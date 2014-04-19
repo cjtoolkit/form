@@ -3,7 +3,6 @@ package form
 import (
 	"bytes"
 	"fmt"
-	"github.com/gorail/core"
 	"io"
 	"mime/multipart"
 	"reflect"
@@ -264,7 +263,10 @@ func Render(w io.Writer, v FormInterface) (err error) {
 func RenderBytes(v FormInterface) []byte {
 	buf := &bytes.Buffer{}
 	defer buf.Reset()
-	core.Check(Render(buf, v))
+	err := Render(buf, v)
+	if err != nil {
+		panic(err)
+	}
 	return buf.Bytes()
 }
 
