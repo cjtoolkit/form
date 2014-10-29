@@ -2,464 +2,424 @@ package form
 
 import (
 	"fmt"
-	"reflect"
+	"strings"
 )
 
-func (r render) strSelect() {
-	m := r.m.MethodByName(r.name + "Options")
-	if !m.IsValid() {
+func (r renderValue) strSelect(value string) {
+	value = strings.TrimSpace(value)
+	w := r.w
+
+	var options []Option
+
+	r.fieldsFns.Call("option", map[string]interface{}{
+		"option": &options,
+	})
+
+	if options == nil {
+		panic(fmt.Errorf(r.form.T("ErrSelectNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
+
+	fmt.Fprintf(w, `<select name="%s" `, es(r.preferedName))
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	options, ok := values[0].Interface().([]Option)
-	if !ok {
-		return
-	}
-
-	fmt.Fprint(r.w, `<select name="`, es(r.preferedName), `" `)
-
-	r.attr("name", "multiple")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprintln(r.w)
-
-	attrOptionExc := []string{"value", "label", "selected"}
-
-	value := r.value.String()
+	fmt.Fprint(w, `>`)
 
 	for _, option := range options {
-		fmt.Fprint(r.w, `<option `)
+		fmt.Fprint(w, `<option `)
 
 		if option.Value != "" {
-			fmt.Fprint(r.w, `value="`, es(option.Value), `" `)
+			fmt.Fprintf(w, `value="%s" `, es(option.Value))
 		}
 
 		if option.Label != "" {
-			fmt.Fprint(r.w, `label="`, es(option.Label), `" `)
+			fmt.Fprintf(w, `label="%s" `, es(option.Label))
 		}
 
 		if value == "" {
 			if option.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
 			if value == option.Value {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		}
 
-		if option.Attr == nil {
-			goto do_content
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			fmt.Fprint(w, ParseAttr(option.Attr))
 		}
-
-		for _, exc := range attrOptionExc {
-			delete(option.Attr, exc)
-		}
-
-		for key, value := range option.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	do_content:
 
 		if option.Content != "" {
-			fmt.Fprint(r.w, `>`, es(option.Content), `</option>`)
+			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
 		} else {
-			fmt.Fprint(r.w, `/>`)
+			fmt.Fprint(w, `/>`)
 		}
-
-		fmt.Fprintln(r.w)
 	}
 
-	fmt.Fprint(r.w, `</select>`)
+	fmt.Fprint(w, `</select>`)
 }
 
-func (r render) strsSelect() {
-	m := r.m.MethodByName(r.name + "Options")
-	if !m.IsValid() {
+func (r renderValue) strsSelect(values []string) {
+	w := r.w
+
+	var options []Option
+
+	r.fieldsFns.Call("option", map[string]interface{}{
+		"option": &options,
+	})
+
+	if options == nil {
+		panic(fmt.Errorf(r.form.T("ErrSelectNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
+
+	fmt.Fprintf(w, `<select name="%s" multiple `, es(r.preferedName))
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	options, ok := values[0].Interface().([]Option)
-	if !ok {
-		return
-	}
-
-	fmt.Fprint(r.w, `<select name="`, es(r.preferedName), `" multiple `)
-
-	r.attr("name", "multiple")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprintln(r.w)
-
-	attrOptionExc := []string{"value", "label", "selected"}
-
-	_values := r.value.Interface().([]string)
-	values_len := len(_values)
+	fmt.Fprint(w, `>`)
 
 	for _, option := range options {
-		fmt.Fprint(r.w, `<option `)
+		fmt.Fprint(w, `<option `)
 
 		if option.Value != "" {
-			fmt.Fprint(r.w, `value="`, es(option.Value), `" `)
+			fmt.Fprintf(w, `value="%s" `, es(option.Value))
 		}
 
 		if option.Label != "" {
-			fmt.Fprint(r.w, `label="`, es(option.Label), `" `)
+			fmt.Fprintf(w, `label="%s" `, es(option.Label))
 		}
 
-		if values_len == 0 {
+		if len(values) == 0 {
 			if option.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
-			for _, value := range _values {
+			for _, value := range values {
+				value = strings.TrimSpace(value)
 				if value == option.Value {
-					fmt.Fprint(r.w, `selected `)
+					fmt.Fprint(w, `selected `)
+					break
 				}
 			}
 		}
 
-		if option.Attr == nil {
-			goto do_content
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			fmt.Fprint(w, ParseAttr(option.Attr))
 		}
-
-		for _, exc := range attrOptionExc {
-			delete(option.Attr, exc)
-		}
-
-		for key, value := range option.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	do_content:
 
 		if option.Content != "" {
-			fmt.Fprint(r.w, `>`, es(option.Content), `</option>`)
+			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
 		} else {
-			fmt.Fprint(r.w, `/>`)
+			fmt.Fprint(w, `/>`)
 		}
-
-		fmt.Fprintln(r.w)
 	}
 
-	fmt.Fprint(r.w, `</select>`)
+	fmt.Fprint(w, `</select>`)
 }
 
-func (r render) wnumSelect() {
-	m := r.m.MethodByName(r.name + "Options")
-	if !m.IsValid() {
+func (r renderValue) wnumSelect(value int64) {
+	w := r.w
+
+	var options []OptionInt
+
+	r.fieldsFns.Call("option", map[string]interface{}{
+		"option": &options,
+	})
+
+	if options == nil {
+		panic(fmt.Errorf(r.form.T("ErrSelectNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
+
+	fmt.Fprintf(w, `<select name="%s" `, es(r.preferedName))
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	options, ok := values[0].Interface().([]OptionInt)
-	if !ok {
-		return
-	}
-
-	fmt.Fprint(r.w, `<select name="`, es(r.preferedName), `" `)
-
-	r.attr("name", "multiple")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprintln(r.w)
-
-	attrOptionExc := []string{"value", "label", "selected"}
-
-	value := r.value.Int()
+	fmt.Fprint(w, `>`)
 
 	for _, option := range options {
-		fmt.Fprint(r.w, `<option `)
+		fmt.Fprint(w, `<option `)
 
 		if option.Value != 0 {
-			fmt.Fprint(r.w, `value="`, option.Value, `" `)
+			fmt.Fprintf(w, `value="%d" `, option.Value)
 		}
 
 		if option.Label != "" {
-			fmt.Fprint(r.w, `label="`, es(option.Label), `" `)
+			fmt.Fprintf(w, `label="%s" `, es(option.Label))
 		}
 
 		if value == 0 {
 			if option.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
 			if value == option.Value {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		}
 
-		if option.Attr == nil {
-			goto do_content
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			fmt.Fprint(w, ParseAttr(option.Attr))
 		}
-
-		for _, exc := range attrOptionExc {
-			delete(option.Attr, exc)
-		}
-
-		for key, value := range option.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	do_content:
 
 		if option.Content != "" {
-			fmt.Fprint(r.w, `>`, es(option.Content), `</option>`)
+			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
 		} else {
-			fmt.Fprint(r.w, `/>`)
+			fmt.Fprint(w, `/>`)
 		}
-
-		fmt.Fprintln(r.w)
 	}
 
-	fmt.Fprint(r.w, `</select>`)
+	fmt.Fprint(w, `</select>`)
 }
 
-func (r render) wnumsSelect() {
-	m := r.m.MethodByName(r.name + "Options")
-	if !m.IsValid() {
+func (r renderValue) wnumsSelect(values []int64) {
+	w := r.w
+
+	var options []OptionInt
+
+	r.fieldsFns.Call("option", map[string]interface{}{
+		"option": &options,
+	})
+
+	if options == nil {
+		panic(fmt.Errorf(r.form.T("ErrSelectNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
+
+	fmt.Fprintf(w, `<select name="%s" multiple `, es(r.preferedName))
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	options, ok := values[0].Interface().([]OptionInt)
-	if !ok {
-		return
-	}
-
-	fmt.Fprint(r.w, `<select name="`, es(r.preferedName), `" multiple `)
-
-	r.attr("name", "multiple")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprintln(r.w)
-
-	attrOptionExc := []string{"value", "label", "selected"}
-
-	_values := r.value.Interface().([]int64)
-	values_len := len(_values)
+	fmt.Fprint(w, `>`)
 
 	for _, option := range options {
-		fmt.Fprint(r.w, `<option `)
+		fmt.Fprint(w, `<option `)
 
 		if option.Value != 0 {
-			fmt.Fprint(r.w, `value="`, option.Value, `" `)
+			fmt.Fprintf(w, `value="%d" `, option.Value)
 		}
 
 		if option.Label != "" {
-			fmt.Fprint(r.w, `label="`, es(option.Label), `" `)
+			fmt.Fprintf(w, `label="%s" `, es(option.Label))
 		}
 
-		if values_len == 0 {
+		if len(values) == 0 {
 			if option.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
-			for _, value := range _values {
+			for _, value := range values {
 				if value == option.Value {
-					fmt.Fprint(r.w, `selected `)
+					fmt.Fprint(w, `selected `)
+					break
 				}
 			}
 		}
 
-		if option.Attr == nil {
-			goto do_content
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			fmt.Fprint(w, ParseAttr(option.Attr))
 		}
-
-		for _, exc := range attrOptionExc {
-			delete(option.Attr, exc)
-		}
-
-		for key, value := range option.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	do_content:
 
 		if option.Content != "" {
-			fmt.Fprint(r.w, `>`, es(option.Content), `</option>`)
+			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
 		} else {
-			fmt.Fprint(r.w, `/>`)
+			fmt.Fprint(w, `/>`)
 		}
-
-		fmt.Fprintln(r.w)
 	}
 
-	fmt.Fprint(r.w, `</select>`)
+	fmt.Fprint(w, `</select>`)
 }
 
-func (r render) fnumSelect() {
-	m := r.m.MethodByName(r.name + "Options")
-	if !m.IsValid() {
+func (r renderValue) fnumSelect(value float64) {
+	w := r.w
+
+	var options []OptionFloat
+
+	r.fieldsFns.Call("option", map[string]interface{}{
+		"option": &options,
+	})
+
+	if options == nil {
+		panic(fmt.Errorf(r.form.T("ErrSelectNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
+
+	fmt.Fprintf(w, `<select name="%s" `, es(r.preferedName))
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	options, ok := values[0].Interface().([]OptionFloat)
-	if !ok {
-		return
-	}
-
-	fmt.Fprint(r.w, `<select name="`, es(r.preferedName), `" `)
-
-	r.attr("name", "multiple")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprintln(r.w)
-
-	attrOptionExc := []string{"value", "label", "selected"}
-
-	value := r.value.Float()
+	fmt.Fprint(w, `>`)
 
 	for _, option := range options {
-		fmt.Fprint(r.w, `<option `)
+		fmt.Fprint(w, `<option `)
 
 		if option.Value != 0 {
-			fmt.Fprint(r.w, `value="`, option.Value, `" `)
+			fmt.Fprintf(w, `value="%f" `, option.Value)
 		}
 
 		if option.Label != "" {
-			fmt.Fprint(r.w, `label="`, es(option.Label), `" `)
+			fmt.Fprintf(w, `label="%s" `, es(option.Label))
 		}
 
 		if value == 0 {
 			if option.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
 			if value == option.Value {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		}
 
-		if option.Attr == nil {
-			goto do_content
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			fmt.Fprint(w, ParseAttr(option.Attr))
 		}
-
-		for _, exc := range attrOptionExc {
-			delete(option.Attr, exc)
-		}
-
-		for key, value := range option.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	do_content:
 
 		if option.Content != "" {
-			fmt.Fprint(r.w, `>`, es(option.Content), `</option>`)
+			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
 		} else {
-			fmt.Fprint(r.w, `/>`)
+			fmt.Fprint(w, `/>`)
 		}
-
-		fmt.Fprintln(r.w)
 	}
 
-	fmt.Fprint(r.w, `</select>`)
+	fmt.Fprint(w, `</select>`)
 }
 
-func (r render) fnumsSelect() {
-	m := r.m.MethodByName(r.name + "Options")
-	if !m.IsValid() {
+func (r renderValue) fnumsSelect(values []float64) {
+	w := r.w
+
+	var options []OptionFloat
+
+	r.fieldsFns.Call("option", map[string]interface{}{
+		"option": &options,
+	})
+
+	if options == nil {
+		panic(fmt.Errorf(r.form.T("ErrSelectNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
+
+	fmt.Fprintf(w, `<select name="%s" multiple `, es(r.preferedName))
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	options, ok := values[0].Interface().([]OptionFloat)
-	if !ok {
-		return
-	}
-
-	fmt.Fprint(r.w, `<select name="`, es(r.preferedName), `" multiple `)
-
-	r.attr("name", "multiple")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprintln(r.w)
-
-	attrOptionExc := []string{"value", "label", "selected"}
-
-	_values := r.value.Interface().([]float64)
-	values_len := len(_values)
+	fmt.Fprint(w, `>`)
 
 	for _, option := range options {
-		fmt.Fprint(r.w, `<option `)
+		fmt.Fprint(w, `<option `)
 
 		if option.Value != 0 {
-			fmt.Fprint(r.w, `value="`, option.Value, `" `)
+			fmt.Fprintf(w, `value="%f" `, option.Value)
 		}
 
 		if option.Label != "" {
-			fmt.Fprint(r.w, `label="`, es(option.Label), `" `)
+			fmt.Fprintf(w, `label="%s" `, es(option.Label))
 		}
 
-		if values_len == 0 {
+		if len(values) == 0 {
 			if option.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
-			for _, value := range _values {
+			for _, value := range values {
 				if value == option.Value {
-					fmt.Fprint(r.w, `selected `)
+					fmt.Fprint(w, `selected `)
+					break
 				}
 			}
 		}
 
-		if option.Attr == nil {
-			goto do_content
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			fmt.Fprint(w, ParseAttr(option.Attr))
 		}
-
-		for _, exc := range attrOptionExc {
-			delete(option.Attr, exc)
-		}
-
-		for key, value := range option.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	do_content:
 
 		if option.Content != "" {
-			fmt.Fprint(r.w, `>`, es(option.Content), `</option>`)
+			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
 		} else {
-			fmt.Fprint(r.w, `/>`)
+			fmt.Fprint(w, `/>`)
 		}
-
-		fmt.Fprintln(r.w)
 	}
 
-	fmt.Fprint(r.w, `</select>`)
+	fmt.Fprint(w, `</select>`)
 }

@@ -1,5 +1,6 @@
 package form
 
+// For use with InputRadio (string)
 type Radio struct {
 	Value    string
 	Label    string
@@ -7,6 +8,7 @@ type Radio struct {
 	Attr     map[string]string
 }
 
+// For use with InputRadio (int64)
 type RadioInt struct {
 	Value    int64
 	Label    string
@@ -14,6 +16,7 @@ type RadioInt struct {
 	Attr     map[string]string
 }
 
+// For use with InputRadio (float64)
 type RadioFloat struct {
 	Value    float64
 	Label    string

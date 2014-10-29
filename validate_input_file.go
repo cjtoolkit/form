@@ -7,52 +7,67 @@ import (
 	"strings"
 )
 
-func (va validate) fileInputFile() {
-	file := va.value.Interface().(*multipart.FileHeader)
-	_fileSize := int64(0)
-	_fileContentType := ""
-	mandatory, ok := va.getBool("Mandatory")
-	if file == nil {
-		if ok {
-			if mandatory {
-				manErr, ok := va.getStr("MandatoryErr")
-				if ok {
-					va.setErr(FormError(manErr))
-				} else {
-					va.setErr(FormError(va.i18n.Key(ErrFileRequired)))
-				}
-				return
-			}
-		}
+func (va validateValue) fileInputFile(value *multipart.FileHeader) {
+	if value == nil {
+		return
 	}
-	_fileSize = fileSize(file)
-	_fileContentType = fileContentType(file)
 
+	// Mandatory
+
+	manErr := ""
+	mandatory := false
+
+	va.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &manErr,
+	})
+
+	if mandatory && value == nil {
+		if manErr == "" {
+			manErr = va.form.T("ErrFileRequired")
+		}
+		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		return
+	}
+
+	// Size and Mime
+
+	size := int64(-1)
 	sizeErr := ""
-	size, ok := va.getInt("Size")
-	if !ok {
+	var mimes []string
+	mimesErr := ""
+
+	va.fieldsFns.Call("file", map[string]interface{}{
+		"size":      &size,
+		"sizeErr":   &sizeErr,
+		"accept":    &mimes,
+		"acceptErr": &mimesErr,
+	})
+
+	if size <= -1 {
 		goto mime_check
 	}
 
-	sizeErr, ok = va.getStr("SizeErr")
-	if !ok {
-		sizeErr = fmt.Sprintf(va.i18n.Key(ErrFileSize), size)
-	}
-
-	if _fileSize > size {
-		va.setErr(FormError(sizeErr))
+	if fileSize(value) > size {
+		if sizeErr == "" {
+			sizeErr = va.form.T("ErrFileSize", map[string]interface{}{
+				"Size": size,
+			})
+		}
+		va.data.Errors[va.name] = fmt.Errorf(sizeErr)
 		return
 	}
 
 mime_check:
 
-	mimes, ok := va.getStrs("Accept")
-	if !ok {
+	if mimes == nil {
 		return
 	}
 
+	fileType := fileContentType(value)
+
 	for _, mime := range mimes {
-		matched, err := path.Match(mime, _fileContentType)
+		matched, err := path.Match(mime, fileType)
 		if err != nil {
 			continue
 		}
@@ -61,12 +76,17 @@ mime_check:
 		}
 	}
 
-	mimeStr := ""
-	if len(mimes) == 1 {
-		mimeStr = mimes[0]
-	} else {
-		mimeStr = strings.Join(mimes[:len(mimes)-1], ", ") + " & " + mimes[len(mimes)-1]
+	if mimesErr == "" {
+		mimeStr := ""
+		if len(mimes) == 1 {
+			mimeStr = mimes[0]
+		} else {
+			mimeStr = strings.Join(mimes[:len(mimes)-1], ", ") + " & " + mimes[len(mimes)-1]
+		}
+		mimesErr = va.form.T("ErrMimeCheck", len(mimes), map[string]interface{}{
+			"Mimes": mimeStr,
+		})
 	}
 
-	va.setErr(FormError(va.i18n.Key(ErrMimeCheck) + mimeStr))
+	va.data.Errors[va.name] = fmt.Errorf(mimesErr)
 }

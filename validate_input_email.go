@@ -3,92 +3,122 @@ package form
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // From http://www.w3.org/TR/html5/states-of-the-type-attribute.html#valid-e-mail-address
 var email_rule = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
 
-func (va validate) strInputEmail() {
-	value := va.value.String()
+func (va validateValue) strInputEmail(value string) {
+	value = strings.TrimSpace(value)
 
-	matchValueStr := ""
+	// Mandatory
 
-	MustMatch, ok := va.getStr("MustMatch")
-	if ok {
-		matchValue := va.v.FieldByName(MustMatch)
-		if !matchValue.IsValid() {
-			va.setErr(FormError(va.i18n.Key(ErrMustMatchMissing)))
-			return
+	manErr := ""
+	mandatory := false
+
+	va.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &manErr,
+	})
+
+	if mandatory && len(value) == 0 {
+		if manErr == "" {
+			manErr = va.form.T("ErrMandatory")
 		}
-		matchValueStr = matchValue.String()
-	} else {
+		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		return
+	}
+
+	// MustMatch
+
+	mustMatchFieldName := ""
+	mustMatchFieldValue := ""
+	mustMatchErr := ""
+
+	va.fieldsFns.Call("mustmatch", map[string]interface{}{
+		"name":  &mustMatchFieldName,
+		"value": &mustMatchFieldValue,
+		"err":   &mustMatchErr,
+	})
+
+	if mustMatchFieldName == "" {
 		goto skipmatch
 	}
 
-	if matchValueStr != value {
-		errMsg, ok := va.getStr("MustMatchErr")
-		if !ok {
-			errMsg = fmt.Sprintf(va.i18n.Key(ErrMustMatchMismatch), MustMatch)
+	if value != mustMatchFieldValue {
+		if mustMatchErr == "" {
+			mustMatchErr = va.form.T("ErrMustMatchMismatch", map[string]interface{}{
+				"Name": mustMatchFieldName,
+			})
 		}
-		va.setErr(FormError(errMsg))
+		va.data.Errors[va.name] = fmt.Errorf(mustMatchErr)
 		return
 	}
 
 skipmatch:
 
-	mandatory, ok := va.getBool("Mandatory")
-	if ok {
-		if !mandatory && value == "" {
-			va.callExt()
-			return
-		}
+	// Size
+
+	min, max := int(-1), int(-1)
+	minErr, maxErr := "", ""
+
+	va.fieldsFns.Call("size", map[string]interface{}{
+		"min":    &min,
+		"max":    &max,
+		"minErr": &minErr,
+		"maxErr": &maxErr,
+	})
+
+	if min == -1 && max == -1 {
+		goto skipmax
+	} else if min == -1 {
+		goto skipmin
 	}
 
-	if !email_rule.MatchString(value) {
-		if mandatory && value == "" {
-			manErr, ok := va.getStr("MandatoryErr")
-			if !ok {
-				manErr = va.i18n.Key(ErrMandatory)
-			}
-			va.setErr(FormError(manErr))
-			return
+	// Min Size
+
+	if len(value) < min {
+		if minErr == "" {
+			minErr = va.form.T("ErrMinChar", map[string]interface{}{
+				"Count": min,
+			})
 		}
-		errStr, ok := va.getStr("Err")
-		if ok {
-			va.setErr(FormError(errStr))
-		} else {
-			va.setErr(FormError(va.i18n.Key(ErrInvalidEmailAddress)))
-		}
+		va.data.Errors[va.name] = fmt.Errorf(minErr)
 		return
 	}
 
-	maxChar, ok := va.getInt("MaxChar")
-	if !ok {
-		maxChar, ok = va.getInt("MaxLength")
-		if !ok {
-			goto skipmax
-		}
-	}
-	if maxChar <= 0 {
+skipmin:
+
+	if max == -1 {
 		goto skipmax
 	}
 
-	if int64(len(value)) > maxChar {
-		maxCharErr, ok := va.getStr("MaxCharErr")
-		if ok {
-			va.setErr(FormError(maxCharErr))
-		} else {
-			maxCharErr, ok = va.getStr("MaxLengthErr")
-			if ok {
-				va.setErr(FormError(maxCharErr))
-			} else {
-				va.setErr(FormError(fmt.Sprintf(va.i18n.Key(ErrMaxChar), maxChar)))
-			}
+	if len(value) > max {
+		if maxErr == "" {
+			maxErr = va.form.T("ErrMaxChar", map[string]interface{}{
+				"Count": max,
+			})
 		}
+		va.data.Errors[va.name] = fmt.Errorf(maxErr)
 		return
 	}
 
 skipmax:
 
-	va.callExt()
+	emailErr := ""
+
+	va.fieldsFns.Call("email", map[string]interface{}{
+		"err": &emailErr,
+	})
+
+	truth := email_rule.MatchString(value)
+
+	if !truth {
+		if emailErr == "" {
+			emailErr = va.form.T("ErrInvalidEmailAddress")
+		}
+		va.data.Errors[va.name] = fmt.Errorf(emailErr)
+		return
+	}
 }

@@ -2,52 +2,115 @@ package form
 
 import (
 	"fmt"
+	"math"
 )
 
-func (r render) numInputNumber(_float bool, _type string) {
-	fmt.Fprint(r.w, `<input type="`, _type, `" `)
-
-	fmt.Fprint(r.w, `name="`, es(r.preferedName), `" `)
-
-	fmt.Fprint(r.w, ` value="`, r.value.Interface(), `" `)
-
-	var min, max, step interface{}
-	var ok bool
-
-	min, ok = r.getInt("Min")
-	if !ok {
-		if _float {
-			min, ok = r.getFloat("Min")
+func (r renderValue) numInputNumber(value interface{}) {
+	_type := func() (str string) {
+		switch r._type {
+		case InputNumber:
+			str = "number"
+		case InputRange:
+			str = "range"
+		case InputHidden:
+			str = "hidden"
 		}
-	}
-	if ok {
-		fmt.Fprint(r.w, `min="`, min, `" `)
+		return
 	}
 
-	max, ok = r.getInt("Max")
-	if !ok {
-		if _float {
-			max, ok = r.getFloat("Max")
+	ovalue := func() (str string) {
+		switch value := value.(type) {
+		case int64:
+			str = fmt.Sprintf(`%d`, value)
+		case float64:
+			str = fmt.Sprintf(`%f`, value)
 		}
-	}
-	if ok {
-		fmt.Fprint(r.w, `max="`, max, `" `)
+		return
 	}
 
-	step, ok = r.getInt("Step")
-	if !ok {
-		if _float {
-			step, ok = r.getFloat("Step")
-			if !ok {
-				fmt.Fprint(r.w, `step="any" `)
-			}
+	w := r.w
+
+	fmt.Fprintf(w, `<input name="%s" type="%s" value="%s" `, es(r.preferedName), _type(), ovalue())
+
+	switch value.(type) {
+	case int64:
+		rangeMin := int64(-9223372036854775808)
+		rangeMax := int64(9223372036854775807)
+		_s := ""
+
+		r.fieldsFns.Call("range", map[string]interface{}{
+			"min":    &rangeMin,
+			"max":    &rangeMax,
+			"minErr": &_s,
+			"maxErr": &_s,
+		})
+
+		if rangeMin != int64(-9223372036854775808) {
+			fmt.Fprintf(w, `min="%d" `, rangeMin)
 		}
-	}
-	if ok {
-		fmt.Fprint(r.w, `step="`, step, `" `)
+
+		if rangeMax != int64(9223372036854775807) {
+			fmt.Fprintf(w, `max="%d" `, rangeMax)
+		}
+
+		step := int64(1)
+
+		r.fieldsFns.Call("step", map[string]interface{}{
+			"step": &step,
+			"err":  &_s,
+		})
+
+		fmt.Fprintf(w, `step="%d" `, step)
+	case float64:
+		rangeMin := math.NaN()
+		rangeMax := math.NaN()
+		_s := ""
+
+		r.fieldsFns.Call("range", map[string]interface{}{
+			"min":    &rangeMin,
+			"max":    &rangeMax,
+			"minErr": &_s,
+			"maxErr": &_s,
+		})
+
+		if rangeMin != math.NaN() {
+			fmt.Fprintf(w, `min="%f" `, rangeMin)
+		}
+
+		if rangeMax != math.NaN() {
+			fmt.Fprintf(w, `max="%f" `, rangeMax)
+		}
+
+		step := float64(1)
+
+		r.fieldsFns.Call("step", map[string]interface{}{
+			"step": &step,
+			"err":  &_s,
+		})
+
+		// Anything below 0.5 will not work, for some reason.
+		if step < 0.5 {
+			step = 0.5
+		}
+
+		fmt.Fprintf(w, `step="%f" `, step)
 	}
 
-	r.attr("type", "name", "max", "min", "step")
+	var attr map[string]string
 
-	fmt.Fprint(r.w, `/>`)
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "type")
+		delete(attr, "value")
+		delete(attr, "min")
+		delete(attr, "max")
+		delete(attr, "step")
+		fmt.Fprint(w, ParseAttr(attr))
+	}
+
+	fmt.Fprint(w, `/>`)
 }

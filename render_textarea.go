@@ -4,28 +4,33 @@ import (
 	"fmt"
 )
 
-func (r render) strTextarea() {
-	fmt.Fprint(r.w, `<textarea name="`+es(r.preferedName), `" `)
+func (r renderValue) strTextarea(value string) {
+	w := r.w
 
-	rows, ok := r.getInt("Rows")
-	if ok {
-		fmt.Fprint(r.w, `rows="`, rows, `" `)
-	} else {
-		fmt.Fprint(r.w, `rows="`, 4, `" `)
+	fmt.Fprintf(w, `<textarea name="%s" `, es(r.preferedName))
+
+	rows := int(4)
+	cols := int(25)
+
+	r.fieldsFns.Call("textarea", map[string]interface{}{
+		"rows": &rows,
+		"cols": &cols,
+	})
+
+	fmt.Fprintf(w, `rows="%d" cols="%d" `, rows, cols)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "rows")
+		delete(attr, "cols")
+		fmt.Fprint(w, ParseAttr(attr))
 	}
 
-	cols, ok := r.getInt("Cols")
-	if ok {
-		fmt.Fprint(r.w, `cols="`, cols, `" `)
-	} else {
-		fmt.Fprint(r.w, `cols="`, 25, `" `)
-	}
-
-	r.attr("rows", "cols")
-
-	fmt.Fprint(r.w, `>`)
-
-	fmt.Fprint(r.w, es(r.value.String()))
-
-	fmt.Fprint(r.w, `</textarea>`)
+	fmt.Fprintf(w, `>%s</textarea>`, es(value))
 }

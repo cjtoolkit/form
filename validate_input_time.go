@@ -5,60 +5,85 @@ import (
 	"time"
 )
 
-func (va validate) timeInputTime(_type string) {
-	_time := va.value.Interface().(time.Time)
-
+func (va validateValue) timeInputTime(value time.Time) {
 	formatter := func(t time.Time) (str string) {
-		switch _type {
-		case "datetime":
+		switch va._type {
+		case InputDatetime:
 			str = fmt.Sprint(t.Format(dateTimeFormat))
-		case "datetime-local":
+		case InputDatetimeLocal:
 			str = fmt.Sprint(t.Format(dateTimeLocalFormat))
-		case "time":
+		case InputTime:
 			str = fmt.Sprint(t.Format(timeFormat))
-		case "date":
+		case InputDate:
 			str = fmt.Sprint(t.Format(dateFormat))
-		case "month":
+		case InputMonth:
 			str = fmt.Sprint(t.Format(monthFormat))
-		case "week":
+		case InputWeek:
 			year, week := t.ISOWeek()
 			str = fmt.Sprintf(weekFormat, year, week)
 		}
 		return
 	}
 
-	if min, ok := va.getTime("Min"); ok {
-		if _time.Unix() < min.Unix() {
-			if minErr, ok := va.getStr("MinErr"); ok {
-				va.setErr(FormError(minErr))
-			} else {
-				va.setErr(FormError(fmt.Sprintf(va.i18n.Key(ErrTimeMin), formatter(min))))
-			}
+	min := time.Time{}
+	max := time.Time{}
+	minErr := ""
+	maxErr := ""
+
+	va.fieldsFns.Call("range", map[string]interface{}{
+		"min":    &min,
+		"max":    &max,
+		"minErr": &minErr,
+		"maxErr": &maxErr,
+	})
+
+	if min.Unix() == -62135596800 && max.Unix() == -62135596800 {
+		goto check_mandatory
+	} else if min.Unix() == -62135596800 {
+		goto check_max
+	}
+
+	if value.Unix() < min.Unix() {
+		if minErr == "" {
+			minErr = va.form.T("ErrTimeMin", map[string]interface{}{
+				"Time": formatter(min),
+			})
+			va.data.Errors[va.name] = fmt.Errorf(minErr)
 			return
 		}
 	}
 
-	if max, ok := va.getTime("Max"); ok {
-		if _time.Unix() > max.Unix() {
-			if maxErr, ok := va.getStr("MaxErr"); ok {
-				va.setErr(FormError(maxErr))
-			} else {
-				va.setErr(FormError(fmt.Sprintf(va.i18n.Key(ErrTimeMax), formatter(max))))
-			}
+check_max:
+
+	if max.Unix() == -62135596800 {
+		goto check_mandatory
+	}
+
+	if value.Unix() > max.Unix() {
+		if maxErr == "" {
+			maxErr = va.form.T("ErrTimeMax", map[string]interface{}{
+				"Time": formatter(max),
+			})
+			va.data.Errors[va.name] = fmt.Errorf(maxErr)
 			return
 		}
 	}
 
-	if mandatory, ok := va.getBool("Mandatory"); ok {
-		if _time.Unix() == -62135596800 && mandatory {
-			if manErr, ok := va.getStr("MandatoryErr"); ok {
-				va.setErr(FormError(manErr))
-			} else {
-				va.setErr(FormError(va.i18n.Key(ErrMandatory)))
-			}
-			return
-		}
-	}
+check_mandatory:
 
-	va.callExt()
+	manErr := ""
+	mandatory := false
+
+	va.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &manErr,
+	})
+
+	if mandatory && value.Unix() == -62135596800 {
+		if manErr == "" {
+			manErr = va.form.T("ErrMandatory")
+		}
+		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		return
+	}
 }

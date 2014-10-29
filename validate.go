@@ -1,168 +1,27 @@
 package form
 
 import (
-	"bytes"
+	"fmt"
 	"mime/multipart"
-	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
-	"text/template"
 	"time"
 )
 
-type validate struct {
-	form
-	_form FormInterface
-	res   http.ResponseWriter
-	req   *http.Request
-	i18n  I18n
+type validateValue struct {
+	form         *form
+	data         *formData
+	name         string
+	preferedName string
+	fieldsFns    FieldFuncs
+	_type        TypeCode
+	t            reflect.Type
 }
 
-type formTypeError struct {
-	DataType string
-	FormType string
-}
-
-func (va validate) typeError() {
-	buf := &bytes.Buffer{}
-	defer buf.Reset()
-	temp, err := template.New("TypeError").Parse(va.i18n.Key(ErrType))
-	if err != nil {
-		va.setErr(err)
-		return
-	}
-	temp.Execute(buf, formTypeError{va.t.Name(), va.ftype})
-	va.setErr(FormError(buf.String()))
-}
-
-func (va validate) str() {
-	switch va.ftype {
-	case "input:text", "input:password", "input:search", "input:hidden",
-		"input:url", "input:tel":
-		va.strInputText()
-	case "input:email":
-		va.strInputEmail()
-	case "input:radio":
-		va.strInputRadio()
-	case "input:color":
-		va.strInputColor()
-	case "textarea":
-		va.strTextarea()
-	case "select":
-		va.strSelect()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) strs() {
-	switch va.ftype {
-	case "select":
-		va.strsSelect()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) wnum() {
-	switch va.ftype {
-	case "input:number", "input:range", "input:hidden":
-		va.numInputNumber(false)
-	case "input:radio":
-		va.wnumInputRadio()
-	case "select":
-		va.wnumSelect()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) wnums() {
-	switch va.ftype {
-	case "select":
-		va.wnumsSelect()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) fnum() {
-	switch va.ftype {
-	case "input:number", "input:range", "input:hidden":
-		va.numInputNumber(true)
-	case "input:radio":
-		va.fnumInputRadio()
-	case "select":
-		va.fnumSelect()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) fnums() {
-	switch va.ftype {
-	case "select":
-		va.fnumsSelect()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) b() {
-	switch va.ftype {
-	case "input:checkbox", "input:hidden":
-		va.bInputCheckbox()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) time() {
-	switch va.ftype {
-	case "input:datetime":
-		va.timeInputTime("datetime")
-	case "input:datetime-local":
-		va.timeInputTime("datetime-local")
-	case "input:time":
-		va.timeInputTime("time")
-	case "input:date":
-		va.timeInputTime("date")
-	case "input:month":
-		va.timeInputTime("month")
-	case "input:week":
-		va.timeInputTime("week")
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) file() {
-	switch va.ftype {
-	case "input:file":
-		va.fileInputFile()
-	default:
-		va.typeError()
-	}
-}
-
-func (va validate) setErr(err error) {
-	va._form.SetErr(va.name, err)
-}
-
-func (va validate) callExt() {
-	m := va.m.MethodByName(va.name + "Ext")
-	if !m.IsValid() {
-		return
-	}
-	in := make([]reflect.Value, 0)
-	m.Call(in)
-}
-
-// Validate by Struct Field. (Must be struct with pointer)
-func ValidateItself(v FormInterface, res http.ResponseWriter, req *http.Request) bool {
-	t := reflect.TypeOf(v)
-	vc := reflect.ValueOf(v)
+func (f *form) validate(structPtr interface{}) (bool, error) {
+	t := reflect.TypeOf(structPtr)
+	vc := reflect.ValueOf(structPtr)
 	vcc := vc
 
 	switch {
@@ -170,200 +29,80 @@ func ValidateItself(v FormInterface, res http.ResponseWriter, req *http.Request)
 		t = t.Elem()
 		vc = vc.Elem()
 	default:
-		return false
+		return false, fmt.Errorf("form: '%p' is not a struct pointer", structPtr)
 	}
 
-	lang := DefaultI18n
+	f.Data[structPtr] = newData()
+	data := f.Data[structPtr]
 
-	for i := 0; i < t.NumField(); i++ {
-		field := vc.Field(i)
+	type _f struct {
+		fieldNo      int
+		field        reflect.Value
+		name         string
+		preferedName string
+		fieldFns     FieldFuncs
+		_type        TypeCode
+		t            reflect.Type
+	}
+
+	fieldM := []_f{}
+
+	// Populate first
+	for fieldNo := 0; fieldNo < t.NumField(); fieldNo++ {
+		field := vc.Field(fieldNo)
 		if !field.CanSet() {
 			continue
 		}
-		name := t.Field(i).Name
+
+		name := t.Field(fieldNo).Name
 		preferedName := name
-		tag := t.Field(i).Tag.Get("form")
-		if tag == "-" {
-			continue
-		}
-		if tag != "" {
-			preferedName = tag
-		}
 
-		va := validate{form{vcc, t, vc, t.Field(i), vc.Field(i), name, preferedName, ""}, v, res, req, lang}
-
-		ftype, ok := va.getStr("Type")
-		if !ok {
+		opsFunc := vcc.MethodByName(name + "Field")
+		if !opsFunc.IsValid() {
 			continue
 		}
 
-		va.form.ftype = ftype
-
-		if v.Err(name) != nil {
-			// No point going further with validation, has it already failed!
+		val := opsFunc.Call(make([]reflect.Value, 0))
+		var fieldFns FieldFuncs
+		var ok bool
+		if fieldFns, ok = val[0].Interface().(FieldFuncs); !ok {
 			continue
 		}
 
-		switch vc.Field(i).Interface().(type) {
+		_type := Invalid
+
+		fieldFns.Call("form", map[string]interface{}{
+			"type": &_type,
+			"name": &preferedName,
+		})
+
+		if _type <= Invalid || _type >= terminate {
+			continue
+		}
+
+		fieldM = append(fieldM, _f{fieldNo, field, name, preferedName, fieldFns, _type, t.Field(fieldNo).Type})
+
+		if f.Value == nil {
+			continue
+		}
+
+		switch field.Interface().(type) {
+
 		case string:
-			va.str()
+			field.Set(reflect.ValueOf(f.Value.Shift(preferedName)))
 		case []string:
-			va.strs()
+			field.Set(reflect.ValueOf(f.Value.All(preferedName)))
+
 		case int64:
-			va.wnum()
-		case []int64:
-			va.wnums()
-		case float64:
-			va.fnum()
-		case []float64:
-			va.fnums()
-		case bool:
-			va.b()
-		case time.Time:
-			va.time()
-		case *multipart.FileHeader:
-			va.file()
-		}
-	}
-
-	// Tick it has checked
-	v.Check()
-
-	return !v.HasErr()
-}
-
-func ValidateItselfMulti(res http.ResponseWriter, req *http.Request, forms ...FormInterface) bool {
-	b := true
-	for _, form := range forms {
-		if !ValidateItself(form, res, req) {
-			b = false
-		}
-	}
-	return b
-}
-
-// Read user request, populate struct field, than call ValidateItself (Must be struct with pointer)
-func Validate(v FormInterface, res http.ResponseWriter, req *http.Request) bool {
-	r := req
-	r.ParseMultipartForm(10 * 1024 * 1024)
-	valShift := func(name string) string {
-		str := ""
-		if r.MultipartForm != nil {
-			if len(r.MultipartForm.Value[name]) <= 1 {
-				if len(r.MultipartForm.Value[name]) == 1 {
-					str = r.MultipartForm.Value[name][0]
-				}
-				delete(r.MultipartForm.Value, name)
-			} else {
-				str, r.MultipartForm.Value[name] =
-					r.MultipartForm.Value[name][0], r.MultipartForm.Value[name][1:]
-			}
-		} else if r.PostForm != nil {
-			if len(r.PostForm[name]) <= 1 {
-				if len(r.PostForm[name]) == 1 {
-					str = r.PostForm[name][0]
-				}
-				delete(r.PostForm, name)
-			} else {
-				str, r.PostForm[name] =
-					r.PostForm[name][0], r.PostForm[name][1:]
-			}
-		} else if r.Form != nil {
-			if len(r.Form[name]) <= 1 {
-				if len(r.Form[name]) == 1 {
-					str = r.Form[name][0]
-				}
-				delete(r.Form, name)
-			} else {
-				str, r.Form[name] =
-					r.Form[name][0], r.Form[name][1:]
-			}
-		}
-		return str
-	}
-	valAll := func(name string) []string {
-		strs := []string{}
-		if r.MultipartForm != nil {
-			if len(r.MultipartForm.Value[name]) > 0 {
-				strs = r.MultipartForm.Value[name]
-				delete(r.MultipartForm.Value, name)
-			}
-		} else if r.PostForm != nil {
-			if len(r.PostForm[name]) > 0 {
-				strs = r.PostForm[name]
-				delete(r.PostForm, name)
-			}
-		} else if r.Form != nil {
-			if len(r.Form[name]) > 0 {
-				strs = r.Form[name]
-				delete(r.Form, name)
-			}
-		}
-		return strs
-	}
-	fileShift := func(name string) *multipart.FileHeader {
-		var fileHeader *multipart.FileHeader
-		if r.MultipartForm != nil {
-			if len(r.MultipartForm.File[name]) <= 1 {
-				if len(r.MultipartForm.File[name]) == 1 {
-					fileHeader = r.MultipartForm.File[name][0]
-				}
-				delete(r.MultipartForm.File, name)
-			} else {
-				fileHeader, r.MultipartForm.File[name] =
-					r.MultipartForm.File[name][0], r.MultipartForm.File[name][1:]
-			}
-		}
-		return fileHeader
-	}
-
-	t := reflect.TypeOf(v)
-	vc := reflect.ValueOf(v)
-	vcc := vc
-
-	switch {
-	case isStructPtr(t):
-		t = t.Elem()
-		vc = vc.Elem()
-	default:
-		return false
-	}
-
-	for i := 0; i < t.NumField(); i++ {
-		field := vc.Field(i)
-		if !field.CanSet() {
-			continue
-		}
-		name := t.Field(i).Name
-		preferedName := name
-		tag := t.Field(i).Tag.Get("form")
-		if tag == "-" {
-			continue
-		}
-		if tag != "" {
-			preferedName = tag
-		}
-
-		typeFunc := vcc.MethodByName(name + "Type")
-		if !typeFunc.IsValid() {
-			continue
-		}
-
-		switch vc.Field(i).Interface().(type) {
-		case string:
-			vc.Field(i).Set(reflect.ValueOf(valShift(preferedName)))
-		case []string:
-			vc.Field(i).Set(reflect.ValueOf(valAll(preferedName)))
-		case int64:
-			_v, err := strconv.ParseInt(valShift(preferedName), 10, 64)
+			_v, err := strconv.ParseInt(f.Value.Shift(preferedName), 10, 64)
 			if err != nil {
-				v.SetErr(name, err)
+				data.Errors[name] = err
 				continue
 			}
-			vc.Field(i).Set(reflect.ValueOf(_v))
+			field.Set(reflect.ValueOf(_v))
 		case []int64:
 			vs := []int64{}
-			vals := valAll(preferedName)
+			vals := f.Value.All(preferedName)
 			var err error
 			for _, val := range vals {
 				var v int64
@@ -374,20 +113,22 @@ func Validate(v FormInterface, res http.ResponseWriter, req *http.Request) bool 
 				vs = append(vs, v)
 			}
 			if err != nil {
-				v.SetErr(name, err)
+				data.Errors[name] = err
 				continue
 			}
-			vc.Field(i).Set(reflect.ValueOf(vs))
+			field.Set(reflect.ValueOf(vs))
+
 		case float64:
-			_v, err := strconv.ParseFloat(valShift(preferedName), 64)
+			_v, err := strconv.ParseFloat(f.Value.Shift(preferedName), 64)
 			if err != nil {
-				v.SetErr(name, err)
+				data.Errors[name] = err
 				continue
 			}
-			vc.Field(i).Set(reflect.ValueOf(_v))
+			field.Set(reflect.ValueOf(_v))
+
 		case []float64:
 			vs := []float64{}
-			vals := valAll(preferedName)
+			vals := f.Value.All(preferedName)
 			var err error
 			for _, val := range vals {
 				var v float64
@@ -398,28 +139,20 @@ func Validate(v FormInterface, res http.ResponseWriter, req *http.Request) bool 
 				vs = append(vs, v)
 			}
 			if err != nil {
-				v.SetErr(name, err)
+				data.Errors[name] = err
 				continue
 			}
-			vc.Field(i).Set(reflect.ValueOf(vs))
+			field.Set(reflect.ValueOf(vs))
+
 		case bool:
 			b := false
-			if valShift(preferedName) == "1" {
+			if f.Value.Shift(preferedName) == "1" {
 				b = true
 			}
-			vc.Field(i).Set(reflect.ValueOf(b))
-		case time.Time:
-			in := make([]reflect.Value, 0)
-			values := typeFunc.Call(in)
-			if len(values) == 0 {
-				continue
-			}
-			_type, ok := values[0].Interface().(string)
-			if !ok {
-				continue
-			}
+			field.Set(reflect.ValueOf(b))
 
-			_v := valShift(preferedName)
+		case time.Time:
+			_v := f.Value.Shift(preferedName)
 
 			var _time time.Time
 			var err error
@@ -429,62 +162,233 @@ func Validate(v FormInterface, res http.ResponseWriter, req *http.Request) bool 
 			}
 
 			switch _type {
-			case "input:datetime":
+			case InputDatetime:
 				_time, err = time.Parse(dateTimeFormat, _v)
-			case "input:datetime-local":
+			case InputDatetimeLocal:
 				_time, err = time.Parse(dateTimeLocalFormat, _v)
-			case "input:time":
+			case InputTime:
 				_time, err = time.Parse(timeFormat, _v)
-			case "input:date":
+			case InputDate:
 				_time, err = time.Parse(dateFormat, _v)
-			case "input:month":
+			case InputMonth:
 				_time, err = time.Parse(monthFormat, _v)
-			case "input:week":
+			case InputWeek:
 				_vv := strings.Split(_v, "-W")
 				if len(_vv) < 2 {
-					v.SetErr(name, FormError(DefaultI18n.Key(ErrOutOfBound)))
+					data.Errors[name] = fmt.Errorf(f.T("ErrOutOfBound"))
 					continue
 				}
-				year, err := strconv.ParseInt(_vv[0], 10, 64)
+				var year int64
+				year, err = strconv.ParseInt(_vv[0], 10, 64)
 				if err != nil {
-					v.SetErr(name, err)
+					data.Errors[name] = err
 					continue
 				}
-				week, err := strconv.ParseInt(_vv[1], 10, 64)
+				var week int64
+				week, err = strconv.ParseInt(_vv[1], 10, 64)
 				if err != nil {
-					v.SetErr(name, err)
+					data.Errors[name] = err
 					continue
 				}
 				_time = StartingDayOfWeek(int(year), int(week))
 			}
 
 			if err != nil {
-				v.SetErr(name, err)
+				data.Errors[name] = err
 				continue
 			}
 
 		blank:
 
-			vc.Field(i).Set(reflect.ValueOf(_time))
+			field.Set(reflect.ValueOf(_time))
 
 		case *multipart.FileHeader:
-			fileHeader := fileShift(preferedName)
+			fileHeader := f.Value.FileShift(preferedName)
 			if fileHeader == nil {
 				continue
 			}
-			vc.Field(i).Set(reflect.ValueOf(fileHeader))
+			field.Set(reflect.ValueOf(fileHeader))
 		}
 	}
 
-	return ValidateItself(v, res, req)
+	jsonUpdate := func(name, preferedName string) {
+		m := map[string]interface{}{}
+		m["valid"] = data.Errors[name] == nil
+		if m["valid"].(bool) {
+			m["error"] = ""
+		} else {
+			m["error"] = data.Errors[name].Error()
+		}
+		m["warning"] = data.Warning[name]
+		m["name"] = preferedName
+		m["count"] = f.vcount
+		f.vcount++
+		f.JsonData = append(f.JsonData, m)
+	}
+
+	// Now for full on validation.
+	for _, item := range fieldM {
+		field := item.field
+		name := item.name
+		preferedName := item.preferedName
+		fieldFns := item.fieldFns
+		_type := item._type
+		t := item.t
+
+		va := validateValue{f, data, name, preferedName, fieldFns, _type, t}
+
+		if data.Errors[name] != nil {
+			jsonUpdate(name, preferedName)
+			// No point going further with validation, has the field already failed!
+			continue
+		}
+
+		switch value := field.Interface().(type) {
+		case string:
+			va.str(value)
+		case []string:
+			va.strs(value)
+		case int64:
+			va.wnum(value)
+		case []int64:
+			va.wnums(value)
+		case float64:
+			va.fnum(value)
+		case []float64:
+			va.fnums(value)
+		case bool:
+			va.b(value)
+		case time.Time:
+			va.time(value)
+		case *multipart.FileHeader:
+			va.file(value)
+		}
+
+		if data.Errors[name] == nil {
+			derror := va.data.Errors[name]
+			dwarning := va.data.Warning[name]
+
+			va.fieldsFns.Call("ext", map[string]interface{}{
+				"error":   &derror,
+				"warning": &dwarning,
+			})
+
+			if derror != nil {
+				va.data.Errors[name] = derror
+			}
+
+			if dwarning != "" {
+				va.data.Warning[name] = dwarning
+			}
+		}
+
+		jsonUpdate(name, preferedName)
+	}
+
+	return len(data.Errors) == 0, nil
 }
 
-func ValidateMulti(res http.ResponseWriter, req *http.Request, forms ...FormInterface) bool {
-	b := true
-	for _, form := range forms {
-		if !Validate(form, res, req) {
-			b = false
-		}
+func (va validateValue) typeError() {
+	va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrType", map[string]interface{}{
+		"DataType": va.t.String(),
+	}))
+}
+
+func (va validateValue) str(value string) {
+	switch va._type {
+	case InputText, InputPassword, InputSearch, InputHidden, InputUrl, InputTel:
+		va.strInputText(value)
+	case InputEmail:
+		va.strInputEmail(value)
+	case InputRadio:
+		va.strInputRadio(value)
+	case InputColor:
+		va.strInputColor(value)
+	case Textarea:
+		va.strTextarea(value)
+	case Select:
+		va.strSelect(value)
+	default:
+		va.typeError()
 	}
-	return b
+}
+
+func (va validateValue) strs(values []string) {
+	switch va._type {
+	case Select:
+		va.strsSelect(values)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) wnum(value int64) {
+	switch va._type {
+	case InputNumber, InputRange, InputHidden:
+		va.wnumInputNumber(value)
+	case InputRadio:
+		va.wnumInputRadio(value)
+	case Select:
+		va.wnumSelect(value)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) wnums(values []int64) {
+	switch va._type {
+	case Select:
+		va.wnumsSelect(values)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) fnum(value float64) {
+	switch va._type {
+	case InputNumber, InputRange, InputHidden:
+		va.fnumInputNumber(value)
+	case InputRadio:
+		va.fnumInputRadio(value)
+	case Select:
+		va.fnumSelect(value)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) fnums(values []float64) {
+	switch va._type {
+	case Select:
+		va.fnumsSelect(values)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) b(value bool) {
+	switch va._type {
+	case InputCheckbox, InputHidden:
+		va.bInputCheckbox(value)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) time(value time.Time) {
+	switch va._type {
+	case InputDatetime, InputDatetimeLocal, InputTime, InputDate, InputMonth, InputWeek:
+		va.timeInputTime(value)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) file(value *multipart.FileHeader) {
+	switch va._type {
+	case InputFile:
+		va.fileInputFile(value)
+	default:
+		va.typeError()
+	}
 }

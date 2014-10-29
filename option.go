@@ -1,5 +1,6 @@
 package form
 
+// For use with Select (string, []string)
 type Option struct {
 	Content  string
 	Value    string
@@ -8,6 +9,7 @@ type Option struct {
 	Attr     map[string]string
 }
 
+// For use with Select (int64, []int64)
 type OptionInt struct {
 	Content  string
 	Value    int64
@@ -16,6 +18,7 @@ type OptionInt struct {
 	Attr     map[string]string
 }
 
+// For use with Select (float64, []float64)
 type OptionFloat struct {
 	Content  string
 	Value    float64

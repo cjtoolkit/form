@@ -2,188 +2,147 @@ package form
 
 import (
 	"fmt"
-	"reflect"
+	"strings"
 )
 
-func (r render) strInputRadio() {
-	m := r.m.MethodByName(r.name + "Radio")
-	if !m.IsValid() {
+func (r renderValue) strInputRadio(value string) {
+	value = strings.TrimSpace(value)
+	w := r.w
+
+	var radios []Radio
+
+	r.fieldsFns.Call("radio", map[string]interface{}{
+		"radio": &radios,
+	})
+
+	if radios == nil {
+		panic(fmt.Errorf(r.form.T("ErrRadioNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
-	}
-
-	radios, ok := values[0].Interface().([]Radio)
-	if !ok {
-		return
-	}
-
-	attrExclude := []string{"type", "name", "selected", "value"}
-
-	value := r.value.String()
 
 	for _, radio := range radios {
 		if radio.Label != "" {
-			fmt.Fprint(r.w, `<label>`, radio.Label, `: `)
+			fmt.Fprint(w, `<label>`)
 		}
 
-		fmt.Fprint(r.w, `<input type="radio" name"`, es(r.preferedName), `" `)
-
-		fmt.Fprint(r.w, `value="`, es(radio.Value), `" `)
+		fmt.Fprintf(w, `<input name="%s" type="radio" value="%s" `, es(r.preferedName), es(radio.Value))
 
 		if value == "" {
 			if radio.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
 			if value == radio.Value {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		}
 
-		if radio.Attr == nil {
-			goto end
+		if radio.Attr != nil {
+			delete(radio.Attr, "type")
+			delete(radio.Attr, "name")
+			delete(radio.Attr, "selected")
+			delete(radio.Attr, "value")
+			fmt.Fprint(w, ParseAttr(radio.Attr))
 		}
 
-		for _, exc := range attrExclude {
-			delete(radio.Attr, exc)
-		}
+		fmt.Fprint(w, `/>`)
 
-		for key, value := range radio.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	end:
-
-		fmt.Fprint(r.w, `/>`)
 		if radio.Label != "" {
-			fmt.Fprint(r.w, `</label>`)
+			fmt.Fprint(w, ` %s</label>`, es(radio.Label))
 		}
-		fmt.Fprintln(r.w)
 	}
 }
 
-func (r render) wnumInputRadio() {
-	m := r.m.MethodByName(r.name + "Radio")
-	if !m.IsValid() {
+func (r renderValue) wnumInputRadio(value int64) {
+	w := r.w
+
+	var radios []RadioInt
+
+	r.fieldsFns.Call("radio", map[string]interface{}{
+		"radio": &radios,
+	})
+
+	if radios == nil {
+		panic(fmt.Errorf(r.form.T("ErrRadioNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
-	}
-
-	radios, ok := values[0].Interface().([]RadioInt)
-	if !ok {
-		return
-	}
-
-	attrExclude := []string{"type", "name", "selected", "value"}
-
-	value := r.value.Int()
 
 	for _, radio := range radios {
 		if radio.Label != "" {
-			fmt.Fprint(r.w, `<label>`, radio.Label, `: `)
+			fmt.Fprint(w, `<label>`)
 		}
 
-		fmt.Fprint(r.w, `<input type="radio" name"`, es(r.preferedName), `" `)
-
-		fmt.Fprint(r.w, `value="`, radio.Value, `" `)
+		fmt.Fprintf(w, `<input name="%s" type="radio" value="%d" `, es(r.preferedName), radio.Value)
 
 		if value == 0 {
 			if radio.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
 			if value == radio.Value {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		}
 
-		if radio.Attr == nil {
-			goto end
+		if radio.Attr != nil {
+			delete(radio.Attr, "type")
+			delete(radio.Attr, "name")
+			delete(radio.Attr, "selected")
+			delete(radio.Attr, "value")
+			fmt.Fprint(w, ParseAttr(radio.Attr))
 		}
 
-		for _, exc := range attrExclude {
-			delete(radio.Attr, exc)
-		}
+		fmt.Fprint(w, `/>`)
 
-		for key, value := range radio.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	end:
-
-		fmt.Fprint(r.w, `/>`)
 		if radio.Label != "" {
-			fmt.Fprint(r.w, `</label>`)
+			fmt.Fprint(w, ` %s</label>`, es(radio.Label))
 		}
-		fmt.Fprintln(r.w)
 	}
 }
 
-func (r render) fnumInputRadio() {
-	m := r.m.MethodByName(r.name + "Radio")
-	if !m.IsValid() {
+func (r renderValue) fnumInputRadio(value float64) {
+	w := r.w
+
+	var radios []RadioFloat
+
+	r.fieldsFns.Call("radio", map[string]interface{}{
+		"radio": &radios,
+	})
+
+	if radios == nil {
+		panic(fmt.Errorf(r.form.T("ErrRadioNotWellFormed")))
 		return
 	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		return
-	}
-
-	radios, ok := values[0].Interface().([]RadioFloat)
-	if !ok {
-		return
-	}
-
-	attrExclude := []string{"type", "name", "selected", "value"}
-
-	value := r.value.Float()
 
 	for _, radio := range radios {
 		if radio.Label != "" {
-			fmt.Fprint(r.w, `<label>`, radio.Label, `: `)
+			fmt.Fprint(w, `<label>`)
 		}
 
-		fmt.Fprint(r.w, `<input type="radio" name"`, es(r.preferedName), `" `)
-
-		fmt.Fprint(r.w, `value="`, radio.Value, `" `)
+		fmt.Fprintf(w, `<input name="%s" type="radio" value="%f" `, es(r.preferedName), radio.Value)
 
 		if value == 0 {
 			if radio.Selected {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		} else {
 			if value == radio.Value {
-				fmt.Fprint(r.w, `selected `)
+				fmt.Fprint(w, `selected `)
 			}
 		}
 
-		if radio.Attr == nil {
-			goto end
+		if radio.Attr != nil {
+			delete(radio.Attr, "type")
+			delete(radio.Attr, "name")
+			delete(radio.Attr, "selected")
+			delete(radio.Attr, "value")
+			fmt.Fprint(w, ParseAttr(radio.Attr))
 		}
 
-		for _, exc := range attrExclude {
-			delete(radio.Attr, exc)
-		}
+		fmt.Fprint(w, `/>`)
 
-		for key, value := range radio.Attr {
-			fmt.Fprintf(r.w, `%s="%s" `, es(key), es(value))
-		}
-
-	end:
-
-		fmt.Fprint(r.w, `/>`)
 		if radio.Label != "" {
-			fmt.Fprint(r.w, `</label>`)
+			fmt.Fprint(w, ` %s</label>`, es(radio.Label))
 		}
-		fmt.Fprintln(r.w)
 	}
 }

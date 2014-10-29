@@ -1,158 +1,134 @@
 package form
 
 import (
-	"reflect"
+	"fmt"
+	"strings"
 )
 
-func (va validate) strInputRadio() {
-	value := va.value.String()
+func (va validateValue) strInputRadio(value string) {
+	value = strings.TrimSpace(value)
 
-	errStr := FormError(va.i18n.Key(ErrRadioNotWellFormed))
+	var radios []Radio
 
-	m := va.m.MethodByName(va.name + "Radio")
-	if !m.IsValid() {
-		va.setErr(errStr)
-		return
-	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		va.setErr(errStr)
-		return
-	}
+	va.fieldsFns.Call("radio", map[string]interface{}{
+		"radio": &radios,
+	})
 
-	radios, ok := values[0].Interface().([]Radio)
-	if !ok {
-		va.setErr(errStr)
+	if radios == nil {
+		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
 		return
 	}
 
 	for _, radio := range radios {
 		if value == radio.Value {
-			va.callExt()
 			return
 		}
 	}
 
 	if value != "" {
-		va.setErr(FormError(va.i18n.Key(ErrOutOfBound)))
+		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
-	b, ok := va.getBool("Mandatory")
-	if ok {
-		if b {
-			manErr, ok := va.getStr("MandatoryErr")
-			if ok {
-				va.setErr(FormError(manErr))
-			} else {
-				va.setErr(FormError(va.i18n.Key(ErrNotSelect)))
-			}
-			return
-		}
-	}
+	// Mandatory
 
-	va.callExt()
+	manErr := ""
+	mandatory := false
+
+	va.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &manErr,
+	})
+
+	if mandatory {
+		if manErr == "" {
+			manErr = va.form.T("ErrMandatory")
+		}
+		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		return
+	}
 }
 
-func (va validate) wnumInputRadio() {
-	value := va.value.Int()
+func (va validateValue) wnumInputRadio(value int64) {
+	var radios []RadioInt
 
-	errStr := FormError(va.i18n.Key(ErrRadioNotWellFormed))
+	va.fieldsFns.Call("radio", map[string]interface{}{
+		"radio": &radios,
+	})
 
-	m := va.m.MethodByName(va.name + "Radio")
-	if !m.IsValid() {
-		va.setErr(errStr)
-		return
-	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		va.setErr(errStr)
-		return
-	}
-
-	radios, ok := values[0].Interface().([]RadioInt)
-	if !ok {
-		va.setErr(errStr)
+	if radios == nil {
+		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
 		return
 	}
 
 	for _, radio := range radios {
 		if value == radio.Value {
-			va.callExt()
 			return
 		}
 	}
 
 	if value != 0 {
-		va.setErr(FormError(va.i18n.Key(ErrOutOfBound)))
+		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
-	b, ok := va.getBool("Mandatory")
-	if ok {
-		if b {
-			manErr, ok := va.getStr("MandatoryErr")
-			if ok {
-				va.setErr(FormError(manErr))
-			} else {
-				va.setErr(FormError(va.i18n.Key(ErrNotSelect)))
-			}
-			return
-		}
-	}
+	// Mandatory
 
-	va.callExt()
+	manErr := ""
+	mandatory := false
+
+	va.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &manErr,
+	})
+
+	if mandatory {
+		if manErr == "" {
+			manErr = va.form.T("ErrMandatory")
+		}
+		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		return
+	}
 }
 
-func (va validate) fnumInputRadio() {
-	value := va.value.Float()
+func (va validateValue) fnumInputRadio(value float64) {
+	var radios []RadioFloat
 
-	errStr := FormError(va.i18n.Key(ErrRadioNotWellFormed))
+	va.fieldsFns.Call("radio", map[string]interface{}{
+		"radio": &radios,
+	})
 
-	m := va.m.MethodByName(va.name + "Radio")
-	if !m.IsValid() {
-		va.setErr(errStr)
-		return
-	}
-	in := make([]reflect.Value, 0)
-	values := m.Call(in)
-	if len(values) == 0 {
-		va.setErr(errStr)
-		return
-	}
-
-	radios, ok := values[0].Interface().([]RadioFloat)
-	if !ok {
-		va.setErr(errStr)
+	if radios == nil {
+		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
 		return
 	}
 
 	for _, radio := range radios {
 		if value == radio.Value {
-			va.callExt()
 			return
 		}
 	}
 
 	if value != 0 {
-		va.setErr(FormError(va.i18n.Key(ErrOutOfBound)))
+		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
-	b, ok := va.getBool("Mandatory")
-	if ok {
-		if b {
-			manErr, ok := va.getStr("MandatoryErr")
-			if ok {
-				va.setErr(FormError(manErr))
-			} else {
-				va.setErr(FormError(va.i18n.Key(ErrNotSelect)))
-			}
-			return
-		}
-	}
+	// Mandatory
 
-	va.callExt()
+	manErr := ""
+	mandatory := false
+
+	va.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &manErr,
+	})
+
+	if mandatory {
+		if manErr == "" {
+			manErr = va.form.T("ErrMandatory")
+		}
+		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		return
+	}
 }

@@ -10,28 +10,25 @@ import (
 	"testing"
 )
 
-type inputCheckbox struct {
-	First bool
+type inputColor struct {
+	First string
 }
 
-func (i *inputCheckbox) FirstField() FieldFuncs {
+func (i *inputColor) FirstField() FieldFuncs {
 	return FieldFuncs{
 		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputCheckbox
-		},
-		"mandatory": func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
+			*(m["type"].(*TypeCode)) = InputColor
 		},
 	}
 }
 
-func TestInputCheckbox(t *testing.T) {
+func TestInputColor(t *testing.T) {
 	mux := http.NewServeMux()
 
-	var outform inputCheckbox
+	var outform inputColor
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		form := inputCheckbox{}
+		form := inputColor{}
 		check := New(nil, "en-GB")
 
 		r.ParseForm()
@@ -49,7 +46,7 @@ func TestInputCheckbox(t *testing.T) {
 
 	// Init
 	res, _ := http.PostForm(ts.URL, url.Values{
-		"First": {"1"},
+		"First": {"#A0A0A0"},
 	})
 
 	b, _ := ioutil.ReadAll(res.Body)
@@ -58,14 +55,14 @@ func TestInputCheckbox(t *testing.T) {
 		t.Errorf("Init: Expected 'true', return %s. \r\n %v", b, outform)
 	}
 
-	// Check Checkbox Mandatory
+	// Check Color Rule #1
 	res, _ = http.PostForm(ts.URL, url.Values{
-		"First": {""},
+		"First": {"#AGAGAG"},
 	})
 
 	b, _ = ioutil.ReadAll(res.Body)
 
 	if string(b) != "false" {
-		t.Errorf("Check Checkbox Mandatory: Expected 'false', return %s. \r\n %v", b, outform)
+		t.Errorf("Check Color Rule #1: Expected 'false', return %s. \r\n %v", b, outform)
 	}
 }

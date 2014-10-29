@@ -2,82 +2,109 @@ package form
 
 import (
 	"fmt"
+	_ "github.com/cjtoolkit/form/lang/enGB"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"regexp"
+	"net/url"
 	"testing"
 )
 
-var exampleMail = regexp.MustCompile(`example.com$`)
-
-type TestInputEmailForm struct {
-	Form
-	EmailA string `form:"textA"`
-	EmailB string `form:"textB"`
+type inputEmail struct {
+	First  string
+	Second string
 }
 
-func (t *TestInputEmailForm) EmailAType() string {
-	return "input:email"
-}
-
-func (t *TestInputEmailForm) EmailAExt() {
-	if exampleMail.MatchString(t.EmailA) {
-		t.SetErr("EmailA", FormError("We do not accept example.com email address, sorry!"))
+func (i *inputEmail) FirstField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputEmail
+		},
+		"mandatory": func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		},
 	}
 }
 
-func (t *TestInputEmailForm) EmailBType() string {
-	return "input:email"
-}
-
-func (t *TestInputEmailForm) EmailBMustMatch() string {
-	return "EmailA"
-}
-
-func (t *TestInputEmailForm) EmailBMustMatchErr() string {
-	return "Does not match EmailA"
+func (i *inputEmail) SecondField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputEmail
+		},
+		"mustmatch": func(m map[string]interface{}) {
+			*(m["name"].(*string)) = "First"
+			*(m["value"].(*string)) = i.First
+		},
+	}
 }
 
 func TestInputEmail(t *testing.T) {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		s := &TestInputEmailForm{
-			EmailA: "hello@cj-jackson.com",
-			EmailB: "hello@cj-jackson.com",
-		}
-		if ValidateItself(s, res, req) == false {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputEmailForm{
-			EmailA: "hello@cj-jackson.com",
-			EmailB: "support@cj-jackson.com",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputEmailForm{
-			EmailA: "hello_cj-jackson.com",
-			EmailB: "hello_cj-jackson.com",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputEmailForm{
-			EmailA: "hello@example.com",
-			EmailB: "hello@example.com",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
+	var outform inputEmail
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		form := inputEmail{}
+		check := New(nil, "en-GB")
+
+		r.ParseForm()
+		b := check.MustValidate(r, &form)
+		outform = form
+		if b {
+			fmt.Fprint(w, "true")
+		} else {
+			fmt.Fprint(w, "false")
 		}
 	})
 
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	http.Get(ts.URL)
+	// Init
+	res, _ := http.PostForm(ts.URL, url.Values{
+		"First":  {"hello@example.com"},
+		"Second": {"hello@example.com"},
+	})
+
+	b, _ := ioutil.ReadAll(res.Body)
+
+	if string(b) != "true" {
+		t.Errorf("Init: Expected 'true', return %s. \r\n %v", b, outform)
+	}
+
+	// Valid Email Address
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"hello_example.com"},
+		"Second": {"hello_example.com"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Check Matching Rule: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Check Matching Rule
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"hello@example.com"},
+		"Second": {"world@example.com"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Check Matching Rule: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Mandatory
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {""},
+		"Second": {""},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Mandatory: Expected 'false', return %s. \r\n %v", b, outform)
+	}
 }

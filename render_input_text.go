@@ -2,44 +2,71 @@ package form
 
 import (
 	"fmt"
+	"regexp"
 )
 
-func (r render) strInputText(_type string) {
-	fmt.Fprint(r.w, `<input name="`, es(r.preferedName), `" type="`, _type, `" `)
-
-	fmt.Fprint(r.w, `value="`, es(r.value.String()), `" `)
-
-	var pattern string
-
-	regExp, ok := r.getRegExp("RegExp")
-	if !ok {
-		regExp, ok = r.getRegExp("Pattern")
-	}
-	if ok {
-		pattern = regExp.String()
-		fmt.Fprint(r.w, `pattern="`, es(pattern), `" `)
-		goto max_char_check
-	}
-
-	pattern, ok = r.getStr("RegExp")
-	if !ok {
-		pattern, ok = r.getStr("Pattern")
-	}
-	if ok {
-		fmt.Fprint(r.w, `pattern="`, es(pattern), `" `)
+func (r renderValue) strInputText(value string) {
+	_type := func() (str string) {
+		switch r._type {
+		case InputText:
+			str = "text"
+		case InputSearch:
+			str = "search"
+		case InputPassword:
+			str = "password"
+		case InputHidden:
+			str = "hidden"
+		case InputUrl:
+			str = "url"
+		case InputTel:
+			str = "tel"
+		}
+		return
 	}
 
-max_char_check:
+	w := r.w
 
-	maxChar, ok := r.getInt("MaxChar")
-	if !ok {
-		maxChar, ok = r.getInt("MaxLenght")
+	fmt.Fprintf(w, `<input name="%s" type="%s" value="%s" `, es(r.preferedName), _type(), es(value))
+
+	var pattern *regexp.Regexp
+	_s := ""
+
+	r.fieldsFns.Call("pattern", map[string]interface{}{
+		"pattern": &pattern,
+		"err":     &_s,
+	})
+
+	if pattern != nil {
+		fmt.Fprintf(w, `pattern="%s" `, es(pattern.String()))
 	}
-	if ok {
-		fmt.Fprint(r.w, `maxlength="`, maxChar, `" `)
+
+	_n, max := int(-1), int(-1)
+
+	r.fieldsFns.Call("size", map[string]interface{}{
+		"min":    &_n,
+		"max":    &max,
+		"minErr": &_s,
+		"maxErr": &_s,
+	})
+
+	if max > 0 {
+		fmt.Fprintf(w, `maxlength="%d" `, max)
 	}
 
-	r.attr("type", "value", "pattern", "maxlength")
+	var attr map[string]string
 
-	fmt.Fprint(r.w, `/>`)
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "type")
+		delete(attr, "value")
+		delete(attr, "pattern")
+		delete(attr, "mexlength")
+		fmt.Fprint(w, ParseAttr(attr))
+	}
+
+	fmt.Fprint(w, `/>`)
 }

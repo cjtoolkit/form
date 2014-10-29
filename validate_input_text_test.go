@@ -2,89 +2,144 @@ package form
 
 import (
 	"fmt"
+	_ "github.com/cjtoolkit/form/lang/enGB"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"regexp"
 	"testing"
 )
 
-type TestInputTextForm struct {
-	Form
-	TextA string `form:"textA"`
-	TextB string `form:"textB"`
+type inputText struct {
+	First  string
+	Second string
+	Re     string
 }
 
-func (t *TestInputTextForm) TextAType() string {
-	return "input:text"
+func (i *inputText) FirstField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputText
+		},
+		"mandatory": func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		},
+		"size": func(m map[string]interface{}) {
+			*(m["max"].(*int)) = 8
+		},
+	}
 }
 
-func (t *TestInputTextForm) TextAMinChar() int64 {
-	return 2
+func (i *inputText) SecondField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputText
+		},
+		"mustmatch": func(m map[string]interface{}) {
+			*(m["name"].(*string)) = "First"
+			*(m["value"].(*string)) = i.First
+		},
+	}
 }
 
-func (t *TestInputTextForm) TextAMaxChar() int64 {
-	return 10
-}
+var rePattern = regexp.MustCompile("^[a-z]{1,5}[0-9]{1,5}$")
 
-func (t *TestInputTextForm) TextAPattern() string {
-	return "^([a-zA-Z]*)$"
-}
-
-func (t *TestInputTextForm) TextAPatternErr() string {
-	return "Letters Only"
-}
-
-func (t *TestInputTextForm) TextBType() string {
-	return "input:text"
-}
-
-func (t *TestInputTextForm) TextBMustMatch() string {
-	return "TextA"
-}
-
-func (t *TestInputTextForm) TextBMustMatchErr() string {
-	return "Does not match Test1"
+func (i *inputText) ReField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputText
+		},
+		"pattern": func(m map[string]interface{}) {
+			*(m["pattern"].(**regexp.Regexp)) = rePattern
+		},
+	}
 }
 
 func TestInputText(t *testing.T) {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		s := &TestInputTextForm{
-			TextA: "hello",
-			TextB: "hello",
-		}
-		if ValidateItself(s, res, req) == false {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputTextForm{
-			TextA: "hello5",
-			TextB: "hello3",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputTextForm{
-			TextA: "hellohellohello",
-			TextB: "hellohellohello",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputTextForm{
-			TextA: "a",
-			TextB: "a",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
+	var outform inputText
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		form := inputText{}
+		check := New(nil, "en-GB")
+
+		r.ParseForm()
+		b := check.MustValidate(r, &form)
+		outform = form
+		if b {
+			fmt.Fprint(w, "true")
+		} else {
+			fmt.Fprint(w, "false")
 		}
 	})
 
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	http.Get(ts.URL)
+	// Init
+	res, _ := http.PostForm(ts.URL, url.Values{
+		"First":  {"Hello"},
+		"Second": {"Hello"},
+		"Re":     {"abcde12345"},
+	})
+
+	b, _ := ioutil.ReadAll(res.Body)
+
+	if string(b) != "true" {
+		t.Errorf("Init: Expected 'true', return %s. \r\n %v", b, outform)
+	}
+
+	// Check Matching Rule
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"Hello"},
+		"Second": {"World"},
+		"Re":     {"abcde12345"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Check Matching Rule: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Check Size
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"HelloHello"},
+		"Second": {"HelloHello"},
+		"Re":     {"abcde12345"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Check Size: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Mandatory
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {""},
+		"Second": {""},
+		"Re":     {"abcde12345"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Mandatory: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// RegExp Rule
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"Hello"},
+		"Second": {"Hello"},
+		"Re":     {"abcdef123456"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("RegExp Rule: Expected 'false', return %s. \r\n %v", b, outform)
+	}
 }

@@ -5,119 +5,139 @@ import (
 	"math"
 )
 
-func (va validate) numInputNumber(_float bool) {
-	var min, max, step interface{}
-	var bmin, bmax, bstep bool
+func (va validateValue) wnumInputNumber(value int64) {
+	rangeMin := int64(-9223372036854775808)
+	rangeMax := int64(9223372036854775807)
+	rangeMinErr := ""
+	rangeMaxErr := ""
 
-	min, bmin = va.getInt("Min")
-	if !bmin && _float {
-		min, bmin = va.getFloat("Min")
+	va.fieldsFns.Call("range", map[string]interface{}{
+		"min":    &rangeMin,
+		"max":    &rangeMax,
+		"minErr": &rangeMinErr,
+		"maxErr": &rangeMaxErr,
+	})
+
+	if rangeMin == -9223372036854775808 && rangeMax == 9223372036854775807 {
+		goto dostep
+	} else if rangeMin == -9223372036854775808 {
+		goto doMax
 	}
 
-	max, bmax = va.getInt("Max")
-	if !bmax && _float {
-		max, bmax = va.getFloat("Max")
-	}
-
-	step, bstep = va.getInt("Step")
-	if !bstep && _float {
-		step, bstep = va.getFloat("Step")
-	}
-
-	minErr, ok := va.getStr("MinErr")
-	if !ok {
-		minErr = va.i18n.Key(ErrNumberMin)
-	}
-
-	maxErr, ok := va.getStr("MaxErr")
-	if !ok {
-		maxErr = va.i18n.Key(ErrNumberMax)
-	}
-
-	stepErr, ok := va.getStr("StepErr")
-	if !ok {
-		stepErr = va.i18n.Key(ErrNumberStep)
-	}
-
-	switch {
-	case _float:
-		value := va.value.Float()
-
-		if bmin {
-			_min := float64(0)
-			switch t := min.(type) {
-			case float64:
-				_min = t
-			case int64:
-				_min = float64(t)
-			}
-
-			if value < _min {
-				va.setErr(FormError(fmt.Sprintf(minErr, _min)))
-				return
-			}
+	if value < rangeMin {
+		if rangeMinErr == "" {
+			rangeMinErr = va.form.T("ErrNumberMin", map[string]interface{}{
+				"Count": rangeMin,
+			})
 		}
-
-		if bmax {
-			_max := float64(0)
-			switch t := max.(type) {
-			case float64:
-				_max = t
-			case int64:
-				_max = float64(t)
-			}
-
-			if value > _max {
-				va.setErr(FormError(fmt.Sprintf(maxErr, _max)))
-				return
-			}
-		}
-
-		if bstep {
-			_step := float64(0)
-			switch t := step.(type) {
-			case float64:
-				_step = t
-			case int64:
-				_step = float64(t)
-			}
-
-			if math.Remainder(value, _step) != 0 {
-				va.setErr(FormError(fmt.Sprintf(stepErr, _step)))
-				return
-			}
-		}
-
-	default:
-		value := va.value.Int()
-
-		if bmin {
-			_min := min.(int64)
-
-			if value < _min {
-				va.setErr(FormError(fmt.Sprintf(minErr, _min)))
-				return
-			}
-		}
-
-		if bmax {
-			_max := max.(int64)
-
-			if value > _max {
-				va.setErr(FormError(fmt.Sprintf(maxErr, _max)))
-				return
-			}
-		}
-
-		if bstep {
-			_step := step.(int64)
-
-			if value%_step != 0 {
-				va.setErr(FormError(fmt.Sprintf(stepErr, _step)))
-				return
-			}
-		}
+		va.data.Errors[va.name] = fmt.Errorf(rangeMinErr)
+		return
 	}
 
-	va.callExt()
+doMax:
+
+	if rangeMax == 9223372036854775807 {
+		goto dostep
+	}
+
+	if value > rangeMax {
+		if rangeMaxErr == "" {
+			rangeMaxErr = va.form.T("ErrNumberMax", map[string]interface{}{
+				"Count": rangeMax,
+			})
+		}
+		va.data.Errors[va.name] = fmt.Errorf(rangeMaxErr)
+		return
+	}
+
+dostep:
+
+	step := int64(1)
+	stepErr := ""
+
+	va.fieldsFns.Call("step", map[string]interface{}{
+		"step": &step,
+		"err":  &stepErr,
+	})
+
+	if value%step != 0 {
+		if stepErr == "" {
+			stepErr = va.form.T("ErrNumberStep", map[string]interface{}{
+				"Count": step,
+			})
+		}
+		va.data.Errors[va.name] = fmt.Errorf(stepErr)
+		return
+	}
+}
+
+func (va validateValue) fnumInputNumber(value float64) {
+	rangeMin := math.NaN()
+	rangeMax := math.NaN()
+	rangeMinErr := ""
+	rangeMaxErr := ""
+
+	va.fieldsFns.Call("range", map[string]interface{}{
+		"min":    &rangeMin,
+		"max":    &rangeMax,
+		"minErr": &rangeMinErr,
+		"maxErr": &rangeMaxErr,
+	})
+
+	if rangeMin == math.NaN() && rangeMax == math.NaN() {
+		goto dostep
+	} else if rangeMin == math.NaN() {
+		goto doMax
+	}
+
+	if value < rangeMin {
+		if rangeMinErr == "" {
+			rangeMinErr = va.form.T("ErrNumberMin", map[string]interface{}{
+				"Count": rangeMin,
+			})
+		}
+		va.data.Errors[va.name] = fmt.Errorf(rangeMinErr)
+		return
+	}
+
+doMax:
+
+	if rangeMax == math.NaN() {
+		goto dostep
+	}
+
+	if value > rangeMax {
+		if rangeMaxErr == "" {
+			rangeMaxErr = va.form.T("ErrNumberMax", map[string]interface{}{
+				"Count": rangeMax,
+			})
+		}
+		va.data.Errors[va.name] = fmt.Errorf(rangeMaxErr)
+		return
+	}
+
+dostep:
+
+	step := float64(1)
+	stepErr := ""
+
+	va.fieldsFns.Call("step", map[string]interface{}{
+		"step": &step,
+		"err":  &stepErr,
+	})
+
+	// Anything below 0.5 will not work, for some reason.
+	if step < 0.5 {
+		step = 0.5
+	}
+
+	if math.Mod(value, step) != 0 {
+		if stepErr == "" {
+			stepErr = va.form.T("ErrNumberStep", map[string]interface{}{
+				"Count": step,
+			})
+		}
+		va.data.Errors[va.name] = fmt.Errorf(stepErr)
+		return
+	}
 }

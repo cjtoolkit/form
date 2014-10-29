@@ -5,19 +5,39 @@ import (
 	"strings"
 )
 
-func (r render) fileInputFile() {
-	fmt.Fprint(r.w, `<input type="file" name="`, es(r.preferedName), `" `)
+func (r renderValue) fileInputFile() {
+	w := r.w
+	fmt.Fprintf(w, `<input name="%s" type="file" `, es(r.preferedName))
 
-	mimes, ok := r.getStrs("Accept")
-	if ok {
-		fmt.Fprint(r.w, `accept="`)
+	// Size and Mime
 
-		fmt.Fprint(r.w, es(strings.Join(mimes, "|")))
+	_n := int64(-1)
+	_s := ""
+	var mimes []string
 
-		fmt.Fprint(r.w, `" `)
+	r.fieldsFns.Call("file", map[string]interface{}{
+		"size":      &_n,
+		"sizeErr":   &_s,
+		"accept":    &mimes,
+		"acceptErr": &_s,
+	})
+
+	if mimes != nil {
+		fmt.Fprintf(w, `accept="%s" `, es(strings.Join(mimes, "|")))
 	}
 
-	r.attr("type", "name", "accept")
+	var attr map[string]string
 
-	fmt.Fprint(r.w, `/>`)
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "type")
+		delete(attr, "accept")
+		fmt.Fprint(w, ParseAttr(attr))
+	}
+
+	fmt.Fprint(w, `/>`)
 }

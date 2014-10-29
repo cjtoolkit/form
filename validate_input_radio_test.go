@@ -2,115 +2,142 @@ package form
 
 import (
 	"fmt"
+	_ "github.com/cjtoolkit/form/lang/enGB"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
-type TestInputRadioForm struct {
-	Form
-	RadioA string `form:"radioA"`
-	RadioB string `form:"radioB"`
+type inputRadio struct {
+	Str string
+	W   int64
+	F   float64
 }
 
-func (t *TestInputRadioForm) RadioAType() string {
-	return "input:radio"
-}
-
-func (t *TestInputRadioForm) RadioAMandatory() bool {
-	return true
-}
-
-func (t *TestInputRadioForm) RadioARadio() []Radio {
-	return []Radio{
-		{"car", "Car", false, nil},
-		{"motorbike", "Motorbike", true, nil},
+func (i *inputRadio) StrField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputRadio
+		},
+		"mandatory": func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		},
+		"radio": func(m map[string]interface{}) {
+			*(m["radio"].(*[]Radio)) = []Radio{
+				{Value: "Hello", Label: "Hello"},
+				{Value: "World", Label: "World"},
+			}
+		},
 	}
 }
 
-func (t *TestInputRadioForm) RadioBType() string {
-	return "input:radio"
-}
-
-func (t *TestInputRadioForm) RadioBRadio() []Radio {
-	return []Radio{
-		{"car", "Car", false, nil},
-		{"motorbike", "Motorbike", true, nil},
+func (i *inputRadio) WField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputRadio
+		},
+		"mandatory": func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		},
+		"radio": func(m map[string]interface{}) {
+			*(m["radio"].(*[]RadioInt)) = []RadioInt{
+				{Value: 1, Label: "Hello"},
+				{Value: 2, Label: "World"},
+			}
+		},
 	}
 }
 
-type TestNotWellFormedRadioForm struct {
-	Form
-	RadioA string `name:"radioA"`
-}
-
-func (t *TestNotWellFormedRadioForm) RadioAType() string {
-	return "input:radio"
+func (i *inputRadio) FField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputRadio
+		},
+		"mandatory": func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		},
+		"radio": func(m map[string]interface{}) {
+			*(m["radio"].(*[]RadioFloat)) = []RadioFloat{
+				{Value: 1.5, Label: "Hello"},
+				{Value: 2.5, Label: "World"},
+			}
+		},
+	}
 }
 
 func TestInputRadio(t *testing.T) {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		s := &TestInputRadioForm{
-			RadioA: "motorbike",
-			RadioB: "motorbike",
-		}
-		if ValidateItself(s, res, req) == false {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputRadioForm{
-			RadioA: "car",
-			RadioB: "car",
-		}
-		if ValidateItself(s, res, req) == false {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputRadioForm{
-			RadioA: "car",
-			RadioB: "",
-		}
-		if ValidateItself(s, res, req) == false {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputRadioForm{
-			RadioA: "",
-			RadioB: "car",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputRadioForm{
-			RadioA: "car",
-			RadioB: "van",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputRadioForm{
-			RadioA: "van",
-			RadioB: "car",
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
+	var outform inputRadio
 
-		// Testing not well formed radio form
-		a := &TestNotWellFormedRadioForm{}
-		if ValidateItself(a, res, req) == true {
-			fmt.Print(RenderString(a))
-			t.Fail()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		form := inputRadio{}
+		check := New(nil, "en-GB")
+
+		r.ParseForm()
+		b := check.MustValidate(r, &form)
+		outform = form
+		if b {
+			fmt.Fprint(w, "true")
+		} else {
+			fmt.Fprint(w, "false")
 		}
 	})
 
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	http.Get(ts.URL)
+	// Init
+	res, _ := http.PostForm(ts.URL, url.Values{
+		"Str": {"Hello"},
+		"W":   {"1"},
+		"F":   {"1.5"},
+	})
+
+	b, _ := ioutil.ReadAll(res.Body)
+
+	if string(b) != "true" {
+		t.Errorf("Init: Expected 'true', return %s. \r\n %v", b, outform)
+	}
+
+	// Str Mandatory
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"Str": {""},
+		"W":   {"1"},
+		"F":   {"1.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Str Mandatory: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// W Mandatory
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"Str": {"Hello"},
+		"W":   {"0"},
+		"F":   {"1.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("W Mandatory: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// F Mandatory
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"Str": {"Hello"},
+		"W":   {"1"},
+		"F":   {"0"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("F Mandatory: Expected 'false', return %s. \r\n %v", b, outform)
+	}
 }

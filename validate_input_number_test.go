@@ -2,138 +2,152 @@ package form
 
 import (
 	"fmt"
+	_ "github.com/cjtoolkit/form/lang/enGB"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
-type TestInputNumberForm struct {
-	Form
-	Number1 int64 `form:"number1"`
-	Number2 int64 `form:"number2"`
+type inputNumber struct {
+	First  int64
+	Second float64
 }
 
-func (t *TestInputNumberForm) Number1Type() string {
-	return "input:number"
+func (i *inputNumber) FirstField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputNumber
+		},
+		"range": func(m map[string]interface{}) {
+			*(m["min"].(*int64)) = 4
+			*(m["max"].(*int64)) = 8
+		},
+		"step": func(m map[string]interface{}) {
+			*(m["step"].(*int64)) = 2
+		},
+	}
 }
 
-func (t *TestInputNumberForm) Number1Min() int64 {
-	return 5
-}
-
-func (t *TestInputNumberForm) Number1Max() int64 {
-	return 15
-}
-
-func (t *TestInputNumberForm) Number2Type() string {
-	return "input:range"
-}
-
-func (t *TestInputNumberForm) Number2Step() int64 {
-	return 5
-}
-
-type TestInputNumberFloatForm struct {
-	Form
-	Number1 float64 `form:"number1"`
-	Number2 float64 `form:"number2"`
-}
-
-func (t *TestInputNumberFloatForm) Number1Type() string {
-	return "input:number"
-}
-
-func (t *TestInputNumberFloatForm) Number1Min() float64 {
-	return 2.3
-}
-
-func (t *TestInputNumberFloatForm) Number1Max() float64 {
-	return 17.5
-}
-
-func (t *TestInputNumberFloatForm) Number2Type() string {
-	return "input:range"
-}
-
-func (t *TestInputNumberFloatForm) Number2Step() float64 {
-	return 0.5
+func (i *inputNumber) SecondField() FieldFuncs {
+	return FieldFuncs{
+		"form": func(m map[string]interface{}) {
+			*(m["type"].(*TypeCode)) = InputNumber
+		},
+		"range": func(m map[string]interface{}) {
+			*(m["min"].(*float64)) = 2.65
+			*(m["max"].(*float64)) = 7.45
+		},
+		"step": func(m map[string]interface{}) {
+			*(m["step"].(*float64)) = 0.5
+		},
+	}
 }
 
 func TestInputNumber(t *testing.T) {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		// Whole Number
-		s := &TestInputNumberForm{
-			Number1: 10,
-			Number2: 10,
-		}
-		if ValidateItself(s, res, req) == false {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputNumberForm{
-			Number1: 3,
-			Number2: 10,
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputNumberForm{
-			Number1: 18,
-			Number2: 10,
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
-		s = &TestInputNumberForm{
-			Number1: 10,
-			Number2: 8,
-		}
-		if ValidateItself(s, res, req) == true {
-			fmt.Print(RenderString(s))
-			t.Fail()
-		}
+	var outform inputNumber
 
-		// Floating Number
-		ff := &TestInputNumberFloatForm{
-			Number1: 5.3,
-			Number2: 2.5,
-		}
-		if ValidateItself(ff, res, req) == false {
-			fmt.Print(RenderString(ff))
-			t.Fail()
-		}
-		ff = &TestInputNumberFloatForm{
-			Number1: 2.2,
-			Number2: 2.5,
-		}
-		if ValidateItself(ff, res, req) == true {
-			fmt.Print(RenderString(ff))
-			t.Fail()
-		}
-		ff = &TestInputNumberFloatForm{
-			Number1: 17.6,
-			Number2: 2.5,
-		}
-		if ValidateItself(ff, res, req) == true {
-			fmt.Print(RenderString(ff))
-			t.Fail()
-		}
-		ff = &TestInputNumberFloatForm{
-			Number1: 5.3,
-			Number2: 2.4,
-		}
-		if ValidateItself(ff, res, req) == true {
-			fmt.Print(RenderString(ff))
-			t.Fail()
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		form := inputNumber{}
+		check := New(nil, "en-GB")
+
+		r.ParseForm()
+		b := check.MustValidate(r, &form)
+		outform = form
+		if b {
+			fmt.Fprint(w, "true")
+		} else {
+			fmt.Fprint(w, "false")
 		}
 	})
 
 	ts := httptest.NewServer(mux)
 	defer ts.Close()
 
-	http.Get(ts.URL)
+	// Init
+	res, _ := http.PostForm(ts.URL, url.Values{
+		"First":  {"6"},
+		"Second": {"5.5"},
+	})
+
+	b, _ := ioutil.ReadAll(res.Body)
+
+	if string(b) != "true" {
+		t.Errorf("Init: Expected 'true', return %s. \r\n %v", b, outform)
+	}
+
+	// First Above Max
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"10"},
+		"Second": {"5.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("First Above Max: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// First Below Min
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"2"},
+		"Second": {"5.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("First Below Min: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// First Out of Step
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"7"},
+		"Second": {"5.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("First Out of Step: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Second Below Min
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"6"},
+		"Second": {"2.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Second Below Min: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Second Above Max
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"6"},
+		"Second": {"7.5"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Second Above Max: Expected 'false', return %s. \r\n %v", b, outform)
+	}
+
+	// Second Out of Step
+	res, _ = http.PostForm(ts.URL, url.Values{
+		"First":  {"6"},
+		"Second": {"5.6"},
+	})
+
+	b, _ = ioutil.ReadAll(res.Body)
+
+	if string(b) != "false" {
+		t.Errorf("Second Out of Step: Expected 'false', return %s. \r\n %v", b, outform)
+	}
 }
