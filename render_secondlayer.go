@@ -13,6 +13,7 @@ type RenderData struct {
 	Warning        string
 	PostFirstLayer string // Rendered by first layer
 	Fns            FieldFuncs
+	Check          bool
 }
 
 // Second Layer interface
@@ -32,6 +33,11 @@ func (render RenderSecondLayerFunc) Render(w io.Writer, r RenderData) {
 var DefaultRenderSecondLayer RenderSecondLayer = RenderSecondLayerFunc(defaultRenderSecondLayer)
 
 func defaultRenderSecondLayer(w io.Writer, r RenderData) {
+	if r.Type == InputHidden {
+		fmt.Fprint(w, r.PostFirstLayer)
+		return
+	}
+
 	before := ""
 	after := ""
 
