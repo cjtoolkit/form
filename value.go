@@ -1,6 +1,7 @@
 package form
 
 import (
+	"encoding/json"
 	"mime/multipart"
 	"net/http"
 	"net/url"
@@ -58,6 +59,26 @@ func newValue(r *http.Request) *value {
 	if count == 0 {
 		return nil
 	}
+	return v
+}
+
+func newValueSerializeArray(r *http.Request) *value {
+	v := &value{PostForm: url.Values{}}
+
+	data := []struct {
+		Name  string `json:"name"`
+		Value string `json:"value"`
+	}{}
+
+	jDec := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+
+	jDec.Decode(&data)
+
+	for _, item := range data {
+		v.PostForm[item.Name] = append(v.PostForm[item.Name], item.Value)
+	}
+
 	return v
 }
 

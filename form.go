@@ -27,6 +27,12 @@ type Form interface {
 	// As Render but Return string
 	RenderStr(structPtr interface{}) string
 
+	// http://api.jquery.com/serializearray/
+	// Request Body must be in JSON format. 'JSON.stringify(object);' in Javascript.
+	// Eg [{name:"",value:""},{name:"",value:""},{name:"",value:""}...]
+	// To validate you must call 'Validate' or 'MustValidate' after 'ParseSerializeArray'.
+	ParseSerializeArray(r *http.Request)
+
 	// Validate User Input and Populate Field in struct with pointers.
 	// Must use struct with pointers otherwise it will return an error.
 	// To get structPtrs field to validate against itself, specify r as 'nil'
@@ -91,6 +97,13 @@ func (f *form) RenderStr(structPtr interface{}) string {
 	defer w.Reset()
 	f.Render(structPtr, w)
 	return w.String()
+}
+
+func (f *form) ParseSerializeArray(r *http.Request) {
+	if r == nil || f.Value != nil {
+		return
+	}
+	f.Value = newValueSerializeArray(r)
 }
 
 func (f *form) Validate(r *http.Request, structPtrs ...interface{}) (bool, error) {
