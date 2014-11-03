@@ -249,6 +249,8 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 
 		if err != nil {
 			hasError = true
+			data.addError(name, err)
+			data.addWarning(name, warning)
 			jsonUpdate(preferedName, err, warning)
 			// No point going further with validation, has the field already failed!
 			continue
