@@ -12,7 +12,7 @@ func (va validateValue) strSelect(value string) {
 	})
 
 	if options == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
 		return
 	}
 
@@ -23,7 +23,7 @@ func (va validateValue) strSelect(value string) {
 	}
 
 	if value != "" {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
@@ -41,7 +41,7 @@ func (va validateValue) strSelect(value string) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -54,7 +54,7 @@ func (va validateValue) strsSelect(values []string) {
 	})
 
 	if options == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
 		return
 	}
 
@@ -80,7 +80,7 @@ func (va validateValue) strsSelect(values []string) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -93,7 +93,7 @@ func (va validateValue) wnumSelect(value int64) {
 	})
 
 	if options == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
 		return
 	}
 
@@ -104,7 +104,7 @@ func (va validateValue) wnumSelect(value int64) {
 	}
 
 	if value != 0 {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
@@ -122,7 +122,7 @@ func (va validateValue) wnumSelect(value int64) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -135,7 +135,7 @@ func (va validateValue) wnumsSelect(values []int64) {
 	})
 
 	if options == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
 		return
 	}
 
@@ -161,7 +161,7 @@ func (va validateValue) wnumsSelect(values []int64) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -174,7 +174,7 @@ func (va validateValue) fnumSelect(value float64) {
 	})
 
 	if options == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
 		return
 	}
 
@@ -185,7 +185,7 @@ func (va validateValue) fnumSelect(value float64) {
 	}
 
 	if value != 0 {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
@@ -203,7 +203,7 @@ func (va validateValue) fnumSelect(value float64) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -216,7 +216,7 @@ func (va validateValue) fnumsSelect(values []float64) {
 	})
 
 	if options == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrSelectNotWellFormed"))
 		return
 	}
 
@@ -242,7 +242,7 @@ func (va validateValue) fnumsSelect(values []float64) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }

@@ -26,7 +26,7 @@ func (va validateValue) fileInputFile(value *multipart.FileHeader) {
 		if manErr == "" {
 			manErr = va.form.T("ErrFileRequired")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 
@@ -54,7 +54,7 @@ func (va validateValue) fileInputFile(value *multipart.FileHeader) {
 				"Size": size,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(sizeErr)
+		*(va.err) = fmt.Errorf(sizeErr)
 		return
 	}
 
@@ -88,5 +88,5 @@ mime_check:
 		})
 	}
 
-	va.data.Errors[va.name] = fmt.Errorf(mimesErr)
+	*(va.err) = fmt.Errorf(mimesErr)
 }

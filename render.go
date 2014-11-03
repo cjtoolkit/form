@@ -100,8 +100,8 @@ func (f *form) render(structPtr interface{}, w io.Writer) {
 		warning := ""
 
 		if data != nil {
-			err = data.Errors[r.name]
-			warning = data.Warning[r.name]
+			err = data.shiftError(r.name)
+			warning = data.shiftWarning(r.name)
 		}
 
 		secondLayerData := RenderData{f.rcount, _type, err, warning, buf.String(), fieldFns, data != nil}

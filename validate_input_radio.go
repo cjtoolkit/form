@@ -12,7 +12,7 @@ func (va validateValue) strInputRadio(value string) {
 	})
 
 	if radios == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
 		return
 	}
 
@@ -23,7 +23,7 @@ func (va validateValue) strInputRadio(value string) {
 	}
 
 	if value != "" {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
@@ -41,7 +41,7 @@ func (va validateValue) strInputRadio(value string) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -54,7 +54,7 @@ func (va validateValue) wnumInputRadio(value int64) {
 	})
 
 	if radios == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
 		return
 	}
 
@@ -65,7 +65,7 @@ func (va validateValue) wnumInputRadio(value int64) {
 	}
 
 	if value != 0 {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
@@ -83,7 +83,7 @@ func (va validateValue) wnumInputRadio(value int64) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }
@@ -96,7 +96,7 @@ func (va validateValue) fnumInputRadio(value float64) {
 	})
 
 	if radios == nil {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrRadioNotWellFormed"))
 		return
 	}
 
@@ -107,7 +107,7 @@ func (va validateValue) fnumInputRadio(value float64) {
 	}
 
 	if value != 0 {
-		va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrOutOfBound"))
+		*(va.err) = fmt.Errorf(va.form.T("ErrOutOfBound"))
 		return
 	}
 
@@ -125,7 +125,7 @@ func (va validateValue) fnumInputRadio(value float64) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }

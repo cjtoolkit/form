@@ -48,7 +48,7 @@ func (va validateValue) timeInputTime(value time.Time) {
 			minErr = va.form.T("ErrTimeMin", map[string]interface{}{
 				"Time": formatter(min),
 			})
-			va.data.Errors[va.name] = fmt.Errorf(minErr)
+			*(va.err) = fmt.Errorf(minErr)
 			return
 		}
 	}
@@ -64,7 +64,7 @@ check_max:
 			maxErr = va.form.T("ErrTimeMax", map[string]interface{}{
 				"Time": formatter(max),
 			})
-			va.data.Errors[va.name] = fmt.Errorf(maxErr)
+			*(va.err) = fmt.Errorf(maxErr)
 			return
 		}
 	}
@@ -83,7 +83,7 @@ check_mandatory:
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 }

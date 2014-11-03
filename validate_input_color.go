@@ -22,7 +22,7 @@ func (va validateValue) strInputColor(value string) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 
@@ -37,7 +37,7 @@ func (va validateValue) strInputColor(value string) {
 		if colorErr == "" {
 			colorErr = va.form.T("ErrInvalidColorCode")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(colorErr)
+		*(va.err) = fmt.Errorf(colorErr)
 		return
 	}
 }

@@ -11,7 +11,8 @@ import (
 
 type validateValue struct {
 	form         *form
-	data         *formData
+	err          *error
+	warning      *string
 	name         string
 	preferedName string
 	fieldsFns    FieldFuncs
@@ -43,9 +44,10 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 		fieldFns     FieldFuncs
 		_type        TypeCode
 		t            reflect.Type
+		err          error
 	}
 
-	fieldM := []_f{}
+	fieldM := []*_f{}
 
 	// Populate first
 	for fieldNo := 0; fieldNo < t.NumField(); fieldNo++ {
@@ -53,6 +55,8 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 		if !field.CanSet() {
 			continue
 		}
+
+		var err error
 
 		name := t.Field(fieldNo).Name
 		preferedName := name
@@ -80,7 +84,9 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			continue
 		}
 
-		fieldM = append(fieldM, _f{fieldNo, field, name, preferedName, fieldFns, _type, t.Field(fieldNo).Type})
+		fieldC := &_f{fieldNo, field, name, preferedName, fieldFns, _type, t.Field(fieldNo).Type, nil}
+
+		fieldM = append(fieldM, fieldC)
 
 		if f.Value == nil {
 			continue
@@ -99,16 +105,15 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			field.Set(reflect.ValueOf(clean))
 
 		case int64:
-			_v, err := strconv.ParseInt(strings.TrimSpace(f.Value.Shift(preferedName)), 10, 64)
+			var _v int64
+			_v, err = strconv.ParseInt(strings.TrimSpace(f.Value.Shift(preferedName)), 10, 64)
 			if err != nil {
-				data.Errors[name] = err
 				continue
 			}
 			field.Set(reflect.ValueOf(_v))
 		case []int64:
 			vs := []int64{}
 			vals := f.Value.All(preferedName)
-			var err error
 			for _, val := range vals {
 				var v int64
 				v, err = strconv.ParseInt(strings.TrimSpace(val), 10, 64)
@@ -118,15 +123,14 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 				vs = append(vs, v)
 			}
 			if err != nil {
-				data.Errors[name] = err
 				continue
 			}
 			field.Set(reflect.ValueOf(vs))
 
 		case float64:
-			_v, err := strconv.ParseFloat(strings.TrimSpace(f.Value.Shift(preferedName)), 64)
+			var _v float64
+			_v, err = strconv.ParseFloat(strings.TrimSpace(f.Value.Shift(preferedName)), 64)
 			if err != nil {
-				data.Errors[name] = err
 				continue
 			}
 			field.Set(reflect.ValueOf(_v))
@@ -134,7 +138,6 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 		case []float64:
 			vs := []float64{}
 			vals := f.Value.All(preferedName)
-			var err error
 			for _, val := range vals {
 				var v float64
 				v, err = strconv.ParseFloat(strings.TrimSpace(val), 64)
@@ -144,7 +147,6 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 				vs = append(vs, v)
 			}
 			if err != nil {
-				data.Errors[name] = err
 				continue
 			}
 			field.Set(reflect.ValueOf(vs))
@@ -160,7 +162,6 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			_v := strings.TrimSpace(f.Value.Shift(preferedName))
 
 			var _time time.Time
-			var err error
 
 			if _v == "" {
 				goto blank
@@ -180,26 +181,23 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			case InputWeek:
 				_vv := strings.Split(_v, "-W")
 				if len(_vv) < 2 {
-					data.Errors[name] = fmt.Errorf(f.T("ErrOutOfBound"))
+					err = fmt.Errorf(f.T("ErrOutOfBound"))
 					continue
 				}
 				var year int64
 				year, err = strconv.ParseInt(_vv[0], 10, 64)
 				if err != nil {
-					data.Errors[name] = err
 					continue
 				}
 				var week int64
 				week, err = strconv.ParseInt(_vv[1], 10, 64)
 				if err != nil {
-					data.Errors[name] = err
 					continue
 				}
 				_time = StartingDayOfWeek(int(year), int(week))
 			}
 
 			if err != nil {
-				data.Errors[name] = err
 				continue
 			}
 
@@ -214,22 +212,26 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			}
 			field.Set(reflect.ValueOf(fileHeader))
 		}
+
+		fieldC.err = err
 	}
 
-	jsonUpdate := func(name, preferedName string) {
+	jsonUpdate := func(preferedName string, err error, warning string) {
 		m := map[string]interface{}{}
-		m["valid"] = data.Errors[name] == nil
+		m["valid"] = err == nil
 		if m["valid"].(bool) {
 			m["error"] = ""
 		} else {
-			m["error"] = data.Errors[name].Error()
+			m["error"] = err.Error()
 		}
-		m["warning"] = data.Warning[name]
+		m["warning"] = warning
 		m["name"] = preferedName
 		m["count"] = f.vcount
 		f.vcount++
 		f.JsonData = append(f.JsonData, m)
 	}
+
+	hasError := false
 
 	// Now for full on validation.
 	for _, item := range fieldM {
@@ -239,11 +241,15 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 		fieldFns := item.fieldFns
 		_type := item._type
 		t := item.t
+		err := item.err
 
-		va := validateValue{f, data, name, preferedName, fieldFns, _type, t}
+		warning := ""
 
-		if data.Errors[name] != nil {
-			jsonUpdate(name, preferedName)
+		va := validateValue{f, &err, &warning, name, preferedName, fieldFns, _type, t}
+
+		if err != nil {
+			hasError = true
+			jsonUpdate(preferedName, err, warning)
 			// No point going further with validation, has the field already failed!
 			continue
 		}
@@ -270,31 +276,28 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 		}
 
 		if data.Errors[name] == nil {
-			derror := va.data.Errors[name]
-			dwarning := va.data.Warning[name]
-
 			va.fieldsFns.Call("ext", map[string]interface{}{
-				"error":   &derror,
-				"warning": &dwarning,
+				"error":   &err,
+				"warning": &warning,
 			})
-
-			if derror != nil {
-				va.data.Errors[name] = derror
-			}
-
-			if dwarning != "" {
-				va.data.Warning[name] = dwarning
-			}
 		}
 
-		jsonUpdate(name, preferedName)
+		if err != nil {
+			hasError = true
+		}
+
+		data.addError(name, err)
+		data.addWarning(name, warning)
+
+		jsonUpdate(preferedName, err, warning)
+
 	}
 
-	return len(data.Errors) == 0, nil
+	return !hasError, nil
 }
 
 func (va validateValue) typeError() {
-	va.data.Errors[va.name] = fmt.Errorf(va.form.T("ErrType", map[string]interface{}{
+	*(va.err) = fmt.Errorf(va.form.T("ErrType", map[string]interface{}{
 		"DataType": va.t.String(),
 	}))
 }

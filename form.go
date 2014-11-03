@@ -66,15 +66,49 @@ func New(r RenderSecondLayer, languageSources ...string) Form {
 }
 
 type formData struct {
-	Errors  map[string]error
-	Warning map[string]string
+	Errors  map[string][]error
+	Warning map[string][]string
 }
 
 func newData() *formData {
 	return &formData{
-		Errors:  map[string]error{},
-		Warning: map[string]string{},
+		Errors:  map[string][]error{},
+		Warning: map[string][]string{},
 	}
+}
+
+func (f *formData) addError(name string, err error) {
+	f.Errors[name] = append(f.Errors[name], err)
+}
+
+func (f *formData) addWarning(name, warning string) {
+	f.Warning[name] = append(f.Warning[name], warning)
+}
+
+func (f *formData) shiftError(name string) (err error) {
+	if len(f.Errors[name]) > 0 {
+		if len(f.Errors[name]) <= 1 {
+			if len(f.Errors[name]) == 1 {
+				err = f.Errors[name][0]
+			}
+			delete(f.Errors, name)
+		}
+		err, f.Errors[name] = f.Errors[name][0], f.Errors[name][1:]
+	}
+	return
+}
+
+func (f *formData) shiftWarning(name string) (warning string) {
+	if len(f.Warning[name]) > 0 {
+		if len(f.Warning[name]) <= 1 {
+			if len(f.Warning[name]) == 1 {
+				warning = f.Warning[name][0]
+			}
+			delete(f.Warning, name)
+		}
+		warning, f.Warning[name] = f.Warning[name][0], f.Warning[name][1:]
+	}
+	return
 }
 
 type form struct {

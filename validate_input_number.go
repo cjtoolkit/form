@@ -30,7 +30,7 @@ func (va validateValue) wnumInputNumber(value int64) {
 				"Count": rangeMin,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(rangeMinErr)
+		*(va.err) = fmt.Errorf(rangeMinErr)
 		return
 	}
 
@@ -46,7 +46,7 @@ doMax:
 				"Count": rangeMax,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(rangeMaxErr)
+		*(va.err) = fmt.Errorf(rangeMaxErr)
 		return
 	}
 
@@ -66,7 +66,7 @@ dostep:
 				"Count": step,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(stepErr)
+		*(va.err) = fmt.Errorf(stepErr)
 		return
 	}
 }
@@ -96,7 +96,7 @@ func (va validateValue) fnumInputNumber(value float64) {
 				"Count": rangeMin,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(rangeMinErr)
+		*(va.err) = fmt.Errorf(rangeMinErr)
 		return
 	}
 
@@ -112,7 +112,7 @@ doMax:
 				"Count": rangeMax,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(rangeMaxErr)
+		*(va.err) = fmt.Errorf(rangeMaxErr)
 		return
 	}
 
@@ -137,7 +137,7 @@ dostep:
 				"Count": step,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(stepErr)
+		*(va.err) = fmt.Errorf(stepErr)
 		return
 	}
 }

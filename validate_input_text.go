@@ -20,7 +20,7 @@ func (va validateValue) strInputText(value string) {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}
-		va.data.Errors[va.name] = fmt.Errorf(manErr)
+		*(va.err) = fmt.Errorf(manErr)
 		return
 	}
 
@@ -46,7 +46,7 @@ func (va validateValue) strInputText(value string) {
 				"Name": mustMatchFieldName,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(mustMatchErr)
+		*(va.err) = fmt.Errorf(mustMatchErr)
 		return
 	}
 
@@ -78,7 +78,7 @@ skipmatch:
 				"Count": min,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(minErr)
+		*(va.err) = fmt.Errorf(minErr)
 		return
 	}
 
@@ -94,7 +94,7 @@ skipmin:
 				"Count": max,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(maxErr)
+		*(va.err) = fmt.Errorf(maxErr)
 		return
 	}
 
@@ -120,7 +120,7 @@ skipmax:
 				"Pattern": pattern,
 			})
 		}
-		va.data.Errors[va.name] = fmt.Errorf(patternErr)
+		*(va.err) = fmt.Errorf(patternErr)
 		return
 	}
 
