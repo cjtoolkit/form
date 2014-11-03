@@ -3,12 +3,9 @@ package form
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 func (va validateValue) strInputText(value string) {
-	value = strings.TrimSpace(value)
-
 	// Mandatory
 
 	manErr := ""

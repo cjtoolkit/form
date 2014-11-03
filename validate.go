@@ -89,12 +89,17 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 		switch field.Interface().(type) {
 
 		case string:
-			field.Set(reflect.ValueOf(f.Value.Shift(preferedName)))
+			field.Set(reflect.ValueOf(strings.TrimSpace(f.Value.Shift(preferedName))))
 		case []string:
-			field.Set(reflect.ValueOf(f.Value.All(preferedName)))
+			clean := []string{}
+			unclean := f.Value.All(preferedName)
+			for _, value := range unclean {
+				clean = append(clean, strings.TrimSpace(value))
+			}
+			field.Set(reflect.ValueOf(clean))
 
 		case int64:
-			_v, err := strconv.ParseInt(f.Value.Shift(preferedName), 10, 64)
+			_v, err := strconv.ParseInt(strings.TrimSpace(f.Value.Shift(preferedName)), 10, 64)
 			if err != nil {
 				data.Errors[name] = err
 				continue
@@ -106,7 +111,7 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			var err error
 			for _, val := range vals {
 				var v int64
-				v, err = strconv.ParseInt(val, 10, 64)
+				v, err = strconv.ParseInt(strings.TrimSpace(val), 10, 64)
 				if err != nil {
 					break
 				}
@@ -119,7 +124,7 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			field.Set(reflect.ValueOf(vs))
 
 		case float64:
-			_v, err := strconv.ParseFloat(f.Value.Shift(preferedName), 64)
+			_v, err := strconv.ParseFloat(strings.TrimSpace(f.Value.Shift(preferedName)), 64)
 			if err != nil {
 				data.Errors[name] = err
 				continue
@@ -132,7 +137,7 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			var err error
 			for _, val := range vals {
 				var v float64
-				v, err = strconv.ParseFloat(val, 64)
+				v, err = strconv.ParseFloat(strings.TrimSpace(val), 64)
 				if err != nil {
 					break
 				}
@@ -146,13 +151,13 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 
 		case bool:
 			b := false
-			if f.Value.Shift(preferedName) == "1" {
+			if strings.TrimSpace(f.Value.Shift(preferedName)) == "1" {
 				b = true
 			}
 			field.Set(reflect.ValueOf(b))
 
 		case time.Time:
-			_v := f.Value.Shift(preferedName)
+			_v := strings.TrimSpace(f.Value.Shift(preferedName))
 
 			var _time time.Time
 			var err error

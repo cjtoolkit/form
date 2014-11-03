@@ -3,15 +3,12 @@ package form
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 // From http://www.w3.org/TR/html5/states-of-the-type-attribute.html#valid-e-mail-address
 var email_rule = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
 
 func (va validateValue) strInputEmail(value string) {
-	value = strings.TrimSpace(value)
-
 	// Mandatory
 
 	manErr := ""

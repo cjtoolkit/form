@@ -2,12 +2,9 @@ package form
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (va validateValue) strTextarea(value string) {
-	value = strings.TrimSpace(value)
-
 	// Mandatory
 
 	manErr := ""

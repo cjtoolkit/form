@@ -2,12 +2,9 @@ package form
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (va validateValue) strSelect(value string) {
-	value = strings.TrimSpace(value)
-
 	var options []Option
 
 	va.fieldsFns.Call("option", map[string]interface{}{
@@ -63,7 +60,6 @@ func (va validateValue) strsSelect(values []string) {
 
 	for _, option := range options {
 		for _, value := range values {
-			value = strings.TrimSpace(value)
 			if value == option.Value {
 				return
 			}

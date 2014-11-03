@@ -8,7 +8,7 @@ import (
 
 func init() {
 	i18n.AppendMap("en-US", "cjtoolkit-form", map[string]interface{}{
-		"ErrMandatory":         "This field is mandatory! (Also first character must not be space or new line)",
+		"ErrMandatory":         "This field is mandatory!",
 		"ErrMinChar":           "Characters must be more than and equal to '{{.Count}}'!",
 		"ErrMaxChar":           "Characters must be less than and equal to '{{.Count}}'!",
 		"ErrMustMatchMissing":  "Must Match is missing!",

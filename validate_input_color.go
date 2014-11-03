@@ -3,14 +3,11 @@ package form
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 var color_rule = regexp.MustCompile(`^#([a-fA-F0-9]{6})$`)
 
 func (va validateValue) strInputColor(value string) {
-	value = strings.TrimSpace(value)
-
 	// Mandatory
 
 	manErr := ""

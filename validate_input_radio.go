@@ -2,12 +2,9 @@ package form
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (va validateValue) strInputRadio(value string) {
-	value = strings.TrimSpace(value)
-
 	var radios []Radio
 
 	va.fieldsFns.Call("radio", map[string]interface{}{
