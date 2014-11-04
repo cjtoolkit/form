@@ -92,8 +92,9 @@ func (f *formData) shiftError(name string) (err error) {
 				err = f.Errors[name][0]
 			}
 			delete(f.Errors, name)
+		} else {
+			err, f.Errors[name] = f.Errors[name][0], f.Errors[name][1:]
 		}
-		err, f.Errors[name] = f.Errors[name][0], f.Errors[name][1:]
 	}
 	return
 }
@@ -105,8 +106,9 @@ func (f *formData) shiftWarning(name string) (warning string) {
 				warning = f.Warning[name][0]
 			}
 			delete(f.Warning, name)
+		} else {
+			warning, f.Warning[name] = f.Warning[name][0], f.Warning[name][1:]
 		}
-		warning, f.Warning[name] = f.Warning[name][0], f.Warning[name][1:]
 	}
 	return
 }
