@@ -109,7 +109,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 		delete(attr, "min")
 		delete(attr, "max")
 		delete(attr, "step")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `/>`)

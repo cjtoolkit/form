@@ -83,8 +83,8 @@ func StartingDayOfWeek(year, week int) time.Time {
 	return time.Date(year, 1, day, 0, 0, 0, 0, time.UTC)
 }
 
-// Parse Attribute into strings.
-func ParseAttr(attr map[string]string) (str string) {
+// Render Attribute into strings.
+func RenderAttr(attr map[string]string) (str string) {
 	if attr == nil {
 		return
 	}

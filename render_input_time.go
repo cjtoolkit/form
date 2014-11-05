@@ -89,7 +89,7 @@ func (r renderValue) timeInputTime(value time.Time) {
 		delete(attr, "max")
 		delete(attr, "min")
 		delete(attr, "step")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `/>`)

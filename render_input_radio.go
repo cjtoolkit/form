@@ -42,7 +42,7 @@ func (r renderValue) strInputRadio(value string) {
 			delete(radio.Attr, "name")
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
-			fmt.Fprint(w, ParseAttr(radio.Attr))
+			fmt.Fprint(w, RenderAttr(radio.Attr))
 		}
 
 		fmt.Fprint(w, `/>`)
@@ -89,7 +89,7 @@ func (r renderValue) wnumInputRadio(value int64) {
 			delete(radio.Attr, "name")
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
-			fmt.Fprint(w, ParseAttr(radio.Attr))
+			fmt.Fprint(w, RenderAttr(radio.Attr))
 		}
 
 		fmt.Fprint(w, `/>`)
@@ -136,7 +136,7 @@ func (r renderValue) fnumInputRadio(value float64) {
 			delete(radio.Attr, "name")
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
-			fmt.Fprint(w, ParseAttr(radio.Attr))
+			fmt.Fprint(w, RenderAttr(radio.Attr))
 		}
 
 		fmt.Fprint(w, `/>`)

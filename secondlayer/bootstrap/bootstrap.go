@@ -115,7 +115,7 @@ func bootstrapSecondLayer(w io.Writer, r form.RenderData) {
 		fmt.Fprint(w, `<label `)
 		if labelAttr != nil {
 			delete(labelAttr, "for")
-			fmt.Fprint(w, form.ParseAttr(labelAttr))
+			fmt.Fprint(w, form.RenderAttr(labelAttr))
 		}
 		fmt.Fprint(w, `>`)
 		goto formField
@@ -125,7 +125,7 @@ func bootstrapSecondLayer(w io.Writer, r form.RenderData) {
 
 	if labelAttr != nil {
 		delete(labelAttr, "for")
-		parsedLabelAttr = form.ParseAttr(labelAttr)
+		parsedLabelAttr = form.RenderAttr(labelAttr)
 	}
 
 	fmt.Fprintf(w, `<label for="%s" %s>%s</label>`, es(labelFor), parsedLabelAttr, es(labelContent))

@@ -31,7 +31,7 @@ func (r renderValue) strSelect(value string) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `>`)
@@ -61,7 +61,7 @@ func (r renderValue) strSelect(value string) {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, ParseAttr(option.Attr))
+			fmt.Fprint(w, RenderAttr(option.Attr))
 		}
 
 		if option.Content != "" {
@@ -99,7 +99,7 @@ func (r renderValue) strsSelect(values []string) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `>`)
@@ -133,7 +133,7 @@ func (r renderValue) strsSelect(values []string) {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, ParseAttr(option.Attr))
+			fmt.Fprint(w, RenderAttr(option.Attr))
 		}
 
 		if option.Content != "" {
@@ -171,7 +171,7 @@ func (r renderValue) wnumSelect(value int64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `>`)
@@ -201,7 +201,7 @@ func (r renderValue) wnumSelect(value int64) {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, ParseAttr(option.Attr))
+			fmt.Fprint(w, RenderAttr(option.Attr))
 		}
 
 		if option.Content != "" {
@@ -239,7 +239,7 @@ func (r renderValue) wnumsSelect(values []int64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `>`)
@@ -272,7 +272,7 @@ func (r renderValue) wnumsSelect(values []int64) {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, ParseAttr(option.Attr))
+			fmt.Fprint(w, RenderAttr(option.Attr))
 		}
 
 		if option.Content != "" {
@@ -310,7 +310,7 @@ func (r renderValue) fnumSelect(value float64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `>`)
@@ -340,7 +340,7 @@ func (r renderValue) fnumSelect(value float64) {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, ParseAttr(option.Attr))
+			fmt.Fprint(w, RenderAttr(option.Attr))
 		}
 
 		if option.Content != "" {
@@ -378,7 +378,7 @@ func (r renderValue) fnumsSelect(values []float64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `>`)
@@ -411,7 +411,7 @@ func (r renderValue) fnumsSelect(values []float64) {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, ParseAttr(option.Attr))
+			fmt.Fprint(w, RenderAttr(option.Attr))
 		}
 
 		if option.Content != "" {

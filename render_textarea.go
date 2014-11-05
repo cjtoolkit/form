@@ -29,7 +29,7 @@ func (r renderValue) strTextarea(value string) {
 		delete(attr, "name")
 		delete(attr, "rows")
 		delete(attr, "cols")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprintf(w, `>%s</textarea>`, es(value))

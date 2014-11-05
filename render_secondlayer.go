@@ -67,7 +67,7 @@ func defaultRenderSecondLayer(w io.Writer, r RenderData) {
 
 	if labelAttr != nil {
 		delete(labelAttr, "for")
-		parsedLabelAttr = ParseAttr(labelAttr)
+		parsedLabelAttr = RenderAttr(labelAttr)
 	}
 
 	fmt.Fprintf(w, `<label for="%s" %s>%s</label>`, es(labelFor), parsedLabelAttr, es(labelContent))

@@ -65,7 +65,7 @@ func (r renderValue) strInputText(value string) {
 		delete(attr, "value")
 		delete(attr, "pattern")
 		delete(attr, "mexlength")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `/>`)

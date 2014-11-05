@@ -34,7 +34,7 @@ func (r renderValue) bInputCheckbox(value bool) {
 		delete(attr, "type")
 		delete(attr, "value")
 		delete(attr, "checked")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `/>`)

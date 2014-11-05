@@ -36,7 +36,7 @@ func (r renderValue) fileInputFile() {
 		delete(attr, "name")
 		delete(attr, "type")
 		delete(attr, "accept")
-		fmt.Fprint(w, ParseAttr(attr))
+		fmt.Fprint(w, RenderAttr(attr))
 	}
 
 	fmt.Fprint(w, `/>`)
