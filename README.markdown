@@ -4,8 +4,8 @@ Highly Flexible Form Rendering and Validation System.
 
 Documentation can be found at.
 
-http://gowalker.org/github.com/cjtoolkit/form
-http://gowalker.org/github.com/cjtoolkit/form/cheatsheet
+ - http://gowalker.org/github.com/cjtoolkit/form
+ - http://gowalker.org/github.com/cjtoolkit/form/cheatsheet
 
 ## Installation
 
@@ -96,3 +96,7 @@ func main() {
 	http.ListenAndServe(":8080", mux)
 }
 ~~~
+
+## Demo
+
+https://formdemo.cj-jackson.com/
