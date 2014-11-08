@@ -1,13 +1,8 @@
 package form
 
-import (
-	"fmt"
-)
-
 func (r renderValue) strInputColor(value string) {
-	w := r.w
-
-	fmt.Fprintf(w, `<input name="%s" type="color" value="%s" `, es(r.preferedName), es(value))
+	input := &FirstLayerInput{}
+	r.fls.append(input)
 
 	var attr map[string]string
 
@@ -21,8 +16,12 @@ func (r renderValue) strInputColor(value string) {
 		delete(attr, "value")
 		delete(attr, "pattern")
 		delete(attr, "mexlength")
-		fmt.Fprint(w, RenderAttr(attr))
+		input.Attr = attr
+	} else {
+		input.Attr = map[string]string{}
 	}
 
-	fmt.Fprint(w, `/>`)
+	input.Attr["name"] = r.preferedName
+	input.Attr["type"] = "color"
+	input.Attr["value"] = value
 }

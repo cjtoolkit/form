@@ -1,9 +1,5 @@
 package form
 
-import (
-	"fmt"
-)
-
 func (r renderValue) bInputCheckbox(value bool) {
 	_type := func() (str string) {
 		switch r._type {
@@ -15,13 +11,8 @@ func (r renderValue) bInputCheckbox(value bool) {
 		return
 	}
 
-	w := r.w
-
-	fmt.Fprintf(w, `<input name="%s" type="%s" value="1" `, es(r.preferedName), _type())
-
-	if value {
-		fmt.Fprint(w, `checked`)
-	}
+	input := &FirstLayerInput{}
+	r.fls.append(input)
 
 	var attr map[string]string
 
@@ -34,8 +25,16 @@ func (r renderValue) bInputCheckbox(value bool) {
 		delete(attr, "type")
 		delete(attr, "value")
 		delete(attr, "checked")
-		fmt.Fprint(w, RenderAttr(attr))
+		input.Attr = attr
+	} else {
+		input.Attr = map[string]string{}
 	}
 
-	fmt.Fprint(w, `/>`)
+	input.Attr["name"] = r.preferedName
+	input.Attr["type"] = _type()
+	input.Attr["value"] = "1"
+
+	if value {
+		input.Attr["checked"] = " "
+	}
 }

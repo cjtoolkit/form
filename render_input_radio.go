@@ -2,13 +2,9 @@ package form
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (r renderValue) strInputRadio(value string) {
-	value = strings.TrimSpace(value)
-	w := r.w
-
 	var radios []Radio
 
 	r.fieldsFns.Call("radio", map[string]interface{}{
@@ -21,41 +17,38 @@ func (r renderValue) strInputRadio(value string) {
 	}
 
 	for _, radio := range radios {
-		if radio.Label != "" {
-			fmt.Fprint(w, `<label>`)
-		}
-
-		fmt.Fprintf(w, `<input name="%s" type="radio" value="%s" `, es(r.preferedName), es(radio.Value))
-
-		if value == "" {
-			if radio.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			if value == radio.Value {
-				fmt.Fprint(w, `selected `)
-			}
-		}
+		input := &FirstLayerInput{}
+		r.fls.append(input)
 
 		if radio.Attr != nil {
 			delete(radio.Attr, "type")
 			delete(radio.Attr, "name")
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
-			fmt.Fprint(w, RenderAttr(radio.Attr))
+			input.Attr = radio.Attr
 		}
 
-		fmt.Fprint(w, `/>`)
+		input.Attr["name"] = r.preferedName
+		input.Attr["type"] = "radio"
+		input.Attr["value"] = radio.Value
+
+		if value == "" {
+			if radio.Selected {
+				input.Attr["selected"] = " "
+			}
+		} else {
+			if value == radio.Value {
+				input.Attr["selected"] = " "
+			}
+		}
 
 		if radio.Label != "" {
-			fmt.Fprint(w, ` %s</label>`, es(radio.Label))
+			input.Label = radio.Label
 		}
 	}
 }
 
 func (r renderValue) wnumInputRadio(value int64) {
-	w := r.w
-
 	var radios []RadioInt
 
 	r.fieldsFns.Call("radio", map[string]interface{}{
@@ -68,41 +61,38 @@ func (r renderValue) wnumInputRadio(value int64) {
 	}
 
 	for _, radio := range radios {
-		if radio.Label != "" {
-			fmt.Fprint(w, `<label>`)
-		}
-
-		fmt.Fprintf(w, `<input name="%s" type="radio" value="%d" `, es(r.preferedName), radio.Value)
-
-		if value == 0 {
-			if radio.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			if value == radio.Value {
-				fmt.Fprint(w, `selected `)
-			}
-		}
+		input := &FirstLayerInput{}
+		r.fls.append(input)
 
 		if radio.Attr != nil {
 			delete(radio.Attr, "type")
 			delete(radio.Attr, "name")
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
-			fmt.Fprint(w, RenderAttr(radio.Attr))
+			input.Attr = radio.Attr
 		}
 
-		fmt.Fprint(w, `/>`)
+		input.Attr["name"] = r.preferedName
+		input.Attr["type"] = "radio"
+		input.Attr["value"] = fmt.Sprintf("%d", radio.Value)
+
+		if value == 0 {
+			if radio.Selected {
+				input.Attr["selected"] = " "
+			}
+		} else {
+			if value == radio.Value {
+				input.Attr["selected"] = " "
+			}
+		}
 
 		if radio.Label != "" {
-			fmt.Fprint(w, ` %s</label>`, es(radio.Label))
+			input.Label = radio.Label
 		}
 	}
 }
 
 func (r renderValue) fnumInputRadio(value float64) {
-	w := r.w
-
 	var radios []RadioFloat
 
 	r.fieldsFns.Call("radio", map[string]interface{}{
@@ -115,34 +105,33 @@ func (r renderValue) fnumInputRadio(value float64) {
 	}
 
 	for _, radio := range radios {
-		if radio.Label != "" {
-			fmt.Fprint(w, `<label>`)
-		}
-
-		fmt.Fprintf(w, `<input name="%s" type="radio" value="%f" `, es(r.preferedName), radio.Value)
-
-		if value == 0 {
-			if radio.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			if value == radio.Value {
-				fmt.Fprint(w, `selected `)
-			}
-		}
+		input := &FirstLayerInput{}
+		r.fls.append(input)
 
 		if radio.Attr != nil {
 			delete(radio.Attr, "type")
 			delete(radio.Attr, "name")
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
-			fmt.Fprint(w, RenderAttr(radio.Attr))
+			input.Attr = radio.Attr
 		}
 
-		fmt.Fprint(w, `/>`)
+		input.Attr["name"] = r.preferedName
+		input.Attr["type"] = "radio"
+		input.Attr["value"] = fmt.Sprintf("%f", radio.Value)
+
+		if value == 0 {
+			if radio.Selected {
+				input.Attr["selected"] = " "
+			}
+		} else {
+			if value == radio.Value {
+				input.Attr["selected"] = " "
+			}
+		}
 
 		if radio.Label != "" {
-			fmt.Fprint(w, ` %s</label>`, es(radio.Label))
+			input.Label = radio.Label
 		}
 	}
 }

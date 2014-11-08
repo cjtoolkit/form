@@ -5,19 +5,8 @@ import (
 )
 
 func (r renderValue) strTextarea(value string) {
-	w := r.w
-
-	fmt.Fprintf(w, `<textarea name="%s" `, es(r.preferedName))
-
-	rows := int(4)
-	cols := int(25)
-
-	r.fieldsFns.Call("textarea", map[string]interface{}{
-		"rows": &rows,
-		"cols": &cols,
-	})
-
-	fmt.Fprintf(w, `rows="%d" cols="%d" `, rows, cols)
+	textarea := &FirstLayerTextarea{}
+	r.fls.append(textarea)
 
 	var attr map[string]string
 
@@ -29,8 +18,22 @@ func (r renderValue) strTextarea(value string) {
 		delete(attr, "name")
 		delete(attr, "rows")
 		delete(attr, "cols")
-		fmt.Fprint(w, RenderAttr(attr))
+		textarea.Attr = attr
+	} else {
+		textarea.Attr = map[string]string{}
 	}
 
-	fmt.Fprintf(w, `>%s</textarea>`, es(value))
+	textarea.Attr["name"] = r.preferedName
+	textarea.Content = value
+
+	rows := int(4)
+	cols := int(25)
+
+	r.fieldsFns.Call("textarea", map[string]interface{}{
+		"rows": &rows,
+		"cols": &cols,
+	})
+
+	textarea.Attr["rows"] = fmt.Sprintf("%d", rows)
+	textarea.Attr["cols"] = fmt.Sprintf("%d", cols)
 }

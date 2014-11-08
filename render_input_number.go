@@ -28,9 +28,30 @@ func (r renderValue) numInputNumber(value interface{}) {
 		return
 	}
 
-	w := r.w
+	input := &FirstLayerInput{}
+	r.fls.append(input)
 
-	fmt.Fprintf(w, `<input name="%s" type="%s" value="%s" `, es(r.preferedName), _type(), ovalue())
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "type")
+		delete(attr, "value")
+		delete(attr, "min")
+		delete(attr, "max")
+		delete(attr, "step")
+		input.Attr = attr
+	} else {
+		input.Attr = map[string]string{}
+	}
+
+	input.Attr["name"] = r.preferedName
+	input.Attr["type"] = _type()
+	input.Attr["value"] = ovalue()
 
 	switch value.(type) {
 	case int64:
@@ -46,11 +67,11 @@ func (r renderValue) numInputNumber(value interface{}) {
 		})
 
 		if rangeMin != int64(-9223372036854775808) {
-			fmt.Fprintf(w, `min="%d" `, rangeMin)
+			input.Attr["min"] = fmt.Sprintf("%d", rangeMin)
 		}
 
 		if rangeMax != int64(9223372036854775807) {
-			fmt.Fprintf(w, `max="%d" `, rangeMax)
+			input.Attr["max"] = fmt.Sprintf("%d", rangeMax)
 		}
 
 		step := int64(1)
@@ -60,7 +81,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 			"err":  &_s,
 		})
 
-		fmt.Fprintf(w, `step="%d" `, step)
+		input.Attr["step"] = fmt.Sprintf("%d", step)
 	case float64:
 		rangeMin := math.NaN()
 		rangeMax := math.NaN()
@@ -74,11 +95,11 @@ func (r renderValue) numInputNumber(value interface{}) {
 		})
 
 		if rangeMin != math.NaN() {
-			fmt.Fprintf(w, `min="%f" `, rangeMin)
+			input.Attr["min"] = fmt.Sprintf("%f", rangeMin)
 		}
 
 		if rangeMax != math.NaN() {
-			fmt.Fprintf(w, `max="%f" `, rangeMax)
+			input.Attr["max"] = fmt.Sprintf("%f", rangeMax)
 		}
 
 		step := float64(1)
@@ -93,24 +114,6 @@ func (r renderValue) numInputNumber(value interface{}) {
 			step = 0.5
 		}
 
-		fmt.Fprintf(w, `step="%f" `, step)
+		input.Attr["step"] = fmt.Sprintf("%f", step)
 	}
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "type")
-		delete(attr, "value")
-		delete(attr, "min")
-		delete(attr, "max")
-		delete(attr, "step")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `/>`)
 }

@@ -1,7 +1,6 @@
 package form
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -15,7 +14,7 @@ type renderValue struct {
 	preferedName string
 	fieldsFns    FieldFuncs
 	_type        TypeCode
-	w            io.Writer
+	fls          *FirstLayerStack
 }
 
 func (f *form) render(structPtr interface{}, w io.Writer) {
@@ -32,8 +31,6 @@ func (f *form) render(structPtr interface{}, w io.Writer) {
 	}
 
 	data := f.Data[structPtr]
-
-	buf := &bytes.Buffer{}
 
 	for fieldNo := 0; fieldNo < t.NumField(); fieldNo++ {
 		field := vc.Field(fieldNo)
@@ -69,7 +66,7 @@ func (f *form) render(structPtr interface{}, w io.Writer) {
 
 		// First Layer
 
-		r := renderValue{f, name, preferedName, fieldFns, _type, buf}
+		r := renderValue{f, name, preferedName, fieldFns, _type, &FirstLayerStack{}}
 
 		switch value := field.Interface().(type) {
 		case string:
@@ -104,9 +101,9 @@ func (f *form) render(structPtr interface{}, w io.Writer) {
 			warning = data.shiftWarning(r.name)
 		}
 
-		secondLayerData := RenderData{f.rcount, _type, err, warning, buf.String(), fieldFns, data != nil}
+		secondLayerData := RenderData{f.rcount, _type, err, warning,
+			fieldFns, data != nil, *(r.fls)}
 		f.rcount++
-		buf.Reset()
 
 		f.R.Render(w, secondLayerData)
 	}

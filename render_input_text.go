@@ -24,34 +24,8 @@ func (r renderValue) strInputText(value string) {
 		return
 	}
 
-	w := r.w
-
-	fmt.Fprintf(w, `<input name="%s" type="%s" value="%s" `, es(r.preferedName), _type(), es(value))
-
-	var pattern *regexp.Regexp
-	_s := ""
-
-	r.fieldsFns.Call("pattern", map[string]interface{}{
-		"pattern": &pattern,
-		"err":     &_s,
-	})
-
-	if pattern != nil {
-		fmt.Fprintf(w, `pattern="%s" `, es(pattern.String()))
-	}
-
-	_n, max := int(-1), int(-1)
-
-	r.fieldsFns.Call("size", map[string]interface{}{
-		"min":    &_n,
-		"max":    &max,
-		"minErr": &_s,
-		"maxErr": &_s,
-	})
-
-	if max > 0 {
-		fmt.Fprintf(w, `maxlength="%d" `, max)
-	}
+	input := &FirstLayerInput{}
+	r.fls.append(input)
 
 	var attr map[string]string
 
@@ -65,8 +39,37 @@ func (r renderValue) strInputText(value string) {
 		delete(attr, "value")
 		delete(attr, "pattern")
 		delete(attr, "mexlength")
-		fmt.Fprint(w, RenderAttr(attr))
+		input.Attr = attr
+	} else {
+		input.Attr = map[string]string{}
 	}
 
-	fmt.Fprint(w, `/>`)
+	input.Attr["name"] = r.preferedName
+	input.Attr["type"] = _type()
+	input.Attr["value"] = value
+
+	var pattern *regexp.Regexp
+	_s := ""
+
+	r.fieldsFns.Call("pattern", map[string]interface{}{
+		"pattern": &pattern,
+		"err":     &_s,
+	})
+
+	if pattern != nil {
+		input.Attr["pattern"] = pattern.String()
+	}
+
+	_n, max := int(-1), int(-1)
+
+	r.fieldsFns.Call("size", map[string]interface{}{
+		"min":    &_n,
+		"max":    &max,
+		"minErr": &_s,
+		"maxErr": &_s,
+	})
+
+	if max > 0 {
+		input.Attr["maxlength"] = fmt.Sprintf("%d", max)
+	}
 }

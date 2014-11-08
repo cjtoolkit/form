@@ -2,12 +2,25 @@ package form
 
 import (
 	"fmt"
-	"strings"
 )
 
 func (r renderValue) strSelect(value string) {
-	value = strings.TrimSpace(value)
-	w := r.w
+	_select := &FirstLayerSelect{Options: []Option{}}
+	r.fls.append(_select)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		_select.Attr = attr
+	} else {
+		_select.Attr = map[string]string{}
+	}
 
 	var options []Option
 
@@ -20,62 +33,61 @@ func (r renderValue) strSelect(value string) {
 		return
 	}
 
-	fmt.Fprintf(w, `<select name="%s" `, es(r.preferedName))
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "multiple")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `>`)
+	_select.Attr["name"] = r.preferedName
 
 	for _, option := range options {
-		fmt.Fprint(w, `<option `)
+		_option := &Option{}
 
 		if option.Value != "" {
-			fmt.Fprintf(w, `value="%s" `, es(option.Value))
+			_option.Value = option.Value
+		}
+
+		_option.Content = option.Content
+
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			_option.Attr = option.Attr
+		} else {
+			_option.Attr = map[string]string{}
 		}
 
 		if option.Label != "" {
-			fmt.Fprintf(w, `label="%s" `, es(option.Label))
+			_option.Attr["label"] = option.Label
 		}
 
 		if value == "" {
 			if option.Selected {
-				fmt.Fprint(w, `selected `)
+				_option.Attr["selected"] = " "
 			}
 		} else {
 			if value == option.Value {
-				fmt.Fprint(w, `selected `)
+				_option.Attr["selected"] = " "
 			}
 		}
 
-		if option.Attr != nil {
-			delete(option.Attr, "value")
-			delete(option.Attr, "label")
-			delete(option.Attr, "selected")
-			fmt.Fprint(w, RenderAttr(option.Attr))
-		}
-
-		if option.Content != "" {
-			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
-		} else {
-			fmt.Fprint(w, `/>`)
-		}
+		_select.Options = append(_select.Options, *_option)
 	}
-
-	fmt.Fprint(w, `</select>`)
 }
 
 func (r renderValue) strsSelect(values []string) {
-	w := r.w
+	_select := &FirstLayerSelect{Options: []Option{}}
+	r.fls.append(_select)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		_select.Attr = attr
+	} else {
+		_select.Attr = map[string]string{}
+	}
 
 	var options []Option
 
@@ -88,66 +100,65 @@ func (r renderValue) strsSelect(values []string) {
 		return
 	}
 
-	fmt.Fprintf(w, `<select name="%s" multiple `, es(r.preferedName))
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "multiple")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `>`)
+	_select.Attr["name"] = r.preferedName
+	_select.Attr["multiple"] = " "
 
 	for _, option := range options {
-		fmt.Fprint(w, `<option `)
+		_option := &Option{}
 
 		if option.Value != "" {
-			fmt.Fprintf(w, `value="%s" `, es(option.Value))
+			_option.Value = option.Value
 		}
 
-		if option.Label != "" {
-			fmt.Fprintf(w, `label="%s" `, es(option.Label))
-		}
-
-		if len(values) == 0 {
-			if option.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			for _, value := range values {
-				value = strings.TrimSpace(value)
-				if value == option.Value {
-					fmt.Fprint(w, `selected `)
-					break
-				}
-			}
-		}
+		_option.Content = option.Content
 
 		if option.Attr != nil {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, RenderAttr(option.Attr))
-		}
-
-		if option.Content != "" {
-			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
+			_option.Attr = option.Attr
 		} else {
-			fmt.Fprint(w, `/>`)
+			_option.Attr = map[string]string{}
 		}
-	}
 
-	fmt.Fprint(w, `</select>`)
+		if option.Label != "" {
+			_option.Attr["label"] = option.Label
+		}
+
+		if len(values) == 0 {
+			if option.Selected {
+				_option.Attr["selected"] = " "
+			}
+		} else {
+			for _, value := range values {
+				if value == option.Value {
+					_option.Attr["selected"] = " "
+					break
+				}
+			}
+		}
+
+		_select.Options = append(_select.Options, *_option)
+	}
 }
 
 func (r renderValue) wnumSelect(value int64) {
-	w := r.w
+	_select := &FirstLayerSelect{Options: []Option{}}
+	r.fls.append(_select)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		_select.Attr = attr
+	} else {
+		_select.Attr = map[string]string{}
+	}
 
 	var options []OptionInt
 
@@ -160,62 +171,61 @@ func (r renderValue) wnumSelect(value int64) {
 		return
 	}
 
-	fmt.Fprintf(w, `<select name="%s" `, es(r.preferedName))
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "multiple")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `>`)
+	_select.Attr["name"] = r.preferedName
 
 	for _, option := range options {
-		fmt.Fprint(w, `<option `)
+		_option := &Option{}
 
 		if option.Value != 0 {
-			fmt.Fprintf(w, `value="%d" `, option.Value)
+			_option.Value = fmt.Sprintf("%d", option.Value)
 		}
 
-		if option.Label != "" {
-			fmt.Fprintf(w, `label="%s" `, es(option.Label))
-		}
-
-		if value == 0 {
-			if option.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			if value == option.Value {
-				fmt.Fprint(w, `selected `)
-			}
-		}
+		_option.Content = option.Content
 
 		if option.Attr != nil {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, RenderAttr(option.Attr))
-		}
-
-		if option.Content != "" {
-			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
+			_option.Attr = option.Attr
 		} else {
-			fmt.Fprint(w, `/>`)
+			_option.Attr = map[string]string{}
 		}
-	}
 
-	fmt.Fprint(w, `</select>`)
+		if option.Label != "" {
+			_option.Attr["label"] = option.Label
+		}
+
+		if value == 0 {
+			if option.Selected {
+				_option.Attr["selected"] = " "
+			}
+		} else {
+			if value == option.Value {
+				_option.Attr["selected"] = " "
+			}
+		}
+
+		_select.Options = append(_select.Options, *_option)
+	}
 }
 
 func (r renderValue) wnumsSelect(values []int64) {
-	w := r.w
+	_select := &FirstLayerSelect{Options: []Option{}}
+	r.fls.append(_select)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		_select.Attr = attr
+	} else {
+		_select.Attr = map[string]string{}
+	}
 
 	var options []OptionInt
 
@@ -228,7 +238,49 @@ func (r renderValue) wnumsSelect(values []int64) {
 		return
 	}
 
-	fmt.Fprintf(w, `<select name="%s" multiple `, es(r.preferedName))
+	_select.Attr["name"] = r.preferedName
+	_select.Attr["multiple"] = " "
+
+	for _, option := range options {
+		_option := &Option{}
+
+		if option.Value != 0 {
+			_option.Value = fmt.Sprintf("%d", option.Value)
+		}
+
+		_option.Content = option.Content
+
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			_option.Attr = option.Attr
+		} else {
+			_option.Attr = map[string]string{}
+		}
+
+		if option.Label != "" {
+			_option.Attr["label"] = option.Label
+		}
+
+		if len(values) == 0 {
+			if option.Selected {
+				_option.Attr["selected"] = " "
+			}
+		} else {
+			for _, value := range values {
+				if value == option.Value {
+					_option.Attr["selected"] = " "
+					break
+				}
+			}
+		}
+	}
+}
+
+func (r renderValue) fnumSelect(value float64) {
+	_select := &FirstLayerSelect{Options: []Option{}}
+	r.fls.append(_select)
 
 	var attr map[string]string
 
@@ -239,54 +291,10 @@ func (r renderValue) wnumsSelect(values []int64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
-		fmt.Fprint(w, RenderAttr(attr))
+		_select.Attr = attr
+	} else {
+		_select.Attr = map[string]string{}
 	}
-
-	fmt.Fprint(w, `>`)
-
-	for _, option := range options {
-		fmt.Fprint(w, `<option `)
-
-		if option.Value != 0 {
-			fmt.Fprintf(w, `value="%d" `, option.Value)
-		}
-
-		if option.Label != "" {
-			fmt.Fprintf(w, `label="%s" `, es(option.Label))
-		}
-
-		if len(values) == 0 {
-			if option.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			for _, value := range values {
-				if value == option.Value {
-					fmt.Fprint(w, `selected `)
-					break
-				}
-			}
-		}
-
-		if option.Attr != nil {
-			delete(option.Attr, "value")
-			delete(option.Attr, "label")
-			delete(option.Attr, "selected")
-			fmt.Fprint(w, RenderAttr(option.Attr))
-		}
-
-		if option.Content != "" {
-			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
-		} else {
-			fmt.Fprint(w, `/>`)
-		}
-	}
-
-	fmt.Fprint(w, `</select>`)
-}
-
-func (r renderValue) fnumSelect(value float64) {
-	w := r.w
 
 	var options []OptionFloat
 
@@ -299,62 +307,61 @@ func (r renderValue) fnumSelect(value float64) {
 		return
 	}
 
-	fmt.Fprintf(w, `<select name="%s" `, es(r.preferedName))
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "multiple")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `>`)
+	_select.Attr["name"] = r.preferedName
 
 	for _, option := range options {
-		fmt.Fprint(w, `<option `)
+		_option := &Option{}
 
 		if option.Value != 0 {
-			fmt.Fprintf(w, `value="%f" `, option.Value)
+			_option.Value = fmt.Sprintf("%d", option.Value)
+		}
+
+		_option.Content = option.Content
+
+		if option.Attr != nil {
+			delete(option.Attr, "value")
+			delete(option.Attr, "label")
+			delete(option.Attr, "selected")
+			_option.Attr = option.Attr
+		} else {
+			_option.Attr = map[string]string{}
 		}
 
 		if option.Label != "" {
-			fmt.Fprintf(w, `label="%s" `, es(option.Label))
+			_option.Attr["label"] = option.Label
 		}
 
 		if value == 0 {
 			if option.Selected {
-				fmt.Fprint(w, `selected `)
+				_option.Attr["selected"] = " "
 			}
 		} else {
 			if value == option.Value {
-				fmt.Fprint(w, `selected `)
+				_option.Attr["selected"] = " "
 			}
 		}
 
-		if option.Attr != nil {
-			delete(option.Attr, "value")
-			delete(option.Attr, "label")
-			delete(option.Attr, "selected")
-			fmt.Fprint(w, RenderAttr(option.Attr))
-		}
-
-		if option.Content != "" {
-			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
-		} else {
-			fmt.Fprint(w, `/>`)
-		}
+		_select.Options = append(_select.Options, *_option)
 	}
-
-	fmt.Fprint(w, `</select>`)
 }
 
 func (r renderValue) fnumsSelect(values []float64) {
-	w := r.w
+	_select := &FirstLayerSelect{Options: []Option{}}
+	r.fls.append(_select)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "multiple")
+		_select.Attr = attr
+	} else {
+		_select.Attr = map[string]string{}
+	}
 
 	var options []OptionFloat
 
@@ -367,59 +374,42 @@ func (r renderValue) fnumsSelect(values []float64) {
 		return
 	}
 
-	fmt.Fprintf(w, `<select name="%s" multiple `, es(r.preferedName))
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "multiple")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `>`)
+	_select.Attr["name"] = r.preferedName
+	_select.Attr["multiple"] = " "
 
 	for _, option := range options {
-		fmt.Fprint(w, `<option `)
+		_option := &Option{}
 
 		if option.Value != 0 {
-			fmt.Fprintf(w, `value="%f" `, option.Value)
+			_option.Value = fmt.Sprintf("%d", option.Value)
 		}
 
-		if option.Label != "" {
-			fmt.Fprintf(w, `label="%s" `, es(option.Label))
-		}
-
-		if len(values) == 0 {
-			if option.Selected {
-				fmt.Fprint(w, `selected `)
-			}
-		} else {
-			for _, value := range values {
-				if value == option.Value {
-					fmt.Fprint(w, `selected `)
-					break
-				}
-			}
-		}
+		_option.Content = option.Content
 
 		if option.Attr != nil {
 			delete(option.Attr, "value")
 			delete(option.Attr, "label")
 			delete(option.Attr, "selected")
-			fmt.Fprint(w, RenderAttr(option.Attr))
+			_option.Attr = option.Attr
+		} else {
+			_option.Attr = map[string]string{}
 		}
 
-		if option.Content != "" {
-			fmt.Fprintf(w, `>%s</option>`, es(option.Content))
+		if option.Label != "" {
+			_option.Attr["label"] = option.Label
+		}
+
+		if len(values) == 0 {
+			if option.Selected {
+				_option.Attr["selected"] = " "
+			}
 		} else {
-			fmt.Fprint(w, `/>`)
+			for _, value := range values {
+				if value == option.Value {
+					_option.Attr["selected"] = " "
+					break
+				}
+			}
 		}
 	}
-
-	fmt.Fprint(w, `</select>`)
 }

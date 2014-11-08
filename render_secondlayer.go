@@ -7,13 +7,13 @@ import (
 
 // For use with RenderSecondLayer
 type RenderData struct {
-	Count          int
-	Type           TypeCode
-	Error          error
-	Warning        string
-	PostFirstLayer string // Rendered by first layer
-	Fns            FieldFuncs
-	Check          bool
+	Count            int
+	Type             TypeCode
+	Error            error
+	Warning          string
+	Fns              FieldFuncs
+	Check            bool
+	FirstLayerStacks FirstLayerStack
 }
 
 // Second Layer interface
@@ -34,7 +34,7 @@ var DefaultRenderSecondLayer RenderSecondLayer = RenderSecondLayerFunc(defaultRe
 
 func defaultRenderSecondLayer(w io.Writer, r RenderData) {
 	if r.Type == InputHidden {
-		fmt.Fprint(w, r.PostFirstLayer)
+		r.FirstLayerStacks.Render(w)
 		return
 	}
 
@@ -74,7 +74,7 @@ func defaultRenderSecondLayer(w io.Writer, r RenderData) {
 
 formField:
 
-	fmt.Fprint(w, r.PostFirstLayer)
+	r.FirstLayerStacks.Render(w)
 
 	if r.Error != nil {
 		fmt.Fprintf(w, `<div class="error">%s</div>`, es(r.Error.Error()))

@@ -1,16 +1,32 @@
 package form
 
 import (
-	"fmt"
 	"strings"
 )
 
 func (r renderValue) fileInputFile() {
-	w := r.w
-	fmt.Fprintf(w, `<input name="%s" type="file" `, es(r.preferedName))
+	input := &FirstLayerInput{}
+	r.fls.append(input)
+
+	var attr map[string]string
+
+	r.fieldsFns.Call("attr", map[string]interface{}{
+		"attr": &attr,
+	})
+
+	if attr != nil {
+		delete(attr, "name")
+		delete(attr, "type")
+		delete(attr, "accept")
+		input.Attr = attr
+	} else {
+		input.Attr = map[string]string{}
+	}
+
+	input.Attr["name"] = r.preferedName
+	input.Attr["type"] = "file"
 
 	// Size and Mime
-
 	_n := int64(-1)
 	_s := ""
 	var mimes []string
@@ -23,21 +39,6 @@ func (r renderValue) fileInputFile() {
 	})
 
 	if mimes != nil {
-		fmt.Fprintf(w, `accept="%s" `, es(strings.Join(mimes, "|")))
+		input.Attr["accept"] = strings.Join(mimes, "|")
 	}
-
-	var attr map[string]string
-
-	r.fieldsFns.Call("attr", map[string]interface{}{
-		"attr": &attr,
-	})
-
-	if attr != nil {
-		delete(attr, "name")
-		delete(attr, "type")
-		delete(attr, "accept")
-		fmt.Fprint(w, RenderAttr(attr))
-	}
-
-	fmt.Fprint(w, `/>`)
 }

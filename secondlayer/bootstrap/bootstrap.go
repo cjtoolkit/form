@@ -31,7 +31,7 @@ func BootstrapSecondLayer() form.RenderSecondLayer {
 
 func bootstrapSecondLayer(w io.Writer, r form.RenderData) {
 	if r.Type == form.InputHidden {
-		fmt.Fprint(w, r.PostFirstLayer)
+		r.FirstLayerStacks.Render(w)
 		return
 	}
 
@@ -134,7 +134,7 @@ formField:
 
 	fmt.Fprint(w, beforeInput)
 
-	fmt.Fprint(w, r.PostFirstLayer)
+	r.FirstLayerStacks.Render(w)
 
 	fmt.Fprint(w, afterInput)
 
