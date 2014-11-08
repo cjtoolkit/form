@@ -26,6 +26,8 @@ func (r renderValue) strInputRadio(value string) {
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
 			input.Attr = radio.Attr
+		} else {
+			input.Attr = map[string]string{}
 		}
 
 		input.Attr["name"] = r.preferedName
@@ -70,6 +72,8 @@ func (r renderValue) wnumInputRadio(value int64) {
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
 			input.Attr = radio.Attr
+		} else {
+			input.Attr = map[string]string{}
 		}
 
 		input.Attr["name"] = r.preferedName
@@ -114,6 +118,8 @@ func (r renderValue) fnumInputRadio(value float64) {
 			delete(radio.Attr, "selected")
 			delete(radio.Attr, "value")
 			input.Attr = radio.Attr
+		} else {
+			input.Attr = map[string]string{}
 		}
 
 		input.Attr["name"] = r.preferedName
