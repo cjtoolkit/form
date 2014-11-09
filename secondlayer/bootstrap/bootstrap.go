@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/cjtoolkit/form"
 	"io"
+	"strings"
 )
 
 /*
