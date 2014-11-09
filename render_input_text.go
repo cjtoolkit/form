@@ -39,6 +39,7 @@ func (r renderValue) strInputText(value string) {
 		delete(attr, "value")
 		delete(attr, "pattern")
 		delete(attr, "mexlength")
+		delete(attr, "required")
 		input.Attr = attr
 	} else {
 		input.Attr = map[string]string{}
@@ -71,5 +72,16 @@ func (r renderValue) strInputText(value string) {
 
 	if max > 0 {
 		input.Attr["maxlength"] = fmt.Sprintf("%d", max)
+	}
+
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		input.Attr["required"] = " "
 	}
 }

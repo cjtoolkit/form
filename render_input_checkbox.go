@@ -25,6 +25,7 @@ func (r renderValue) bInputCheckbox(value bool) {
 		delete(attr, "type")
 		delete(attr, "value")
 		delete(attr, "checked")
+		delete(attr, "required")
 		input.Attr = attr
 	} else {
 		input.Attr = map[string]string{}
@@ -36,5 +37,17 @@ func (r renderValue) bInputCheckbox(value bool) {
 
 	if value {
 		input.Attr["checked"] = " "
+	}
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		input.Attr["required"] = " "
 	}
 }

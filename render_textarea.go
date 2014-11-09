@@ -18,6 +18,8 @@ func (r renderValue) strTextarea(value string) {
 		delete(attr, "name")
 		delete(attr, "rows")
 		delete(attr, "cols")
+		delete(attr, "maxlength")
+		delete(attr, "required")
 		textarea.Attr = attr
 	} else {
 		textarea.Attr = map[string]string{}
@@ -36,4 +38,29 @@ func (r renderValue) strTextarea(value string) {
 
 	textarea.Attr["rows"] = fmt.Sprintf("%d", rows)
 	textarea.Attr["cols"] = fmt.Sprintf("%d", cols)
+
+	_s := ""
+	_n, max := int(-1), int(-1)
+
+	r.fieldsFns.Call("size", map[string]interface{}{
+		"min":    &_n,
+		"max":    &max,
+		"minErr": &_s,
+		"maxErr": &_s,
+	})
+
+	if max > 0 {
+		textarea.Attr["maxlength"] = fmt.Sprintf("%d", max)
+	}
+
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		textarea.Attr["required"] = " "
+	}
 }

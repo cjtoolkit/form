@@ -18,6 +18,7 @@ func (r renderValue) fileInputFile() {
 		delete(attr, "name")
 		delete(attr, "type")
 		delete(attr, "accept")
+		delete(attr, "required")
 		input.Attr = attr
 	} else {
 		input.Attr = map[string]string{}
@@ -40,5 +41,16 @@ func (r renderValue) fileInputFile() {
 
 	if mimes != nil {
 		input.Attr["accept"] = strings.Join(mimes, "|")
+	}
+
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		input.Attr["required"] = " "
 	}
 }

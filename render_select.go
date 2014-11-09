@@ -17,6 +17,7 @@ func (r renderValue) strSelect(value string) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
+		delete(attr, "required")
 		_select.Attr = attr
 	} else {
 		_select.Attr = map[string]string{}
@@ -34,6 +35,18 @@ func (r renderValue) strSelect(value string) {
 	}
 
 	_select.Attr["name"] = r.preferedName
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		_select.Attr["required"] = " "
+	}
 
 	for _, option := range options {
 		_option := &Option{}
@@ -84,6 +97,7 @@ func (r renderValue) strsSelect(values []string) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
+		delete(attr, "required")
 		_select.Attr = attr
 	} else {
 		_select.Attr = map[string]string{}
@@ -102,6 +116,18 @@ func (r renderValue) strsSelect(values []string) {
 
 	_select.Attr["name"] = r.preferedName
 	_select.Attr["multiple"] = " "
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		_select.Attr["required"] = " "
+	}
 
 	for _, option := range options {
 		_option := &Option{}
@@ -155,6 +181,7 @@ func (r renderValue) wnumSelect(value int64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
+		delete(attr, "required")
 		_select.Attr = attr
 	} else {
 		_select.Attr = map[string]string{}
@@ -172,6 +199,18 @@ func (r renderValue) wnumSelect(value int64) {
 	}
 
 	_select.Attr["name"] = r.preferedName
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		_select.Attr["required"] = " "
+	}
 
 	for _, option := range options {
 		_option := &Option{}
@@ -222,6 +261,7 @@ func (r renderValue) wnumsSelect(values []int64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
+		delete(attr, "required")
 		_select.Attr = attr
 	} else {
 		_select.Attr = map[string]string{}
@@ -240,6 +280,18 @@ func (r renderValue) wnumsSelect(values []int64) {
 
 	_select.Attr["name"] = r.preferedName
 	_select.Attr["multiple"] = " "
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		_select.Attr["required"] = " "
+	}
 
 	for _, option := range options {
 		_option := &Option{}
@@ -291,6 +343,7 @@ func (r renderValue) fnumSelect(value float64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
+		delete(attr, "required")
 		_select.Attr = attr
 	} else {
 		_select.Attr = map[string]string{}
@@ -308,6 +361,18 @@ func (r renderValue) fnumSelect(value float64) {
 	}
 
 	_select.Attr["name"] = r.preferedName
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		_select.Attr["required"] = " "
+	}
 
 	for _, option := range options {
 		_option := &Option{}
@@ -358,6 +423,7 @@ func (r renderValue) fnumsSelect(values []float64) {
 	if attr != nil {
 		delete(attr, "name")
 		delete(attr, "multiple")
+		delete(attr, "required")
 		_select.Attr = attr
 	} else {
 		_select.Attr = map[string]string{}
@@ -376,6 +442,18 @@ func (r renderValue) fnumsSelect(values []float64) {
 
 	_select.Attr["name"] = r.preferedName
 	_select.Attr["multiple"] = " "
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		_select.Attr["required"] = " "
+	}
 
 	for _, option := range options {
 		_option := &Option{}

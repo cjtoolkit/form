@@ -44,6 +44,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 		delete(attr, "min")
 		delete(attr, "max")
 		delete(attr, "step")
+		delete(attr, "required")
 		input.Attr = attr
 	} else {
 		input.Attr = map[string]string{}
@@ -115,5 +116,17 @@ func (r renderValue) numInputNumber(value interface{}) {
 		}
 
 		input.Attr["step"] = fmt.Sprintf("%f", step)
+	}
+
+	_s := ""
+	mandatory := false
+
+	r.fieldsFns.Call("mandatory", map[string]interface{}{
+		"mandatory": &mandatory,
+		"err":       &_s,
+	})
+
+	if mandatory {
+		input.Attr["required"] = " "
 	}
 }
