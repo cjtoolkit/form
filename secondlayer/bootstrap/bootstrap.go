@@ -26,10 +26,23 @@ Bootstrap Second Layer (http://getbootstrap.com/)
 		"feedback" *bool
 */
 func SecondLayer() form.RenderSecondLayer {
-	return form.RenderSecondLayerFunc(bootstrapSecondLayer)
+	return bootstrap{}
 }
 
-func bootstrapSecondLayer(w io.Writer, r form.RenderData) {
+type bootstrap struct{}
+
+func (b bootstrap) addClass(src string, classes ...string) (str string) {
+	if src == "" {
+		str = strings.Join(classes, " ")
+		return
+	}
+	srcs := strings.Split(src, " ")
+	srcs = append(srcs, classes...)
+	str = strings.Join(srcs, " ")
+	return
+}
+
+func (b bootstrap) Render(w io.Writer, r form.RenderData) {
 	if r.Type == form.InputHidden {
 		r.FirstLayerStacks.Render(w)
 		return
@@ -138,7 +151,22 @@ formField:
 
 	fmt.Fprint(w, beforeInput)
 
-	r.FirstLayerStacks.Render(w)
+	for _, field := range r.FirstLayerStacks {
+		switch field := field.(type) {
+		case *form.FirstLayerInput:
+			switch field.Attr["type"] {
+			case "radio", "checkbox", "file", "range", "hidden", "color":
+				// Do nothing
+			default:
+				field.Attr["class"] = b.addClass(field.Attr["class"], "form-control")
+			}
+		case *form.FirstLayerSelect:
+			field.Attr["class"] = b.addClass(field.Attr["class"], "form-control")
+		case *form.FirstLayerTextarea:
+			field.Attr["class"] = b.addClass(field.Attr["class"], "form-control")
+		}
+		field.Render(w)
+	}
 
 	fmt.Fprint(w, afterInput)
 
