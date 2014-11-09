@@ -36,18 +36,6 @@ func (r renderValue) strSelect(value string) {
 
 	_select.Attr["name"] = r.preferedName
 
-	_s := ""
-	mandatory := false
-
-	r.fieldsFns.Call("mandatory", map[string]interface{}{
-		"mandatory": &mandatory,
-		"err":       &_s,
-	})
-
-	if mandatory {
-		_select.Attr["required"] = " "
-	}
-
 	for _, option := range options {
 		_option := &Option{}
 
@@ -200,18 +188,6 @@ func (r renderValue) wnumSelect(value int64) {
 
 	_select.Attr["name"] = r.preferedName
 
-	_s := ""
-	mandatory := false
-
-	r.fieldsFns.Call("mandatory", map[string]interface{}{
-		"mandatory": &mandatory,
-		"err":       &_s,
-	})
-
-	if mandatory {
-		_select.Attr["required"] = " "
-	}
-
 	for _, option := range options {
 		_option := &Option{}
 
@@ -361,18 +337,6 @@ func (r renderValue) fnumSelect(value float64) {
 	}
 
 	_select.Attr["name"] = r.preferedName
-
-	_s := ""
-	mandatory := false
-
-	r.fieldsFns.Call("mandatory", map[string]interface{}{
-		"mandatory": &mandatory,
-		"err":       &_s,
-	})
-
-	if mandatory {
-		_select.Attr["required"] = " "
-	}
 
 	for _, option := range options {
 		_option := &Option{}
