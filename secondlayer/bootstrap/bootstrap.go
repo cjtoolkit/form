@@ -25,7 +25,7 @@ Bootstrap Second Layer (http://getbootstrap.com/)
 		"disabled": *bool (Only works with 'InputRadio' and 'InputCheckbox')
 		"feedback" *bool
 */
-func BootstrapSecondLayer() form.RenderSecondLayer {
+func SecondLayer() form.RenderSecondLayer {
 	return form.RenderSecondLayerFunc(bootstrapSecondLayer)
 }
 

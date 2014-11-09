@@ -153,6 +153,6 @@ Foundation Second Layer (http://foundation.zurb.com/)
 		"startOfGroup": *string
 		"endOfGroup": *string
 */
-func Foundation() form.RenderSecondLayer {
+func SecondLayer() form.RenderSecondLayer {
 	return foundation{}
 }
