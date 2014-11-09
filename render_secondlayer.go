@@ -55,6 +55,10 @@ func defaultRenderSecondLayer(w io.Writer, r RenderData) {
 	var labelAttr map[string]string
 	parsedLabelAttr := ""
 
+	if r.Type == InputRadio {
+		goto formField
+	}
+
 	r.Fns.Call("label", map[string]interface{}{
 		"content": &labelContent,
 		"for":     &labelFor,

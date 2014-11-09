@@ -1,4 +1,4 @@
-// Bootstrap Second Layer
+// Bootstrap Second Layer (http://getbootstrap.com/)
 package bootstrap
 
 import (
@@ -8,7 +8,7 @@ import (
 )
 
 /*
-Bootstrap Second Layer
+Bootstrap Second Layer (http://getbootstrap.com/)
 	"html":
 		"before": *string
 		"after": *string
@@ -104,6 +104,10 @@ func bootstrapSecondLayer(w io.Writer, r form.RenderData) {
 	labelFor := ""
 	var labelAttr map[string]string
 	parsedLabelAttr := ""
+
+	if r.Type == form.InputRadio {
+		goto formField
+	}
 
 	r.Fns.Call("label", map[string]interface{}{
 		"content": &labelContent,
