@@ -1,6 +1,23 @@
 # CJToolkit Form
 
-Highly Flexible Form Rendering and Validation System.
+Automated Form Rendering and Validation Library for Google Go.
+
+- Integration with 'github.com/cjtoolkit/i18n'.
+  - So it can speak your lingo.
+- Dual layer rendering system.
+  - So it can easily be adapted to any CSS framework, such as Bootstrap or Foundation.
+  - Currently support Bootstrap and Foundation out of the box.
+  - First layer is fixed.
+  - Second layer is user definable.
+    - So you can use your own CSS framework.
+- Heavily relies on Struct, Methods and Function Enclosures.
+  - So you can pretty much do anything you desire.
+    - Defining your own rules (ext).
+    - i18n integration.
+    - Database integration either with or without ORM, Your choice.
+  - No Struct tags are needed, not that there anything wrong with them.
+  - See example below, than have a look at document and the cheatsheet, it will help you understand the system.
+
 
 Documentation can be found at.
 
