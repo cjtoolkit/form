@@ -7,6 +7,7 @@ import (
 
 // For use with RenderSecondLayer
 type RenderData struct {
+	Name             string
 	Count            int
 	Type             TypeCode
 	Error            error

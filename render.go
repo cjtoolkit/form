@@ -101,7 +101,7 @@ func (f *form) render(structPtr interface{}, w io.Writer) {
 			warning = data.shiftWarning(r.name)
 		}
 
-		secondLayerData := RenderData{f.rcount, _type, err, warning,
+		secondLayerData := RenderData{preferedName, f.rcount, _type, err, warning,
 			fieldFns, data != nil, *(r.fls)}
 		f.rcount++
 
