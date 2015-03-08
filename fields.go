@@ -18,16 +18,22 @@ type Field struct {
 
 // Fields
 type Fields struct {
+	m map[string]FieldFuncs
 	f []*Field
 }
 
 // Init Field
 func (f *Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
+	if f.m[fieldname] != nil {
+		return f.m[fieldname]
+	}
+
 	fns := FieldFuncs{
 		"init": func(m map[string]interface{}) {
 			*(m["type"].(*TypeCode)) = typeCode
 		},
 	}
+	f.m[fieldname] = fns
 	f.f = append(f.f, &Field{fieldname, fns})
 	return fns
 }

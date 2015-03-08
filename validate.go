@@ -48,6 +48,7 @@ func (f *form) validate(structPtr Interface) (bool, error) {
 	fieldM := []*_f{}
 
 	fields := Fields{
+		map[string]FieldFuncs{},
 		[]*Field{},
 	}
 
