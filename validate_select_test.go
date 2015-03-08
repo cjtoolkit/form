@@ -19,106 +19,92 @@ type select_ struct {
 	Fs   []float64
 }
 
-func (i *select_) StrField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = Select
-		},
-		"mandatory": func(m map[string]interface{}) {
+func (i *select_) CJForm(f Fields) {
+
+	// Str
+	func() {
+		f := f.Init("Str", Select)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"option": func(m map[string]interface{}) {
+		}
+		f["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]Option)) = []Option{
 				{Value: "Hello", Label: "Hello"},
 				{Value: "World", Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *select_) StrsField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = Select
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// Strs
+	func() {
+		f := f.Init("Strs", Select)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"option": func(m map[string]interface{}) {
+		}
+		f["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]Option)) = []Option{
 				{Value: "Hello", Label: "Hello"},
 				{Value: "World", Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *select_) WField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = Select
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// W
+	func() {
+		f := f.Init("W", Select)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"option": func(m map[string]interface{}) {
+		}
+		f["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]OptionInt)) = []OptionInt{
 				{Value: 1, Label: "Hello"},
 				{Value: 2, Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *select_) WsField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = Select
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// Ws
+	func() {
+		f := f.Init("Ws", Select)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"option": func(m map[string]interface{}) {
+		}
+		f["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]OptionInt)) = []OptionInt{
 				{Value: 1, Label: "Hello"},
 				{Value: 2, Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *select_) FField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = Select
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// F
+	func() {
+		f := f.Init("F", Select)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"option": func(m map[string]interface{}) {
+		}
+		f["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]OptionFloat)) = []OptionFloat{
 				{Value: 1.5, Label: "Hello"},
 				{Value: 2.5, Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *select_) FsField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = Select
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// Fs
+	func() {
+		f := f.Init("Fs", Select)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"option": func(m map[string]interface{}) {
+		}
+		f["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]OptionFloat)) = []OptionFloat{
 				{Value: 1.5, Label: "Hello"},
 				{Value: 2.5, Label: "World"},
 			}
-		},
-	}
+		}
+	}()
+
 }
 
 func TestSelect(t *testing.T) {

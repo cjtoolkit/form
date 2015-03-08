@@ -17,43 +17,40 @@ type inputText struct {
 	Re     string
 }
 
-func (i *inputText) FirstField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputText
-		},
-		"mandatory": func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		},
-		"size": func(m map[string]interface{}) {
-			*(m["max"].(*int)) = 8
-		},
-	}
-}
-
-func (i *inputText) SecondField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputText
-		},
-		"mustmatch": func(m map[string]interface{}) {
-			*(m["name"].(*string)) = "First"
-			*(m["value"].(*string)) = i.First
-		},
-	}
-}
-
 var rePattern = regexp.MustCompile("^[a-z]{1,5}[0-9]{1,5}$")
 
-func (i *inputText) ReField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputText
-		},
-		"pattern": func(m map[string]interface{}) {
+func (i *inputText) CJForm(f Fields) {
+
+	// First
+	func() {
+		f := f.Init("First", InputText)
+		f["mandatory"] = func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		}
+		f["size"] = func(m map[string]interface{}) {
+			*(m["max"].(*int)) = 8
+		}
+	}()
+
+	// Second
+	func() {
+		f := f.Init("Second", InputText)
+		f["mustmatch"] = func(m map[string]interface{}) {
+			*(m["name"].(*string)) = "First"
+			*(m["value"].(*string)) = i.First
+		}
+	}()
+
+	// Re
+	func() {
+		f := f.Init("Re", InputText)
+		f["mandatory"] = func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		}
+		f["pattern"] = func(m map[string]interface{}) {
 			*(m["pattern"].(**regexp.Regexp)) = rePattern
-		},
-	}
+		}
+	}()
 }
 
 func TestInputText(t *testing.T) {

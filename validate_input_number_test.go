@@ -15,34 +15,31 @@ type inputNumber struct {
 	Second float64
 }
 
-func (i *inputNumber) FirstField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputNumber
-		},
-		"range": func(m map[string]interface{}) {
+func (i *inputNumber) CJForm(f Fields) {
+
+	// First
+	func() {
+		f := f.Init("First", InputNumber)
+		f["range"] = func(m map[string]interface{}) {
 			*(m["min"].(*int64)) = 4
 			*(m["max"].(*int64)) = 8
-		},
-		"step": func(m map[string]interface{}) {
+		}
+		f["step"] = func(m map[string]interface{}) {
 			*(m["step"].(*int64)) = 2
-		},
-	}
-}
+		}
+	}()
 
-func (i *inputNumber) SecondField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputNumber
-		},
-		"range": func(m map[string]interface{}) {
+	// Second
+	func() {
+		f := f.Init("Second", InputNumber)
+		f["range"] = func(m map[string]interface{}) {
 			*(m["min"].(*float64)) = 2.65
 			*(m["max"].(*float64)) = 7.45
-		},
-		"step": func(m map[string]interface{}) {
+		}
+		f["step"] = func(m map[string]interface{}) {
 			*(m["step"].(*float64)) = 0.5
-		},
-	}
+		}
+	}()
 }
 
 func TestInputNumber(t *testing.T) {

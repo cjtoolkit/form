@@ -15,27 +15,24 @@ type inputEmail struct {
 	Second string
 }
 
-func (i *inputEmail) FirstField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputEmail
-		},
-		"mandatory": func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		},
-	}
-}
+func (i *inputEmail) CJForm(f Fields) {
 
-func (i *inputEmail) SecondField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputEmail
-		},
-		"mustmatch": func(m map[string]interface{}) {
+	// First
+	func() {
+		f := f.Init("First", InputEmail)
+		f["mandatory"] = func(m map[string]interface{}) {
+			*(m["mandatory"].(*bool)) = true
+		}
+	}()
+
+	// Second
+	func() {
+		f := f.Init("Second", InputEmail)
+		f["mustmatch"] = func(m map[string]interface{}) {
 			*(m["name"].(*string)) = "First"
 			*(m["value"].(*string)) = i.First
-		},
-	}
+		}
+	}()
 }
 
 func TestInputEmail(t *testing.T) {

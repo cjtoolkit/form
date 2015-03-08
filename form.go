@@ -8,24 +8,13 @@ import (
 	"net/http"
 )
 
-// For keeping a list of enclosed functions for struct pointer fields.
-type FieldFuncs map[string]func(m map[string]interface{})
-
-// Attemp to call a function in FieldFuncs. Does not call if function does not exist.
-func (fns FieldFuncs) Call(name string, m map[string]interface{}) {
-	if fns[name] == nil {
-		return
-	}
-	fns[name](m)
-}
-
 // Form Renderer and Validator interface!
 type Form interface {
 	// Renders 'structPtr' to 'w', panic if structPtr is not a struct with pointer.
 	// Also renders validation errors if 'Validate' or 'MustValidate' was call before hand.
-	Render(structPtr interface{}, w io.Writer)
+	Render(structPtr Interface, w io.Writer)
 	// As Render but Return string
-	RenderStr(structPtr interface{}) string
+	RenderStr(structPtr Interface) string
 
 	// http://api.jquery.com/serializearray/
 	// Request Body must be in JSON format. 'JSON.stringify(object);' in Javascript.
@@ -36,9 +25,9 @@ type Form interface {
 	// Validate User Input and Populate Field in struct with pointers.
 	// Must use struct with pointers otherwise it will return an error.
 	// To get structPtrs field to validate against itself, specify r as 'nil'
-	Validate(r *http.Request, structPtrs ...interface{}) (bool, error)
+	Validate(r *http.Request, structPtrs ...Interface) (bool, error)
 	// Same as validate but panic on error.
-	MustValidate(r *http.Request, structPtrs ...interface{}) bool
+	MustValidate(r *http.Request, structPtrs ...Interface) bool
 
 	// Encode JSON into 'w'
 	// {"valid": bool, "data":[{"valid":bool, "error":"", "warning":"", "name":"", "count":int}...]}
@@ -124,11 +113,11 @@ type form struct {
 	rcount    int
 }
 
-func (f *form) Render(structPtr interface{}, w io.Writer) {
+func (f *form) Render(structPtr Interface, w io.Writer) {
 	f.render(structPtr, w)
 }
 
-func (f *form) RenderStr(structPtr interface{}) string {
+func (f *form) RenderStr(structPtr Interface) string {
 	w := &bytes.Buffer{}
 	defer w.Reset()
 	f.Render(structPtr, w)
@@ -142,7 +131,7 @@ func (f *form) ParseSerializeArray(r *http.Request) {
 	f.Value = newValueSerializeArray(r)
 }
 
-func (f *form) Validate(r *http.Request, structPtrs ...interface{}) (bool, error) {
+func (f *form) Validate(r *http.Request, structPtrs ...Interface) (bool, error) {
 	if r != nil && f.Value == nil {
 		f.Value = newValue(r)
 	}
@@ -160,7 +149,7 @@ func (f *form) Validate(r *http.Request, structPtrs ...interface{}) (bool, error
 	return valid, nil
 }
 
-func (f *form) MustValidate(r *http.Request, structPtrs ...interface{}) bool {
+func (f *form) MustValidate(r *http.Request, structPtrs ...Interface) bool {
 	b, err := f.Validate(r, structPtrs...)
 	if err != nil {
 		panic(err)

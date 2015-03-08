@@ -20,57 +20,43 @@ type inputTime struct {
 	Week          time.Time
 }
 
-func (i *inputTime) DatetimeField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputDatetime
-		},
-		"range": func(m map[string]interface{}) {
+func (i *inputTime) CJForm(f Fields) {
+
+	// Datetime
+	func() {
+		f := f.Init("Datetime", InputDatetime)
+		f["range"] = func(m map[string]interface{}) {
 			// time.Date(year, month, day, hour, min, sec, nsec, loc)
 			*(m["min"].(*time.Time)) = time.Date(2014, 2, 15, 5, 0, 1, 0, time.UTC)
 			*(m["max"].(*time.Time)) = time.Date(2014, 10, 15, 4, 59, 59, 0, time.UTC)
-		},
-	}
-}
+		}
+	}()
 
-func (i *inputTime) DatetimelocalField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputDatetimeLocal
-		},
-	}
-}
+	// Datetimelocal
+	func() {
+		f.Init("Datetimelocal", InputDatetimeLocal)
+	}()
 
-func (i *inputTime) DateField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputDate
-		},
-	}
-}
+	// Date
+	func() {
+		f.Init("Date", InputDate)
+	}()
 
-func (i *inputTime) TimeField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputTime
-		},
-	}
-}
+	// Time
+	func() {
+		f.Init("Time", InputTime)
+	}()
 
-func (i *inputTime) MonthField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputMonth
-		},
-	}
-}
+	// Month
+	func() {
+		f.Init("Month", InputMonth)
+	}()
 
-func (i *inputTime) WeekField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputWeek
-		},
-	}
+	// Week
+	func() {
+		f.Init("Week", InputWeek)
+	}()
+
 }
 
 func TestInputTime(t *testing.T) {

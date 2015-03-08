@@ -16,55 +16,49 @@ type inputRadio struct {
 	F   float64
 }
 
-func (i *inputRadio) StrField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputRadio
-		},
-		"mandatory": func(m map[string]interface{}) {
+func (i *inputRadio) CJForm(f Fields) {
+
+	// Str
+	func() {
+		f := f.Init("Str", InputRadio)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"radio": func(m map[string]interface{}) {
+		}
+		f["radio"] = func(m map[string]interface{}) {
 			*(m["radio"].(*[]Radio)) = []Radio{
 				{Value: "Hello", Label: "Hello"},
 				{Value: "World", Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *inputRadio) WField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputRadio
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// W
+	func() {
+		f := f.Init("W", InputRadio)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"radio": func(m map[string]interface{}) {
+		}
+		f["radio"] = func(m map[string]interface{}) {
 			*(m["radio"].(*[]RadioInt)) = []RadioInt{
 				{Value: 1, Label: "Hello"},
 				{Value: 2, Label: "World"},
 			}
-		},
-	}
-}
+		}
+	}()
 
-func (i *inputRadio) FField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputRadio
-		},
-		"mandatory": func(m map[string]interface{}) {
+	// F
+	func() {
+		f := f.Init("F", InputRadio)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-		"radio": func(m map[string]interface{}) {
+		}
+		f["radio"] = func(m map[string]interface{}) {
 			*(m["radio"].(*[]RadioFloat)) = []RadioFloat{
 				{Value: 1.5, Label: "Hello"},
 				{Value: 2.5, Label: "World"},
 			}
-		},
-	}
+		}
+	}()
 }
 
 func TestInputRadio(t *testing.T) {

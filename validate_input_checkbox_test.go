@@ -14,15 +14,15 @@ type inputCheckbox struct {
 	First bool
 }
 
-func (i *inputCheckbox) FirstField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputCheckbox
-		},
-		"mandatory": func(m map[string]interface{}) {
+func (i *inputCheckbox) CJForm(f Fields) {
+
+	// First
+	func() {
+		f := f.Init("First", InputCheckbox)
+		f["mandatory"] = func(m map[string]interface{}) {
 			*(m["mandatory"].(*bool)) = true
-		},
-	}
+		}
+	}()
 }
 
 func TestInputCheckbox(t *testing.T) {
