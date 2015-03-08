@@ -17,10 +17,9 @@ type renderValue struct {
 	fls          *FirstLayerStack
 }
 
-func (f *form) render(structPtr interface{}, w io.Writer) {
+func (f *form) render(structPtr Interface, w io.Writer) {
 	t := reflect.TypeOf(structPtr)
 	vc := reflect.ValueOf(structPtr)
-	vcc := vc
 
 	switch {
 	case isStructPtr(t):
@@ -32,31 +31,34 @@ func (f *form) render(structPtr interface{}, w io.Writer) {
 
 	data := f.Data[structPtr]
 
-	for fieldNo := 0; fieldNo < t.NumField(); fieldNo++ {
-		field := vc.Field(fieldNo)
-		if !field.CanSet() {
-			continue
+	fields := Fields{
+		[]*Field{},
+	}
+
+	structPtr.CJForm(&fields)
+
+	for _, afield := range fields.f {
+		name := afield.name
+		fieldFns := afield.funcs
+		_, exist := t.FieldByName(name)
+		if !exist {
+			panic(fmt.Errorf("form: '%s' field does not exist", name))
 		}
 
-		name := t.Field(fieldNo).Name
 		preferedName := name
 
-		opsFunc := vcc.MethodByName(name + "Field")
-		if !opsFunc.IsValid() {
-			continue
-		}
-
-		val := opsFunc.Call(make([]reflect.Value, 0))
-		var fieldFns FieldFuncs
-		var ok bool
-		if fieldFns, ok = val[0].Interface().(FieldFuncs); !ok {
-			continue
+		field := vc.FieldByName(name)
+		if !field.CanSet() {
+			panic(fmt.Errorf("form: '%s' field cannot be set", name))
 		}
 
 		_type := Invalid
 
-		fieldFns.Call("form", map[string]interface{}{
+		fieldFns.Call("init", map[string]interface{}{
 			"type": &_type,
+		})
+
+		fieldFns.Call("name", map[string]interface{}{
 			"name": &preferedName,
 		})
 

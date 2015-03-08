@@ -20,10 +20,9 @@ type validateValue struct {
 	t            reflect.Type
 }
 
-func (f *form) validate(structPtr interface{}) (bool, error) {
+func (f *form) validate(structPtr Interface) (bool, error) {
 	t := reflect.TypeOf(structPtr)
 	vc := reflect.ValueOf(structPtr)
-	vcc := vc
 
 	switch {
 	case isStructPtr(t):
@@ -37,7 +36,6 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 	data := f.Data[structPtr]
 
 	type _f struct {
-		fieldNo      int
 		field        reflect.Value
 		name         string
 		preferedName string
@@ -49,34 +47,36 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 
 	fieldM := []*_f{}
 
-	// Populate first
-	for fieldNo := 0; fieldNo < t.NumField(); fieldNo++ {
-		field := vc.Field(fieldNo)
-		if !field.CanSet() {
-			continue
-		}
+	fields := Fields{
+		[]*Field{},
+	}
 
+	structPtr.CJForm(&fields)
+
+	for _, afield := range fields.f {
+		name := afield.name
+		fieldFns := afield.funcs
 		var err error
 
-		name := t.Field(fieldNo).Name
-		preferedName := name
-
-		opsFunc := vcc.MethodByName(name + "Field")
-		if !opsFunc.IsValid() {
-			continue
+		tfield, exist := t.FieldByName(name)
+		if !exist {
+			panic(fmt.Errorf("form: '%s' field does not exist", name))
 		}
 
-		val := opsFunc.Call(make([]reflect.Value, 0))
-		var fieldFns FieldFuncs
-		var ok bool
-		if fieldFns, ok = val[0].Interface().(FieldFuncs); !ok {
-			continue
+		preferedName := name
+
+		field := vc.FieldByName(name)
+		if !field.CanSet() {
+			panic(fmt.Errorf("form: '%s' field cannot be set", name))
 		}
 
 		_type := Invalid
 
-		fieldFns.Call("form", map[string]interface{}{
+		fieldFns.Call("init", map[string]interface{}{
 			"type": &_type,
+		})
+
+		fieldFns.Call("name", map[string]interface{}{
 			"name": &preferedName,
 		})
 
@@ -84,7 +84,7 @@ func (f *form) validate(structPtr interface{}) (bool, error) {
 			continue
 		}
 
-		fieldC := &_f{fieldNo, field, name, preferedName, fieldFns, _type, t.Field(fieldNo).Type, nil}
+		fieldC := &_f{field, name, preferedName, fieldFns, _type, tfield.Type, nil}
 
 		fieldM = append(fieldM, fieldC)
 

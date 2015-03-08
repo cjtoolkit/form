@@ -14,12 +14,12 @@ type inputColor struct {
 	First string
 }
 
-func (i *inputColor) FirstField() FieldFuncs {
-	return FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = InputColor
-		},
-	}
+func (i *inputColor) CJForm(f *Fields) {
+
+	// First
+	func() {
+		f.Init("First", InputColor)
+	}()
 }
 
 func TestInputColor(t *testing.T) {

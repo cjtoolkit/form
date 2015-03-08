@@ -22,7 +22,6 @@ Automated Form Rendering and Validation Library for Google Go.
 Documentation can be found at.
 
  - http://gowalker.org/github.com/cjtoolkit/form
- - http://gowalker.org/github.com/cjtoolkit/form/cheatsheet
 
 ## Installation
 
@@ -50,27 +49,21 @@ type TestForm struct {
 	File *multipart.FileHeader
 }
 
-func (t *TestForm) TextField() form.FieldFuncs {
-	return form.FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*form.TypeCode)) = form.InputText
-		},
-		"html": func(m map[string]interface{}) {
-			*(m["before"].(*string)) = "<h1>File Test</h1>"
-		},
-	}
-}
+func (t *TestForm) CJForm(f form.Fields) {
+	// Text
+	func() {
+		f := f.Init("Text", form.InputText)
+		html := f.HTML()
+		html.Before = "<h1>File Test</h1>"
+	}()
 
-func (t *TestForm) FileField() form.FieldFuncs {
-	return form.FieldFuncs{
-		"form": func(m map[string]interface{}) {
-			*(m["type"].(*form.TypeCode)) = form.InputFile
-		},
-		"file": func(m map[string]interface{}) {
-			*(m["size"].(*int64)) = 10 * 1024 * 1024
-			*(m["accept"].(*[]string)) = []string{"image/jpeg", "image/png"}
-		},
-	}
+	// File
+	func() {
+		f := f.Init("File", form.InputFile)
+		file := f.File()
+		file.Size = 10 * 1024 * 1024
+		file.Accept = []string{"image/jpeg", "image/png"}
+	}()
 }
 
 func main() {
@@ -112,6 +105,7 @@ func main() {
 
 	http.ListenAndServe(":8080", mux)
 }
+
 ~~~
 
 ## Demo
