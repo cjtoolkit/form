@@ -49,7 +49,7 @@ type TestForm struct {
 	File *multipart.FileHeader
 }
 
-func (t *TestForm) CJForm(f form.Fields) {
+func (t *TestForm) CJForm(f *form.Fields) {
 	// Text
 	func() {
 		f := f.Init("Text", form.InputText)
