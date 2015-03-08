@@ -19,7 +19,7 @@ type select_ struct {
 	Fs   []float64
 }
 
-func (i *select_) CJForm(f Fields) {
+func (i *select_) CJForm(f *Fields) {
 
 	// Str
 	func() {

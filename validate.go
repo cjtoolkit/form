@@ -47,11 +47,15 @@ func (f *form) validate(structPtr Interface) (bool, error) {
 
 	fieldM := []*_f{}
 
-	fields := Fields{}
+	fields := Fields{
+		[]*Field{},
+	}
 
-	structPtr.CJForm(fields)
+	structPtr.CJForm(&fields)
 
-	for name, fieldFns := range fields {
+	for _, afield := range fields.f {
+		name := afield.name
+		fieldFns := afield.funcs
 		var err error
 
 		tfield, exist := t.FieldByName(name)

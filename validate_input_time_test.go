@@ -20,7 +20,7 @@ type inputTime struct {
 	Week          time.Time
 }
 
-func (i *inputTime) CJForm(f Fields) {
+func (i *inputTime) CJForm(f *Fields) {
 
 	// Datetime
 	func() {

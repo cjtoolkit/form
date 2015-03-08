@@ -15,7 +15,7 @@ type inputNumber struct {
 	Second float64
 }
 
-func (i *inputNumber) CJForm(f Fields) {
+func (i *inputNumber) CJForm(f *Fields) {
 
 	// First
 	func() {

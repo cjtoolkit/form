@@ -19,7 +19,7 @@ type inputText struct {
 
 var rePattern = regexp.MustCompile("^[a-z]{1,5}[0-9]{1,5}$")
 
-func (i *inputText) CJForm(f Fields) {
+func (i *inputText) CJForm(f *Fields) {
 
 	// First
 	func() {

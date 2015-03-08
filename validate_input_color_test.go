@@ -14,7 +14,7 @@ type inputColor struct {
 	First string
 }
 
-func (i *inputColor) CJForm(f Fields) {
+func (i *inputColor) CJForm(f *Fields) {
 
 	// First
 	func() {

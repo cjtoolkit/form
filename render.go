@@ -31,11 +31,15 @@ func (f *form) render(structPtr Interface, w io.Writer) {
 
 	data := f.Data[structPtr]
 
-	fields := Fields{}
+	fields := Fields{
+		[]*Field{},
+	}
 
-	structPtr.CJForm(fields)
+	structPtr.CJForm(&fields)
 
-	for name, fieldFns := range fields {
+	for _, afield := range fields.f {
+		name := afield.name
+		fieldFns := afield.funcs
 		_, exist := t.FieldByName(name)
 		if !exist {
 			panic(fmt.Errorf("form: '%s' field does not exist", name))

@@ -11,15 +11,23 @@ func (fns FieldFuncs) Call(name string, m map[string]interface{}) {
 	fns[name](m)
 }
 
+type Field struct {
+	name  string
+	funcs FieldFuncs
+}
+
 // Fields
-type Fields map[string]FieldFuncs
+type Fields struct {
+	f []*Field
+}
 
 // Init Field
-func (f Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
-	f[fieldname] = FieldFuncs{
+func (f *Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
+	fns := FieldFuncs{
 		"init": func(m map[string]interface{}) {
 			*(m["type"].(*TypeCode)) = typeCode
 		},
 	}
-	return f[fieldname]
+	f.f = append(f.f, &Field{fieldname, fns})
+	return fns
 }

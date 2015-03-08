@@ -15,7 +15,7 @@ type inputEmail struct {
 	Second string
 }
 
-func (i *inputEmail) CJForm(f Fields) {
+func (i *inputEmail) CJForm(f *Fields) {
 
 	// First
 	func() {

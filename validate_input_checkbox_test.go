@@ -14,7 +14,7 @@ type inputCheckbox struct {
 	First bool
 }
 
-func (i *inputCheckbox) CJForm(f Fields) {
+func (i *inputCheckbox) CJForm(f *Fields) {
 
 	// First
 	func() {

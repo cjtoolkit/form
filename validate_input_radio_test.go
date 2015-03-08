@@ -16,7 +16,7 @@ type inputRadio struct {
 	F   float64
 }
 
-func (i *inputRadio) CJForm(f Fields) {
+func (i *inputRadio) CJForm(f *Fields) {
 
 	// Str
 	func() {

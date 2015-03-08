@@ -223,7 +223,7 @@ type File struct {
 func (fns FieldFuncs) File() *File {
 	file := &File{Size: -1}
 
-	fns["attr"] = func(m map[string]interface{}) {
+	fns["file"] = func(m map[string]interface{}) {
 		*(m["size"].(*int64)) = file.Size
 		*(m["sizeErr"].(*string)) = file.SizeErr
 		*(m["accept"].(*[]string)) = file.Accept
