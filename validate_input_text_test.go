@@ -24,32 +24,26 @@ func (i *inputText) CJForm(f Fields) {
 	// First
 	func() {
 		f := f.Init("First", InputText)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["size"] = func(m map[string]interface{}) {
-			*(m["max"].(*int)) = 8
-		}
+		f.Mandatory()
+
+		size := f.Size()
+		size.Max = 8
 	}()
 
 	// Second
 	func() {
 		f := f.Init("Second", InputText)
-		f["mustmatch"] = func(m map[string]interface{}) {
-			*(m["name"].(*string)) = "First"
-			*(m["value"].(*string)) = i.First
-		}
+
+		match := f.MustMatch()
+		match.Name = "First"
+		match.Value = &i.First
 	}()
 
 	// Re
 	func() {
 		f := f.Init("Re", InputText)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["pattern"] = func(m map[string]interface{}) {
-			*(m["pattern"].(**regexp.Regexp)) = rePattern
-		}
+		f.Mandatory()
+		f.Pattern(rePattern)
 	}()
 }
 

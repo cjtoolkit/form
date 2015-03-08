@@ -24,85 +24,61 @@ func (i *select_) CJForm(f Fields) {
 	// Str
 	func() {
 		f := f.Init("Str", Select)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["option"] = func(m map[string]interface{}) {
-			*(m["option"].(*[]Option)) = []Option{
-				{Value: "Hello", Label: "Hello"},
-				{Value: "World", Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Options([]Option{
+			{Value: "Hello", Label: "Hello"},
+			{Value: "World", Label: "World"},
+		})
 	}()
 
 	// Strs
 	func() {
 		f := f.Init("Strs", Select)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["option"] = func(m map[string]interface{}) {
-			*(m["option"].(*[]Option)) = []Option{
-				{Value: "Hello", Label: "Hello"},
-				{Value: "World", Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Options([]Option{
+			{Value: "Hello", Label: "Hello"},
+			{Value: "World", Label: "World"},
+		})
 	}()
 
 	// W
 	func() {
 		f := f.Init("W", Select)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["option"] = func(m map[string]interface{}) {
-			*(m["option"].(*[]OptionInt)) = []OptionInt{
-				{Value: 1, Label: "Hello"},
-				{Value: 2, Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Options([]OptionInt{
+			{Value: 1, Label: "Hello"},
+			{Value: 2, Label: "World"},
+		})
 	}()
 
 	// Ws
 	func() {
 		f := f.Init("Ws", Select)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["option"] = func(m map[string]interface{}) {
-			*(m["option"].(*[]OptionInt)) = []OptionInt{
-				{Value: 1, Label: "Hello"},
-				{Value: 2, Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Options([]OptionInt{
+			{Value: 1, Label: "Hello"},
+			{Value: 2, Label: "World"},
+		})
 	}()
 
 	// F
 	func() {
 		f := f.Init("F", Select)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["option"] = func(m map[string]interface{}) {
-			*(m["option"].(*[]OptionFloat)) = []OptionFloat{
-				{Value: 1.5, Label: "Hello"},
-				{Value: 2.5, Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Options([]OptionFloat{
+			{Value: 1.5, Label: "Hello"},
+			{Value: 2.5, Label: "World"},
+		})
 	}()
 
 	// Fs
 	func() {
 		f := f.Init("Fs", Select)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["option"] = func(m map[string]interface{}) {
-			*(m["option"].(*[]OptionFloat)) = []OptionFloat{
-				{Value: 1.5, Label: "Hello"},
-				{Value: 2.5, Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Options([]OptionFloat{
+			{Value: 1.5, Label: "Hello"},
+			{Value: 2.5, Label: "World"},
+		})
 	}()
 
 }

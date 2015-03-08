@@ -25,11 +25,9 @@ func (i *inputTime) CJForm(f Fields) {
 	// Datetime
 	func() {
 		f := f.Init("Datetime", InputDatetime)
-		f["range"] = func(m map[string]interface{}) {
-			// time.Date(year, month, day, hour, min, sec, nsec, loc)
-			*(m["min"].(*time.Time)) = time.Date(2014, 2, 15, 5, 0, 1, 0, time.UTC)
-			*(m["max"].(*time.Time)) = time.Date(2014, 10, 15, 4, 59, 59, 0, time.UTC)
-		}
+		r := f.RangeTime()
+		r.Min = time.Date(2014, 2, 15, 5, 0, 1, 0, time.UTC)
+		r.Max = time.Date(2014, 10, 15, 4, 59, 59, 0, time.UTC)
 	}()
 
 	// Datetimelocal

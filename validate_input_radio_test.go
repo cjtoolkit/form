@@ -21,43 +21,31 @@ func (i *inputRadio) CJForm(f Fields) {
 	// Str
 	func() {
 		f := f.Init("Str", InputRadio)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["radio"] = func(m map[string]interface{}) {
-			*(m["radio"].(*[]Radio)) = []Radio{
-				{Value: "Hello", Label: "Hello"},
-				{Value: "World", Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Radios([]Radio{
+			{Value: "Hello", Label: "Hello"},
+			{Value: "World", Label: "World"},
+		})
 	}()
 
 	// W
 	func() {
 		f := f.Init("W", InputRadio)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["radio"] = func(m map[string]interface{}) {
-			*(m["radio"].(*[]RadioInt)) = []RadioInt{
-				{Value: 1, Label: "Hello"},
-				{Value: 2, Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Radios([]RadioInt{
+			{Value: 1, Label: "Hello"},
+			{Value: 2, Label: "World"},
+		})
 	}()
 
 	// F
 	func() {
 		f := f.Init("F", InputRadio)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
-		f["radio"] = func(m map[string]interface{}) {
-			*(m["radio"].(*[]RadioFloat)) = []RadioFloat{
-				{Value: 1.5, Label: "Hello"},
-				{Value: 2.5, Label: "World"},
-			}
-		}
+		f.Mandatory()
+		f.Radios([]RadioFloat{
+			{Value: 1.5, Label: "Hello"},
+			{Value: 2.5, Label: "World"},
+		})
 	}()
 }
 

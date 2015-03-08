@@ -19,9 +19,7 @@ func (i *inputCheckbox) CJForm(f Fields) {
 	// First
 	func() {
 		f := f.Init("First", InputCheckbox)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
+		f.Mandatory()
 	}()
 }
 

@@ -20,18 +20,16 @@ func (i *inputEmail) CJForm(f Fields) {
 	// First
 	func() {
 		f := f.Init("First", InputEmail)
-		f["mandatory"] = func(m map[string]interface{}) {
-			*(m["mandatory"].(*bool)) = true
-		}
+		f.Mandatory()
 	}()
 
 	// Second
 	func() {
 		f := f.Init("Second", InputEmail)
-		f["mustmatch"] = func(m map[string]interface{}) {
-			*(m["name"].(*string)) = "First"
-			*(m["value"].(*string)) = i.First
-		}
+
+		match := f.MustMatch()
+		match.Name = "First"
+		match.Value = &i.First
 	}()
 }
 

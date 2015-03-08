@@ -49,7 +49,7 @@ func New(r RenderSecondLayer, languageSources ...string) Form {
 	return &form{
 		T:        i18n.MustTfunc("cjtoolkit-form", languageSources...),
 		R:        r,
-		Data:     map[interface{}]*formData{},
+		Data:     map[Interface]*formData{},
 		JsonData: []map[string]interface{}{},
 	}
 }
@@ -105,7 +105,7 @@ func (f *formData) shiftWarning(name string) (warning string) {
 type form struct {
 	T         i18n.Translator
 	R         RenderSecondLayer
-	Data      map[interface{}]*formData
+	Data      map[Interface]*formData
 	JsonValid bool
 	JsonData  []map[string]interface{}
 	Value     *value

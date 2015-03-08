@@ -11,8 +11,10 @@ func (fns FieldFuncs) Call(name string, m map[string]interface{}) {
 	fns[name](m)
 }
 
+// Fields
 type Fields map[string]FieldFuncs
 
+// Init Field
 func (f Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
 	f[fieldname] = FieldFuncs{
 		"init": func(m map[string]interface{}) {
