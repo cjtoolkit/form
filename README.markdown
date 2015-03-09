@@ -16,7 +16,7 @@ Automated Form Rendering and Validation Library for Google Go.
     - i18n integration.
     - Database integration either with or without ORM, Your choice.
   - No Struct tags are needed, not that there anything wrong with them.
-  - See example below, than have a look at document and the cheatsheet, it will help you understand the system.
+  - See example below, than have a look at document, it will help you understand the system.
 
 
 Documentation can be found at.
