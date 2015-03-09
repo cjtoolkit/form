@@ -140,18 +140,6 @@ formField:
 
 /*
 Foundation Second Layer (http://foundation.zurb.com/)
-	"html":
-		"before": *string
-		"after": *string
-	"label":
-		"content": *string
-		"for": *string
-		"attr": *map[string]string
-	"foundation":
-		"beforeInput": *string
-		"afterInput": *string
-		"startOfGroup": *string
-		"endOfGroup": *string
 */
 func SecondLayer() form.RenderSecondLayer {
 	return foundation{}
