@@ -183,7 +183,7 @@ func (fns FieldFuncs) Attr(attr map[string]string) {
 	}
 }
 
-// Append Options
+// Append Options, accept []Option, []OptionInt, []OptionFloat
 func (fns FieldFuncs) Options(v interface{}) {
 	fns["option"] = func(m map[string]interface{}) {
 		switch v := v.(type) {
@@ -197,7 +197,7 @@ func (fns FieldFuncs) Options(v interface{}) {
 	}
 }
 
-// Append Radios
+// Append Radios, accept []Radio, []RadioInt, []RadioFloat
 func (fns FieldFuncs) Radios(v interface{}) {
 	fns["radio"] = func(m map[string]interface{}) {
 		switch v := v.(type) {
