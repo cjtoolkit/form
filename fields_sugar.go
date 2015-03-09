@@ -269,3 +269,10 @@ func (fns FieldFuncs) Label() *Label {
 
 	return label
 }
+
+// Custom Rules
+func (fns FieldFuncs) Custom(fn func(*error, *string)) {
+	fns["ext"] = func(m map[string]interface{}) {
+		fn(m["error"].(*error), m["warning"].(*string))
+	}
+}

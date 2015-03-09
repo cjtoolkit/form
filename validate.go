@@ -278,7 +278,7 @@ func (f *form) validate(structPtr Interface) (bool, error) {
 			va.file(value)
 		}
 
-		if data.Errors[name] == nil {
+		if err == nil {
 			va.fieldsFns.Call("ext", map[string]interface{}{
 				"error":   &err,
 				"warning": &warning,
