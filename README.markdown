@@ -10,7 +10,7 @@ Automated Form Rendering and Validation Library for Google Go.
   - First layer is fixed.
   - Second layer is user definable.
     - So you can use your own CSS framework.
-- Heavily relies on Struct, Methods and Function Enclosures.
+- Relies on Struct Pointers with only one methods
   - So you can pretty much do anything you desire.
     - Defining your own rules (ext).
     - i18n integration.
