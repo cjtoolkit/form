@@ -10,21 +10,6 @@ import (
 
 /*
 Bootstrap Second Layer (http://getbootstrap.com/)
-	"html":
-		"before": *string
-		"after": *string
-	"label":
-		"content": *string
-		"for": *string
-		"attr": *map[string]string
-	"bootstrap":
-		"beforeInput": *string
-		"afterInput": *string
-		"startOfGroup": *string
-		"endOfGroup": *string
-		"helpBlock": *string
-		"disabled": *bool (Only works with 'InputRadio' and 'InputCheckbox')
-		"feedback" *bool
 */
 func SecondLayer() form.RenderSecondLayer {
 	return bootstrap{}
