@@ -26,6 +26,7 @@ func (e *Example) CJForm(f *form.Fields) {
 	}()
 }
 ~~~
+
     - i18n integration.
     - Database integration either with or without ORM, Your choice.
   - No Struct tags are needed, not that there anything wrong with them.
