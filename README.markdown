@@ -12,7 +12,20 @@ Automated Form Rendering and Validation Library for Google Go.
     - So you can use your own CSS framework.
 - Relies on Struct Pointers with only one methods
   - So you can pretty much do anything you desire.
-    - Defining your own rules (ext).
+    - Defining your own rules.
+~~~ go 
+func (e *Example) CJForm(f *form.Fields) {
+	// Text
+	func() {
+		f := f.Init("Text", form.InputText)
+
+		f.Custom(func(e *error, w *string) {
+			*e = "Error message here!"
+			*w = "Warning message here!"
+		})
+	}()
+}
+~~~
     - i18n integration.
     - Database integration either with or without ORM, Your choice.
   - No Struct tags are needed, not that there anything wrong with them.
