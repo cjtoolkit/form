@@ -47,7 +47,7 @@ type FirstLayerTextarea struct {
 
 // Render
 func (f *FirstLayerTextarea) Render(w io.Writer) {
-	fmt.Fprintf(w, `<textarea %s>%s</textare>`, RenderAttr(f.Attr), es(f.Content))
+	fmt.Fprintf(w, `<textarea %s>%s</textarea>`, RenderAttr(f.Attr), es(f.Content))
 }
 
 // First Layer Select
