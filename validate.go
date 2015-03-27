@@ -21,15 +21,21 @@ type validateValue struct {
 }
 
 func (f *form) validate(structPtr Interface) (bool, error) {
-	t := reflect.TypeOf(structPtr)
-	vc := reflect.ValueOf(structPtr)
+	var preStructPtr interface{} = structPtr
+
+	if v, ok := structPtr.(Hijacker); ok {
+		preStructPtr = v.CJStructPtr()
+	}
+
+	t := reflect.TypeOf(preStructPtr)
+	vc := reflect.ValueOf(preStructPtr)
 
 	switch {
 	case isStructPtr(t):
 		t = t.Elem()
 		vc = vc.Elem()
 	default:
-		return false, fmt.Errorf("form: '%p' is not a struct pointer", structPtr)
+		return false, fmt.Errorf("form: '%p' is not a struct pointer", preStructPtr)
 	}
 
 	f.Data[structPtr] = newData()
