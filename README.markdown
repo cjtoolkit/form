@@ -21,7 +21,7 @@ Automated Form Rendering and Validation Library for Google Go.
 
 Documentation can be found at.
 
- - http://gowalker.org/github.com/cjtoolkit/form
+ - https://godoc.org/github.com/cjtoolkit/form
 
 ## Installation
 
