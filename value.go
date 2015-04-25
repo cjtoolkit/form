@@ -20,17 +20,13 @@ type value struct {
 func newValue(r *http.Request) *value {
 	v := &value{}
 	count := 0
-	if r.Form != nil {
-		if len(r.Form) > 0 {
-			v.Form = r.Form
-			count++
-		}
+	if len(r.Form) > 0 {
+		v.Form = r.Form
+		count++
 	}
-	if r.PostForm != nil {
-		if len(r.PostForm) > 0 {
-			v.PostForm = r.PostForm
-			count++
-		}
+	if len(r.PostForm) > 0 {
+		v.PostForm = r.PostForm
+		count++
 	}
 	if r.MultipartForm != nil {
 		v.MultipartForm = r.MultipartForm
@@ -77,14 +73,12 @@ func (r *value) Shift(name string) (str string) {
 		str = r.MultipartForm.Value[name][r.multipartValueCount[name]]
 		r.multipartValueCount[name]++
 
-	case r.Form != nil &&
-		len(r.Form[name]) > r.formCount[name]:
+	case len(r.Form[name]) > r.formCount[name]:
 
 		str = r.Form[name][r.formCount[name]]
 		r.formCount[name]++
 
-	case r.PostForm != nil &&
-		len(r.PostForm[name]) > r.postFormCount[name]:
+	case len(r.PostForm[name]) > r.postFormCount[name]:
 
 		str = r.PostForm[name][r.postFormCount[name]]
 		r.postFormCount[name]++
@@ -103,14 +97,12 @@ func (r *value) All(name string) []string {
 		strs = r.MultipartForm.Value[name][r.multipartValueCount[name]:]
 		r.multipartValueCount[name] = len(r.MultipartForm.Value[name])
 
-	case r.Form != nil &&
-		len(r.Form[name]) > r.formCount[name]:
+	case len(r.Form[name]) > r.formCount[name]:
 
 		strs = r.Form[name][r.formCount[name]:]
 		r.formCount[name] = len(r.Form[name])
 
-	case r.PostForm != nil &&
-		len(r.PostForm[name]) > r.postFormCount[name]:
+	case len(r.PostForm[name]) > r.postFormCount[name]:
 
 		strs = r.PostForm[name][r.postFormCount[name]:]
 		r.postFormCount[name] = len(r.PostForm[name])
