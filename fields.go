@@ -18,9 +18,10 @@ type Field struct {
 
 // Fields
 type Fields struct {
-	m map[string]FieldFuncs
-	n map[string]FieldFuncs
-	f []*Field
+	m  map[string]FieldFuncs
+	n  map[string]*Field
+	nm map[string]*Field
+	f  []*Field
 }
 
 // Init Field
@@ -34,11 +35,13 @@ func (f *Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
 			*(m["type"].(*TypeCode)) = typeCode
 		},
 	}
+	afield := &Field{fieldname, fns}
+	f.nm[fieldname] = afield
 	fns["set_name"] = func(m map[string]interface{}) {
 		name := m["set_name"].(string)
-		f.n[name] = fns
+		f.n[name] = afield
 	}
 	f.m[fieldname] = fns
-	f.f = append(f.f, &Field{fieldname, fns})
+	f.f = append(f.f, afield)
 	return fns
 }

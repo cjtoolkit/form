@@ -39,7 +39,8 @@ func (f *form) render(structPtr Interface, w io.Writer) {
 
 	fields := Fields{
 		map[string]FieldFuncs{},
-		map[string]FieldFuncs{},
+		map[string]*Field{},
+		map[string]*Field{},
 		[]*Field{},
 	}
 
