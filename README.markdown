@@ -106,12 +106,7 @@ func main() {
 			get()
 		case "POST":
 			req.ParseMultipartForm(10 * 1024 * 1024)
-			if !v.MustValidate(req, f) {
-				get()
-				return
-			}
-
-			if f.File == nil {
+			if !v.MustValidate(req, f) && f.File == nil {
 				get()
 				return
 			}
