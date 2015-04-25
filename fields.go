@@ -36,10 +36,14 @@ func (f *Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
 		},
 	}
 	afield := &Field{fieldname, fns}
-	f.nm[fieldname] = afield
-	fns["set_name"] = func(m map[string]interface{}) {
-		name := m["set_name"].(string)
-		f.n[name] = afield
+	if f.nm != nil {
+		f.nm[fieldname] = afield
+	}
+	if f.n != nil {
+		fns["set_name"] = func(m map[string]interface{}) {
+			name := m["set_name"].(string)
+			f.n[name] = afield
+		}
 	}
 	f.m[fieldname] = fns
 	f.f = append(f.f, afield)
