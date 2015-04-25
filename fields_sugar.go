@@ -8,6 +8,12 @@ import (
 
 // Input Name
 func (fns FieldFuncs) Name(name string) {
+	fns.Call("set_name", map[string]interface{}{
+		"set_name": name,
+	})
+
+	fns["set_name"] = nil
+
 	fns["name"] = func(m map[string]interface{}) {
 		*(m["name"].(*string)) = name
 	}
