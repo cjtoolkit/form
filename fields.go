@@ -46,6 +46,8 @@ func (f *Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
 		}
 	}
 	f.m[fieldname] = fns
-	f.f = append(f.f, afield)
+	if f.f != nil {
+		f.f = append(f.f, afield)
+	}
 	return fns
 }
