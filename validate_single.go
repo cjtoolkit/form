@@ -61,7 +61,7 @@ func (f *form) validateSingle(structPtr Interface, name string, value []string) 
 
 	preferedName := name
 
-	field := vc.FieldByName(name)
+	field := vc.FieldByName(fieldName)
 	if !field.CanSet() {
 		err = fmt.Errorf("form: '%s' field cannot be set", fieldName)
 		return

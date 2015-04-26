@@ -34,7 +34,7 @@ type Form interface {
 
 	// Encode JSON into 'w'
 	// {"valid": bool, "data":[{"valid":bool, "error":"", "warning":"", "name":"", "count":int}...]}
-	// Must call Validate or MustValidate first, otherwise it's print invalid data.
+	// Must call Validate or MustValidate first, otnilherwise it's print invalid data.
 	Json(w io.Writer)
 }
 
