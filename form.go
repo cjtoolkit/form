@@ -29,6 +29,9 @@ type Form interface {
 	// Same as validate but panic on error.
 	MustValidate(r *http.Request, structPtrs ...Interface) bool
 
+	// Validate Single Field
+	ValidateSingle(structPtr Interface, name string, value []string) (err error)
+
 	// Encode JSON into 'w'
 	// {"valid": bool, "data":[{"valid":bool, "error":"", "warning":"", "name":"", "count":int}...]}
 	// Must call Validate or MustValidate first, otherwise it's print invalid data.
@@ -36,7 +39,7 @@ type Form interface {
 }
 
 // Create new form validator and renderer.
-// Panic if usable to verify languageSources.
+// Panic if unable to verify languageSources.
 // To use Default Second Layer specify r as 'nil'.
 //
 // Note: Stick to one instant per user request,
@@ -155,6 +158,11 @@ func (f *form) MustValidate(r *http.Request, structPtrs ...Interface) bool {
 		panic(err)
 	}
 	return b
+}
+
+func (f *form) ValidateSingle(structPtr Interface, name string, value []string) (err error) {
+	err = f.validateSingle(structPtr, name, value)
+	return
 }
 
 func (f *form) Json(w io.Writer) {
