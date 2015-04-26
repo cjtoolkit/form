@@ -29,7 +29,7 @@ type Form interface {
 	// Same as validate but panic on error.
 	MustValidate(r *http.Request, structPtrs ...Interface) bool
 
-	// Validate Single Field
+	// Validate Single Field, won't work with must match.
 	ValidateSingle(structPtr Interface, name string, value []string) (err error)
 
 	// Encode JSON into 'w'
