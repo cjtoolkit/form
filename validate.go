@@ -220,6 +220,11 @@ func (f *form) validate(structPtr Interface) (bool, error) {
 				continue
 			}
 			field.Set(reflect.ValueOf(fileHeader))
+
+		default:
+			err = fmt.Errorf(`form: '%v' is not a supported data type for validation,
+only string, []string, int64, []int64, float64, []float64, bool, *multipart.FileHeader
+and time.Time`, t)
 		}
 
 		fieldC.err = err

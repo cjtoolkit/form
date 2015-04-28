@@ -198,6 +198,10 @@ func (f *form) validateSingle(structPtr Interface, name string, value []string) 
 	blank:
 
 		(*validator).time(_value)
+
+	default:
+		err = fmt.Errorf(`form: '%v' is not a supported data type for single validation,
+only string, []string, int64, []int64, float64, []float64, bool and time.Time`, t)
 	}
 
 	return
