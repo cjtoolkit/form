@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -67,4 +68,21 @@ func TestUtil(t *testing.T) {
 	mp.Close()
 
 	http.DefaultClient.Post(testserver.URL, bodyType, buffer)
+
+	call = func(w http.ResponseWriter, r *http.Request) {
+		ParseJQuerySerializeArrayBody(r)
+
+		if r.PostForm.Get("hello") != "world" {
+			t.Error("Parse Body of Request (jQuery): 'hello' is not equal to 'world'")
+		}
+
+		if r.PostForm.Get("world") != "hello" {
+			t.Error("Parse Body of Request (jQuery): 'world' is not equal to 'hello'")
+		}
+	}
+
+	strr := strings.NewReader(`[{"name":"hello","value":"world"},{"name":"world","value":"hello"}]`)
+
+	http.DefaultClient.Post(testserver.URL, "application/json", strr)
+
 }

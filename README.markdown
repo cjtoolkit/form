@@ -25,8 +25,13 @@ Documentation can be found at.
 
 ## Installation
 
-~~~
+~~~ sh
+#!/bin/zsh
+
 go get github.com/cjtoolkit/form
+
+# Optional checkout to stable version, must be in $GOPATH/src/github.com/cjtoolkit/form
+git checkout v1.1
 ~~~
 
 ## Example

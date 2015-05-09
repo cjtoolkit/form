@@ -3,6 +3,7 @@ package form
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/cjtoolkit/i18n"
 	"io"
 	"net/http"
@@ -16,15 +17,9 @@ type Form interface {
 	// As Render but Return string
 	RenderStr(structPtr Interface) string
 
-	// http://api.jquery.com/serializearray/
-	// Request Body must be in JSON format. 'JSON.stringify(object);' in Javascript.
-	// Eg [{name:"",value:""},{name:"",value:""},{name:"",value:""}...]
-	// To validate you must call 'Validate' or 'MustValidate' after 'ParseSerializeArray'.
-	ParseSerializeArray(r *http.Request)
-
 	// Validate User Input and Populate Field in struct with pointers.
 	// Must use struct with pointers otherwise it will return an error.
-	// To get structPtrs field to validate against itself, specify r as 'nil'
+	// r cannot be 'nil'
 	Validate(r *http.Request, structPtrs ...Interface) (bool, error)
 	// Same as validate but panic on error.
 	MustValidate(r *http.Request, structPtrs ...Interface) bool
@@ -127,15 +122,11 @@ func (f *form) RenderStr(structPtr Interface) string {
 	return w.String()
 }
 
-func (f *form) ParseSerializeArray(r *http.Request) {
-	if r == nil || f.Value != nil {
-		return
-	}
-	f.Value = newValueSerializeArray(r)
-}
-
 func (f *form) Validate(r *http.Request, structPtrs ...Interface) (bool, error) {
-	if r != nil && f.Value == nil {
+	if r == nil {
+		return false, fmt.Errorf("Form: 'r' cannot be 'nil'")
+	}
+	if f.Value == nil {
 		f.Value = newValue(r)
 	}
 	valid := true
