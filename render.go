@@ -17,7 +17,7 @@ type renderValue struct {
 	fls          *FirstLayerStack
 }
 
-func (f *form) render(structPtr Interface, w io.Writer) {
+func (f *form) render(structPtr StructPtrForm, w io.Writer) {
 	var preStructPtr interface{} = structPtr
 
 	if v, ok := structPtr.(Hijacker); ok {

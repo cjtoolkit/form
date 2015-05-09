@@ -20,7 +20,7 @@ type validateValue struct {
 	t            reflect.Type
 }
 
-func (f *form) validate(structPtr Interface) (bool, error) {
+func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 	var preStructPtr interface{} = structPtr
 
 	if v, ok := structPtr.(Hijacker); ok {

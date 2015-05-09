@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (f *form) validateSingle(structPtr Interface, name string, value []string) (err error) {
+func (f *form) validateSingle(structPtr StructPtrForm, name string, value []string) (err error) {
 	if len(value) <= 0 {
 		err = fmt.Errorf("form: value cannot be nil or empty")
 		return

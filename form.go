@@ -13,19 +13,19 @@ import (
 type Form interface {
 	// Renders 'structPtr' to 'w', panic if structPtr is not a struct with pointer.
 	// Also renders validation errors if 'Validate' or 'MustValidate' was call before hand.
-	Render(structPtr Interface, w io.Writer)
+	Render(structPtr StructPtrForm, w io.Writer)
 	// As Render but Return string
-	RenderStr(structPtr Interface) string
+	RenderStr(structPtr StructPtrForm) string
 
 	// Validate User Input and Populate Field in struct with pointers.
 	// Must use struct with pointers otherwise it will return an error.
 	// r cannot be 'nil'
-	Validate(r *http.Request, structPtrs ...Interface) (bool, error)
+	Validate(r *http.Request, structPtrs ...StructPtrForm) (bool, error)
 	// Same as validate but panic on error.
-	MustValidate(r *http.Request, structPtrs ...Interface) bool
+	MustValidate(r *http.Request, structPtrs ...StructPtrForm) bool
 
 	// Validate Single Field, won't work with must match.
-	ValidateSingle(structPtr Interface, name string, value []string) (err error)
+	ValidateSingle(structPtr StructPtrForm, name string, value []string) (err error)
 
 	// Encode JSON into 'w'
 	// {"valid": bool, "data":[{"valid":bool, "error":"", "warning":"", "name":"", "count":int}...]}
@@ -47,7 +47,7 @@ func New(r RenderSecondLayer, languageSources ...string) Form {
 	return &form{
 		T:        i18n.MustTfunc("cjtoolkit-form", languageSources...),
 		R:        r,
-		Data:     map[Interface]*formData{},
+		Data:     map[StructPtrForm]*formData{},
 		JsonData: []map[string]interface{}{},
 	}
 }
@@ -103,7 +103,7 @@ func (f *formData) shiftWarning(name string) (warning string) {
 type form struct {
 	T         i18n.Translator
 	R         RenderSecondLayer
-	Data      map[Interface]*formData
+	Data      map[StructPtrForm]*formData
 	JsonValid bool
 	JsonData  []map[string]interface{}
 	Value     *value
@@ -111,18 +111,18 @@ type form struct {
 	rcount    int
 }
 
-func (f *form) Render(structPtr Interface, w io.Writer) {
+func (f *form) Render(structPtr StructPtrForm, w io.Writer) {
 	f.render(structPtr, w)
 }
 
-func (f *form) RenderStr(structPtr Interface) string {
+func (f *form) RenderStr(structPtr StructPtrForm) string {
 	w := &bytes.Buffer{}
 	defer w.Reset()
 	f.Render(structPtr, w)
 	return w.String()
 }
 
-func (f *form) Validate(r *http.Request, structPtrs ...Interface) (bool, error) {
+func (f *form) Validate(r *http.Request, structPtrs ...StructPtrForm) (bool, error) {
 	if r == nil {
 		return false, fmt.Errorf("Form: 'r' cannot be 'nil'")
 	}
@@ -143,7 +143,7 @@ func (f *form) Validate(r *http.Request, structPtrs ...Interface) (bool, error) 
 	return valid, nil
 }
 
-func (f *form) MustValidate(r *http.Request, structPtrs ...Interface) bool {
+func (f *form) MustValidate(r *http.Request, structPtrs ...StructPtrForm) bool {
 	b, err := f.Validate(r, structPtrs...)
 	if err != nil {
 		panic(err)
@@ -151,7 +151,7 @@ func (f *form) MustValidate(r *http.Request, structPtrs ...Interface) bool {
 	return b
 }
 
-func (f *form) ValidateSingle(structPtr Interface, name string, value []string) (err error) {
+func (f *form) ValidateSingle(structPtr StructPtrForm, name string, value []string) (err error) {
 	err = f.validateSingle(structPtr, name, value)
 	return
 }
