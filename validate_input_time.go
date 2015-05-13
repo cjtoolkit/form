@@ -37,9 +37,9 @@ func (va validateValue) timeInputTime(value time.Time) {
 		"maxErr": &maxErr,
 	})
 
-	if min.Unix() == -62135596800 && max.Unix() == -62135596800 {
+	if min.IsZero() && max.IsZero() {
 		goto check_mandatory
-	} else if min.Unix() == -62135596800 {
+	} else if min.IsZero() {
 		goto check_max
 	}
 
@@ -55,7 +55,7 @@ func (va validateValue) timeInputTime(value time.Time) {
 
 check_max:
 
-	if max.Unix() == -62135596800 {
+	if max.IsZero() {
 		goto check_mandatory
 	}
 
@@ -79,7 +79,7 @@ check_mandatory:
 		"err":       &manErr,
 	})
 
-	if mandatory && value.Unix() == -62135596800 {
+	if mandatory && value.IsZero() {
 		if manErr == "" {
 			manErr = va.form.T("ErrMandatory")
 		}

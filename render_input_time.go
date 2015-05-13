@@ -45,23 +45,26 @@ func (r renderValue) timeInputTime(value time.Time) {
 	}
 
 	formatter := func(t time.Time) (str string) {
-		if t.Unix() != -62135596800 {
-			switch r._type {
-			case InputDatetime:
-				str = fmt.Sprint(t.Format(dateTimeFormat))
-			case InputDatetimeLocal:
-				str = fmt.Sprint(t.Format(dateTimeLocalFormat))
-			case InputTime:
-				str = fmt.Sprint(t.Format(timeFormat))
-			case InputDate:
-				str = fmt.Sprint(t.Format(dateFormat))
-			case InputMonth:
-				str = fmt.Sprint(t.Format(monthFormat))
-			case InputWeek:
-				year, week := t.ISOWeek()
-				str = fmt.Sprintf(weekFormat, year, week)
-			}
+		if t.IsZero() {
+			return
 		}
+
+		switch r._type {
+		case InputDatetime:
+			str = fmt.Sprint(t.Format(dateTimeFormat))
+		case InputDatetimeLocal:
+			str = fmt.Sprint(t.Format(dateTimeLocalFormat))
+		case InputTime:
+			str = fmt.Sprint(t.Format(timeFormat))
+		case InputDate:
+			str = fmt.Sprint(t.Format(dateFormat))
+		case InputMonth:
+			str = fmt.Sprint(t.Format(monthFormat))
+		case InputWeek:
+			year, week := t.ISOWeek()
+			str = fmt.Sprintf(weekFormat, year, week)
+		}
+
 		return
 	}
 
@@ -80,11 +83,11 @@ func (r renderValue) timeInputTime(value time.Time) {
 		"maxErr": &_s,
 	})
 
-	if min.Unix() != -62135596800 {
+	if !min.IsZero() {
 		input.Attr["min"] = formatter(min)
 	}
 
-	if max.Unix() != -62135596800 {
+	if !max.IsZero() {
 		input.Attr["max"] = formatter(max)
 	}
 
