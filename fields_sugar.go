@@ -267,7 +267,7 @@ type Label struct {
 func (fns FieldFuncs) Label() *Label {
 	label := &Label{}
 
-	fns["html"] = func(m map[string]interface{}) {
+	fns["label"] = func(m map[string]interface{}) {
 		*(m["content"].(*string)) = label.Content
 		*(m["for"].(*string)) = label.For
 		*(m["attr"].(*map[string]string)) = label.Attr
