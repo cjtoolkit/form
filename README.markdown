@@ -31,7 +31,7 @@ Documentation can be found at.
 go get github.com/cjtoolkit/form
 
 # Optional checkout to stable version, must be in $GOPATH/src/github.com/cjtoolkit/form
-git checkout v1.1.1
+git checkout v1.1.2
 ~~~
 
 ## Example
