@@ -60,10 +60,6 @@ func ParseMultipartBody(r *http.Request, maxMemory int64) {
 // Request Body must be in JSON format. 'JSON.stringify(object);' in Javascript.
 // Eg [{"name":"","value":""},{"name":"","value":""},{"name":"","value":""}...]
 func ParseJQuerySerializeArrayBody(r *http.Request) {
-	if !strings.HasPrefix(r.Header.Get("Content-Type"), "application/json") {
-		return
-	}
-
 	data := []struct {
 		Name  string `json:"name"`
 		Value string `json:"value"`
