@@ -25,6 +25,8 @@ func ParseBody(r *http.Request) {
 		return
 	}
 
+	r.PostForm = url.Values{}
+
 	if !strings.HasPrefix(r.Header.Get("Content-Type"), "application/x-www-form-urlencoded") {
 		return
 	}
@@ -47,6 +49,8 @@ func ParseMultipartBody(r *http.Request, maxMemory int64) {
 	if r.MultipartForm != nil {
 		return
 	}
+
+	r.PostForm = url.Values{}
 
 	mediaType, params, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil || !strings.HasPrefix(mediaType, "multipart/") {
