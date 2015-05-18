@@ -21,6 +21,10 @@ func ParseUrlQuery(r *http.Request) {
 
 // Parse Body of Request
 func ParseBody(r *http.Request) {
+	if r.PostForm != nil {
+		return
+	}
+
 	if !strings.HasPrefix(r.Header.Get("Content-Type"), "application/x-www-form-urlencoded") {
 		return
 	}
@@ -40,6 +44,10 @@ func ParseBody(r *http.Request) {
 
 // Parse Body of Request (Multipart)
 func ParseMultipartBody(r *http.Request, maxMemory int64) {
+	if r.MultipartForm != nil {
+		return
+	}
+
 	mediaType, params, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
 	if err != nil || !strings.HasPrefix(mediaType, "multipart/") {
 		return
@@ -60,6 +68,12 @@ func ParseMultipartBody(r *http.Request, maxMemory int64) {
 // Request Body must be in JSON format. 'JSON.stringify(object);' in Javascript.
 // Eg [{"name":"","value":""},{"name":"","value":""},{"name":"","value":""}...]
 func ParseJQuerySerializeArrayBody(r *http.Request) {
+	if r.PostForm != nil {
+		return
+	}
+
+	r.PostForm = url.Values{}
+
 	data := []struct {
 		Name  string `json:"name"`
 		Value string `json:"value"`
@@ -72,8 +86,6 @@ func ParseJQuerySerializeArrayBody(r *http.Request) {
 	if err != nil {
 		return
 	}
-
-	r.PostForm = url.Values{}
 
 	for _, item := range data {
 		r.PostForm.Add(item.Name, item.Value)
