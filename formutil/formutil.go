@@ -71,6 +71,8 @@ func ParseMultipartBody(r *http.Request, maxMemory int64) {
 // Parse http://api.jquery.com/serializearray/ in JSON format
 // Request Body must be in JSON format. 'JSON.stringify(object);' in Javascript.
 // Eg [{"name":"","value":""},{"name":"","value":""},{"name":"","value":""}...]
+//
+// Notice both 'name' and 'value' must be string or it won't work.
 func ParseJQuerySerializeArrayBody(r *http.Request) {
 	if r.PostForm != nil {
 		return
