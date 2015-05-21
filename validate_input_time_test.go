@@ -81,8 +81,8 @@ func TestInputTime(t *testing.T) {
 
 	// Init
 	res, _ := http.PostForm(ts.URL, url.Values{
-		"Datetime":      {"2014-06-15T05:00:00Z"},
-		"Datetimelocal": {"2014-06-15T05:00:00"},
+		"Datetime":      {"2014-06-15T05:00Z"},
+		"Datetimelocal": {"2014-06-15T05:00"},
 		"Date":          {"2014-06-15"},
 		"Time":          {"05:00:00"},
 		"Month":         {"2014-06"},
@@ -123,8 +123,8 @@ func TestInputTime(t *testing.T) {
 
 	// Below Min
 	res, _ = http.PostForm(ts.URL, url.Values{
-		"Datetime":      {"2014-02-15T05:00:00Z"},
-		"Datetimelocal": {"2014-06-15T05:00:00"},
+		"Datetime":      {"2014-02-15T05:00Z"},
+		"Datetimelocal": {"2014-06-15T05:00"},
 		"Date":          {"2014-06-15"},
 		"Time":          {"05:00:00"},
 		"Month":         {"2014-06"},
@@ -139,8 +139,8 @@ func TestInputTime(t *testing.T) {
 
 	// Above Max
 	res, _ = http.PostForm(ts.URL, url.Values{
-		"Datetime":      {"2014-10-15T05:00:00Z"},
-		"Datetimelocal": {"2014-06-15T05:00:00"},
+		"Datetime":      {"2014-10-15T05:00Z"},
+		"Datetimelocal": {"2014-06-15T05:00"},
 		"Date":          {"2014-06-15"},
 		"Time":          {"05:00:00"},
 		"Month":         {"2014-06"},

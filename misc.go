@@ -41,8 +41,8 @@ func fileContentType(fileHeader *multipart.FileHeader) string {
 
 const (
 	// All meets html5 specification.
-	dateTimeFormat      = "2006-01-02T15:04:05Z07:00" //RFC3339
-	dateTimeLocalFormat = "2006-01-02T15:04:05"
+	dateTimeFormat      = "2006-01-02T15:04Z07:00" //RFC3339
+	dateTimeLocalFormat = "2006-01-02T15:04"
 	dateFormat          = "2006-01-02"
 	timeFormat          = "15:04:05"
 	monthFormat         = "2006-01"
