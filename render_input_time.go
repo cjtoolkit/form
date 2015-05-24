@@ -53,15 +53,15 @@ func (r renderValue) timeInputTime(value time.Time) {
 		case InputDatetime:
 			str = fmt.Sprint(t.Format(dateTimeFormat))
 		case InputDatetimeLocal:
-			str = fmt.Sprint(t.Format(dateTimeLocalFormat))
+			str = fmt.Sprint(t.In(r.form.loc).Format(dateTimeLocalFormat))
 		case InputTime:
-			str = fmt.Sprint(t.Format(timeFormat))
+			str = fmt.Sprint(t.In(r.form.loc).Format(timeFormat))
 		case InputDate:
-			str = fmt.Sprint(t.Format(dateFormat))
+			str = fmt.Sprint(t.In(r.form.loc).Format(dateFormat))
 		case InputMonth:
-			str = fmt.Sprint(t.Format(monthFormat))
+			str = fmt.Sprint(t.In(r.form.loc).Format(monthFormat))
 		case InputWeek:
-			year, week := t.ISOWeek()
+			year, week := t.In(r.form.loc).ISOWeek()
 			str = fmt.Sprintf(weekFormat, year, week)
 		}
 

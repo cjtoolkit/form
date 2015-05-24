@@ -172,21 +172,44 @@ func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 
 			var _time time.Time
 
+			parser := func(formats ...string) {
+				for _, format := range formats {
+					_time, err = time.ParseInLocation(format, _v, f.loc)
+					if err == nil {
+						return
+					}
+				}
+			}
+
 			if _v == "" {
 				goto blank
 			}
 
 			switch _type {
 			case InputDatetime:
-				_time, err = time.Parse(dateTimeFormat, _v)
+				_time, err = time.Parse(dateTimeLocalFormat+".05Z07:00", _v)
+				if err != nil {
+					_time, err = time.Parse(dateTimeLocalFormat+":05Z07:00", _v)
+				}
+				if err != nil {
+					_time, err = time.Parse(dateTimeFormat, _v)
+				}
 			case InputDatetimeLocal:
-				_time, err = time.Parse(dateTimeLocalFormat, _v)
+				parser(
+					dateTimeLocalFormat+".05",
+					dateTimeLocalFormat+":05",
+					dateTimeLocalFormat,
+				)
 			case InputTime:
-				_time, err = time.Parse(timeFormat, _v)
+				parser(
+					timeFormat+".05",
+					timeFormat+":05",
+					timeFormat,
+				)
 			case InputDate:
-				_time, err = time.Parse(dateFormat, _v)
+				_time, err = time.ParseInLocation(dateFormat, _v, f.loc)
 			case InputMonth:
-				_time, err = time.Parse(monthFormat, _v)
+				_time, err = time.ParseInLocation(monthFormat, _v, f.loc)
 			case InputWeek:
 				_vv := strings.Split(_v, "-W")
 				if len(_vv) < 2 {
@@ -203,7 +226,7 @@ func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 				if err != nil {
 					continue
 				}
-				_time = StartingDayOfWeek(int(year), int(week))
+				_time = StartingDayOfWeek(int(year), int(week), f.loc)
 			}
 
 			if err != nil {

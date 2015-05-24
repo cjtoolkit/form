@@ -11,15 +11,15 @@ func (va validateValue) timeInputTime(value time.Time) {
 		case InputDatetime:
 			str = fmt.Sprint(t.Format(dateTimeFormat))
 		case InputDatetimeLocal:
-			str = fmt.Sprint(t.Format(dateTimeLocalFormat))
+			str = fmt.Sprint(t.In(va.form.loc).Format(dateTimeLocalFormat))
 		case InputTime:
-			str = fmt.Sprint(t.Format(timeFormat))
+			str = fmt.Sprint(t.In(va.form.loc).Format(timeFormat))
 		case InputDate:
-			str = fmt.Sprint(t.Format(dateFormat))
+			str = fmt.Sprint(t.In(va.form.loc).Format(dateFormat))
 		case InputMonth:
-			str = fmt.Sprint(t.Format(monthFormat))
+			str = fmt.Sprint(t.In(va.form.loc).Format(monthFormat))
 		case InputWeek:
-			year, week := t.ISOWeek()
+			year, week := t.In(va.form.loc).ISOWeek()
 			str = fmt.Sprintf(weekFormat, year, week)
 		}
 		return

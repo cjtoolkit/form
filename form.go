@@ -7,6 +7,7 @@ import (
 	"github.com/cjtoolkit/i18n"
 	"io"
 	"net/http"
+	"time"
 )
 
 // Form Renderer and Validator interface!
@@ -31,6 +32,9 @@ type Form interface {
 	// {"valid": bool, "data":[{"valid":bool, "error":"", "warning":"", "name":"", "count":int}...]}
 	// Must call Validate or MustValidate first, otnilherwise it's print invalid data.
 	Json(w io.Writer)
+
+	// Set Location
+	Location(loc *time.Location)
 }
 
 // Create new form validator and renderer.
@@ -49,6 +53,7 @@ func New(r RenderSecondLayer, languageSources ...string) Form {
 		R:        r,
 		Data:     map[StructPtrForm]*formData{},
 		JsonData: []map[string]interface{}{},
+		loc:      time.Local,
 	}
 }
 
@@ -109,6 +114,7 @@ type form struct {
 	Value     *value
 	vcount    int
 	rcount    int
+	loc       *time.Location
 }
 
 func (f *form) Render(structPtr StructPtrForm, w io.Writer) {
@@ -163,4 +169,11 @@ func (f *form) Json(w io.Writer) {
 	}
 	enc := json.NewEncoder(w)
 	enc.Encode(v)
+}
+
+func (f *form) Location(loc *time.Location) {
+	if loc == nil {
+		return
+	}
+	f.loc = loc
 }
