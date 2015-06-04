@@ -3,7 +3,6 @@ package form
 import (
 	"fmt"
 	"mime/multipart"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -17,77 +16,49 @@ type validateValue struct {
 	preferedName string
 	fieldsFns    FieldFuncs
 	_type        TypeCode
-	t            reflect.Type
+	t            string
 }
 
-func (f *form) validate(structPtr StructPtrForm) (bool, error) {
-	t := reflect.TypeOf(structPtr)
-	vc := reflect.ValueOf(structPtr)
-
-	switch {
-	case isStructPtr(t):
-		t = t.Elem()
-		vc = vc.Elem()
-	default:
-		return false, fmt.Errorf("form: '%p' is not a struct pointer", structPtr)
+func (f *form) validate(formPtr FormPtr) (bool, error) {
+	if !isStructPtr(formPtr) {
+		return false, fmt.Errorf("form: '%T' is not a pointer", formPtr)
 	}
 
-	f.Data[structPtr] = newData()
-	data := f.Data[structPtr]
+	f.Data[formPtr] = newData()
+	data := f.Data[formPtr]
 
 	type _f struct {
-		field        reflect.Value
+		ptr          interface{}
 		name         string
 		preferedName string
 		fieldFns     FieldFuncs
 		_type        TypeCode
-		t            reflect.Type
 		err          error
 	}
 
 	fieldM := []*_f{}
 
-	fields := Fields{
-		map[string]FieldFuncs{},
-		nil,
-		nil,
-		[]*Field{},
-	}
+	fields := &Fields{}
 
-	structPtr.CJForm(&fields)
+	fields.m = map[string]FieldFuncs{}
+	fields.f = []*Field{}
 
-	for _, afield := range fields.f {
-		name := afield.name
-		fieldFns := afield.funcs
+	formPtr.CJForm(fields)
+
+	for _, field := range fields.f {
+		name := field.name
+		fieldFns := field.funcs
 		var err error
-
-		tfield, exist := t.FieldByName(name)
-		if !exist {
-			panic(fmt.Errorf("form: '%s' field does not exist", name))
-		}
 
 		preferedName := name
 
-		field := vc.FieldByName(name)
-		if !field.CanSet() {
-			panic(fmt.Errorf("form: '%s' field cannot be set", name))
-		}
-
-		_type := Invalid
-
-		fieldFns.Call("init", map[string]interface{}{
-			"type": &_type,
-		})
-
-		fieldFns.Call("name", map[string]interface{}{
-			"name": &preferedName,
-		})
+		_type := field.typecode
 
 		if _type <= Invalid || _type >= terminate {
 			continue
 		}
 
-		fieldC := &_f{field, name, preferedName, fieldFns, _type, tfield.Type, nil}
+		fieldC := &_f{field.ptr, name, preferedName, fieldFns, _type, nil}
 
 		fieldM = append(fieldM, fieldC)
 
@@ -95,26 +66,28 @@ func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 			continue
 		}
 
-		switch field.Interface().(type) {
+		switch ptr := field.ptr.(type) {
 
-		case string:
-			field.Set(reflect.ValueOf(strings.TrimSpace(f.Value.Shift(preferedName))))
-		case []string:
+		case *string:
+			*ptr = strings.TrimSpace(f.Value.Shift(preferedName))
+
+		case *[]string:
 			clean := []string{}
 			unclean := f.Value.All(preferedName)
 			for _, value := range unclean {
 				clean = append(clean, strings.TrimSpace(value))
 			}
-			field.Set(reflect.ValueOf(clean))
+			*ptr = clean
 
-		case int64:
+		case *int64:
 			var _v int64
 			_v, err = strconv.ParseInt(strings.TrimSpace(f.Value.Shift(preferedName)), 10, 64)
 			if err != nil {
 				continue
 			}
-			field.Set(reflect.ValueOf(_v))
-		case []int64:
+			*ptr = _v
+
+		case *[]int64:
 			vs := []int64{}
 			vals := f.Value.All(preferedName)
 			for _, val := range vals {
@@ -128,17 +101,17 @@ func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 			if err != nil {
 				continue
 			}
-			field.Set(reflect.ValueOf(vs))
+			*ptr = vs
 
-		case float64:
+		case *float64:
 			var _v float64
 			_v, err = strconv.ParseFloat(strings.TrimSpace(f.Value.Shift(preferedName)), 64)
 			if err != nil {
 				continue
 			}
-			field.Set(reflect.ValueOf(_v))
+			*ptr = _v
 
-		case []float64:
+		case *[]float64:
 			vs := []float64{}
 			vals := f.Value.All(preferedName)
 			for _, val := range vals {
@@ -152,16 +125,16 @@ func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 			if err != nil {
 				continue
 			}
-			field.Set(reflect.ValueOf(vs))
+			*ptr = vs
 
-		case bool:
+		case *bool:
 			b := false
 			if strings.TrimSpace(f.Value.Shift(preferedName)) == "1" {
 				b = true
 			}
-			field.Set(reflect.ValueOf(b))
+			*ptr = b
 
-		case time.Time:
+		case *time.Time:
 			_v := strings.TrimSpace(f.Value.Shift(preferedName))
 
 			var _time time.Time
@@ -229,19 +202,19 @@ func (f *form) validate(structPtr StructPtrForm) (bool, error) {
 
 		blank:
 
-			field.Set(reflect.ValueOf(_time))
+			*ptr = _time
 
-		case *multipart.FileHeader:
+		case **multipart.FileHeader:
 			fileHeader := f.Value.FileShift(preferedName)
 			if fileHeader == nil {
 				continue
 			}
-			field.Set(reflect.ValueOf(fileHeader))
+			*ptr = fileHeader
 
 		default:
-			err = fmt.Errorf(`form: '%v' is not a supported data type for validation,
-only string, []string, int64, []int64, float64, []float64, bool, *multipart.FileHeader
-and time.Time`, t)
+			err = fmt.Errorf(`form: '%T' is not a supported data type for validation,
+only *string, *[]string, *int64, *[]int64, *float64, *[]float64, *bool, **multipart.FileHeader
+and *time.Time`, ptr)
 		}
 
 		fieldC.err = err
@@ -266,17 +239,17 @@ and time.Time`, t)
 
 	// Now for full on validation.
 	for _, item := range fieldM {
-		field := item.field
+		ptr := item.ptr
 		name := item.name
 		preferedName := item.preferedName
 		fieldFns := item.fieldFns
 		_type := item._type
-		t := item.t
 		err := item.err
 
 		warning := ""
 
-		va := validateValue{f, &err, &warning, name, preferedName, fieldFns, _type, t}
+		va := validateValue{f, &err, &warning, name, preferedName, fieldFns, _type,
+			fmt.Sprintf("%T", ptr)}
 
 		if err != nil {
 			hasError = true
@@ -287,25 +260,25 @@ and time.Time`, t)
 			continue
 		}
 
-		switch value := field.Interface().(type) {
-		case string:
-			va.str(value)
-		case []string:
-			va.strs(value)
-		case int64:
-			va.wnum(value)
-		case []int64:
-			va.wnums(value)
-		case float64:
-			va.fnum(value)
-		case []float64:
-			va.fnums(value)
-		case bool:
-			va.b(value)
-		case time.Time:
-			va.time(value)
-		case *multipart.FileHeader:
-			va.file(value)
+		switch value := ptr.(type) {
+		case *string:
+			va.str(*value)
+		case *[]string:
+			va.strs(*value)
+		case *int64:
+			va.wnum(*value)
+		case *[]int64:
+			va.wnums(*value)
+		case *float64:
+			va.fnum(*value)
+		case *[]float64:
+			va.fnums(*value)
+		case *bool:
+			va.b(*value)
+		case *time.Time:
+			va.time(*value)
+		case **multipart.FileHeader:
+			va.file(*value)
 		}
 
 		if err == nil {
@@ -331,7 +304,7 @@ and time.Time`, t)
 
 func (va validateValue) typeError() {
 	*(va.err) = fmt.Errorf(va.form.T("ErrType", map[string]interface{}{
-		"DataType": va.t.String(),
+		"DataType": va.t,
 	}))
 }
 

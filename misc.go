@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"html"
 	"mime/multipart"
-	"reflect"
 	"strings"
 	"time"
 )
 
 var es = html.EscapeString
 
-func isStructPtr(t reflect.Type) bool {
-	return t.Kind() == reflect.Ptr && t.Elem().Kind() == reflect.Struct
+func isStructPtr(v interface{}) bool {
+	str := fmt.Sprintf("%T", v)
+	if len(str) <= 0 || str[0] != '*' {
+		return false
+	}
+	return true
 }
 
 func fileSize(fileHeader *multipart.FileHeader) int64 {

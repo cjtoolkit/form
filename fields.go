@@ -1,5 +1,10 @@
 package form
 
+import (
+	"fmt"
+	"strings"
+)
+
 // For keeping a list of enclosed functions for struct pointer fields.
 type FieldFuncs map[string]func(m map[string]interface{})
 
@@ -12,42 +17,61 @@ func (fns FieldFuncs) Call(name string, m map[string]interface{}) {
 }
 
 type Field struct {
-	name  string
-	funcs FieldFuncs
+	ptr      interface{}
+	name     string
+	funcs    FieldFuncs
+	typecode TypeCode
 }
 
 // Fields
 type Fields struct {
-	m  map[string]FieldFuncs
-	n  map[string]*Field
-	nm map[string]*Field
-	f  []*Field
+	m          map[string]FieldFuncs
+	n          map[string]*Field
+	f          []*Field
+	validating bool
 }
 
 // Init Field
-func (f *Fields) Init(fieldname string, typeCode TypeCode) FieldFuncs {
-	if f.m[fieldname] != nil {
-		return f.m[fieldname]
+func (f *Fields) Init(ptr interface{}, inputName string, typeCode TypeCode) FieldFuncs {
+	if ptr == nil {
+		panic(fmt.Errorf("form: field init: ptr cannot be 'nil'!"))
 	}
 
-	fns := FieldFuncs{
-		"init": func(m map[string]interface{}) {
-			*(m["type"].(*TypeCode)) = typeCode
-		},
+	if !isStructPtr(ptr) {
+		panic(fmt.Errorf("form: field init: ptr: '%T' is not a pointer!", ptr))
 	}
-	afield := &Field{fieldname, fns}
-	if f.nm != nil {
-		f.nm[fieldname] = afield
+
+	inputName = strings.TrimSpace(inputName)
+
+	if inputName == "" {
+		panic(fmt.Errorf("form: field init: inputName cannot be blank"))
 	}
-	if f.n != nil {
-		fns["set_name"] = func(m map[string]interface{}) {
-			name := m["set_name"].(string)
-			f.n[name] = afield
-		}
+
+	if f.m[inputName] != nil {
+		return f.m[inputName]
 	}
-	f.m[fieldname] = fns
+
+	fns := FieldFuncs{}
+	field := &Field{}
+
+	field.ptr = ptr
+	field.name = inputName
+	field.funcs = fns
+	field.typecode = typeCode
+
+	f.m[inputName] = fns
 	if f.f != nil {
-		f.f = append(f.f, afield)
+		f.f = append(f.f, field)
 	}
+
+	if f.n != nil {
+		f.n[inputName] = field
+	}
+
 	return fns
+}
+
+// Is it in progress of validation?
+func (f *Fields) Validating() bool {
+	return f.validating
 }

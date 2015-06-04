@@ -23,7 +23,7 @@ func (i *inputText) CJForm(f *Fields) {
 
 	// First
 	func() {
-		f := f.Init("First", InputText)
+		f := f.Init(&i.First, "First", InputText)
 		f.Mandatory()
 
 		size := f.Size()
@@ -32,7 +32,7 @@ func (i *inputText) CJForm(f *Fields) {
 
 	// Second
 	func() {
-		f := f.Init("Second", InputText)
+		f := f.Init(&i.Second, "Second", InputText)
 
 		match := f.MustMatch()
 		match.Name = "First"
@@ -41,7 +41,7 @@ func (i *inputText) CJForm(f *Fields) {
 
 	// Re
 	func() {
-		f := f.Init("Re", InputText)
+		f := f.Init(&i.Re, "Re", InputText)
 		f.Mandatory()
 		f.Pattern(rePattern)
 	}()

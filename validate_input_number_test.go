@@ -19,7 +19,7 @@ func (i *inputNumber) CJForm(f *Fields) {
 
 	// First
 	func() {
-		f := f.Init("First", InputNumber)
+		f := f.Init(&i.First, "First", InputNumber)
 
 		r := f.RangeInt()
 		r.Min = 4
@@ -30,7 +30,7 @@ func (i *inputNumber) CJForm(f *Fields) {
 
 	// Second
 	func() {
-		f := f.Init("Second", InputNumber)
+		f := f.Init(&i.Second, "Second", InputNumber)
 
 		r := f.RangeFloat()
 		r.Min = 2.65

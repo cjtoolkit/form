@@ -2,70 +2,42 @@ package form
 
 import (
 	"fmt"
-	"reflect"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func (f *form) validateSingle(structPtr StructPtrForm, name string, value []string) (err error) {
+func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err error) {
 	if len(value) <= 0 {
 		err = fmt.Errorf("form: value cannot be nil or empty")
 		return
 	}
 
-	t := reflect.TypeOf(structPtr)
-	vc := reflect.ValueOf(structPtr)
-
-	switch {
-	case isStructPtr(t):
-		t = t.Elem()
-		vc = vc.Elem()
-	default:
-		err = fmt.Errorf("form: '%p' is not a struct pointer", structPtr)
+	if !isStructPtr(formPtr) {
+		err = fmt.Errorf("form: '%T' is not a pointer", formPtr)
 		return
 	}
 
-	fields := Fields{
-		map[string]FieldFuncs{},
-		map[string]*Field{},
-		map[string]*Field{},
-		nil,
-	}
+	fields := &Fields{}
 
-	structPtr.CJForm(&fields)
+	fields.m = map[string]FieldFuncs{}
+	fields.n = map[string]*Field{}
+	fields.validating = true
 
-	afield := fields.n[name]
-	if afield == nil {
-		afield = fields.nm[name]
-	}
-	if afield == nil {
+	formPtr.CJForm(fields)
+
+	field := fields.n[name]
+	if field == nil {
 		err = fmt.Errorf("form: field '%s' does not exist", name)
 		return
 	}
 
-	fieldName := afield.name
-	fieldFns := afield.funcs
+	fieldName := field.name
+	fieldFns := field.funcs
 
-	_, exist := t.FieldByName(fieldName)
-	if !exist {
-		err = fmt.Errorf("form: '%s' field does not exist", fieldName)
-		return
-	}
+	preferedName := fieldName
 
-	preferedName := name
-
-	field := vc.FieldByName(fieldName)
-	if !field.CanSet() {
-		err = fmt.Errorf("form: '%s' field cannot be set", fieldName)
-		return
-	}
-
-	_type := Invalid
-
-	fieldFns.Call("init", map[string]interface{}{
-		"type": &_type,
-	})
+	_type := field.typecode
 
 	if _type <= Invalid || _type >= terminate {
 		err = fmt.Errorf("form: Invalid form type")
@@ -84,22 +56,22 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 
 	validator.fieldsFns = fieldFns
 	validator._type = _type
-	validator.t = t
+	validator.t = fmt.Sprintf("%T", field.ptr)
 
-	switch field.Interface().(type) {
+	switch field.ptr.(type) {
 
-	case string:
+	case *string:
 		_value := strings.TrimSpace(value[0])
 		(*validator).str(_value)
 
-	case []string:
+	case *[]string:
 		values := []string{}
 		for _, _value := range value {
 			values = append(values, strings.TrimSpace(_value))
 		}
 		(*validator).strs(values)
 
-	case int64:
+	case *int64:
 		var _value int64
 		_value, err = strconv.ParseInt(strings.TrimSpace(value[0]), 10, 64)
 		if err != nil {
@@ -107,7 +79,7 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 		}
 		(*validator).wnum(_value)
 
-	case []int64:
+	case *[]int64:
 		values := []int64{}
 		for _, _value := range value {
 			var v int64
@@ -119,7 +91,7 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 		}
 		(*validator).wnums(values)
 
-	case float64:
+	case *float64:
 		var _value float64
 		_value, err = strconv.ParseFloat(strings.TrimSpace(value[0]), 64)
 		if err != nil {
@@ -127,7 +99,7 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 		}
 		(*validator).fnum(_value)
 
-	case []float64:
+	case *[]float64:
 		values := []float64{}
 		for _, _value := range value {
 			var v float64
@@ -139,14 +111,14 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 		}
 		(*validator).fnums(values)
 
-	case bool:
+	case *bool:
 		_value := false
 		if strings.TrimSpace(value[0]) == "1" {
 			_value = true
 		}
 		(*validator).b(_value)
 
-	case time.Time:
+	case *time.Time:
 		_valueStr := strings.TrimSpace(value[0])
 
 		var _value time.Time
@@ -217,8 +189,8 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 		(*validator).time(_value)
 
 	default:
-		err = fmt.Errorf(`form: '%v' is not a supported data type for single validation,
-only string, []string, int64, []int64, float64, []float64, bool and time.Time`, t)
+		err = fmt.Errorf(`form: '%T' is not a supported data type for single validation,
+only *string, *[]string, *int64, *[]int64, *float64, *[]float64, *bool and *time.Time`, field.ptr)
 	}
 
 	return

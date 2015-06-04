@@ -20,7 +20,7 @@ func (i *inputRadio) CJForm(f *Fields) {
 
 	// Str
 	func() {
-		f := f.Init("Str", InputRadio)
+		f := f.Init(&i.Str, "Str", InputRadio)
 		f.Mandatory()
 		f.Radios([]Radio{
 			{Value: "Hello", Label: "Hello"},
@@ -30,7 +30,7 @@ func (i *inputRadio) CJForm(f *Fields) {
 
 	// W
 	func() {
-		f := f.Init("W", InputRadio)
+		f := f.Init(&i.W, "W", InputRadio)
 		f.Mandatory()
 		f.Radios([]RadioInt{
 			{Value: 1, Label: "Hello"},
@@ -40,7 +40,7 @@ func (i *inputRadio) CJForm(f *Fields) {
 
 	// F
 	func() {
-		f := f.Init("F", InputRadio)
+		f := f.Init(&i.F, "F", InputRadio)
 		f.Mandatory()
 		f.Radios([]RadioFloat{
 			{Value: 1.5, Label: "Hello"},

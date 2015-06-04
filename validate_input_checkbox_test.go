@@ -18,7 +18,7 @@ func (i *inputCheckbox) CJForm(f *Fields) {
 
 	// First
 	func() {
-		f := f.Init("First", InputCheckbox)
+		f := f.Init(&i.First, "First", InputCheckbox)
 		f.Mandatory()
 	}()
 }

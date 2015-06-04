@@ -15,8 +15,7 @@ func (t *testValidateSingle) CJForm(fs *Fields) {
 
 	// Text
 	func() {
-		f := fs.Init("Text", InputText)
-		f.Name("text")
+		f := fs.Init(&t.Text, "text", InputText)
 
 		f.Mandatory()
 
@@ -27,8 +26,7 @@ func (t *testValidateSingle) CJForm(fs *Fields) {
 
 	// Number
 	func() {
-		f := fs.Init("Number", InputNumber)
-		f.Name("number")
+		f := fs.Init(&t.Number, "number", InputNumber)
 
 		f.Mandatory()
 

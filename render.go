@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"mime/multipart"
-	"reflect"
 	"time"
 )
 
@@ -17,53 +16,27 @@ type renderValue struct {
 	fls          *FirstLayerStack
 }
 
-func (f *form) render(structPtr StructPtrForm, w io.Writer) {
-	t := reflect.TypeOf(structPtr)
-	vc := reflect.ValueOf(structPtr)
+func (f *form) render(formPtr FormPtr, w io.Writer) {
 
-	switch {
-	case isStructPtr(t):
-		t = t.Elem()
-		vc = vc.Elem()
-	default:
-		panic(fmt.Errorf("form: '%p' is not a struct pointer", structPtr))
+	if !isStructPtr(formPtr) {
+		panic(fmt.Errorf("form: '%T' is not a pointer", formPtr))
 	}
 
-	data := f.Data[structPtr]
+	data := f.Data[formPtr]
 
-	fields := Fields{
-		map[string]FieldFuncs{},
-		nil,
-		nil,
-		[]*Field{},
-	}
+	fields := &Fields{}
 
-	structPtr.CJForm(&fields)
+	fields.m = map[string]FieldFuncs{}
+	fields.f = []*Field{}
 
-	for _, afield := range fields.f {
-		name := afield.name
-		fieldFns := afield.funcs
-		_, exist := t.FieldByName(name)
-		if !exist {
-			panic(fmt.Errorf("form: '%s' field does not exist", name))
-		}
+	formPtr.CJForm(fields)
+
+	for _, field := range fields.f {
+		name := field.name
+		fieldFns := field.funcs
 
 		preferedName := name
-
-		field := vc.FieldByName(name)
-		if !field.CanSet() {
-			panic(fmt.Errorf("form: '%s' field cannot be set", name))
-		}
-
-		_type := Invalid
-
-		fieldFns.Call("init", map[string]interface{}{
-			"type": &_type,
-		})
-
-		fieldFns.Call("name", map[string]interface{}{
-			"name": &preferedName,
-		})
+		_type := field.typecode
 
 		if _type <= Invalid || _type >= terminate {
 			continue
@@ -73,24 +46,24 @@ func (f *form) render(structPtr StructPtrForm, w io.Writer) {
 
 		r := renderValue{f, name, preferedName, fieldFns, _type, &FirstLayerStack{}}
 
-		switch value := field.Interface().(type) {
-		case string:
-			r.str(value)
-		case []string:
-			r.strs(value)
-		case int64:
-			r.wnum(value)
-		case []int64:
-			r.wnums(value)
-		case float64:
-			r.fnum(value)
-		case []float64:
-			r.fnums(value)
-		case bool:
-			r.b(value)
-		case time.Time:
-			r.time(value)
-		case *multipart.FileHeader:
+		switch value := field.ptr.(type) {
+		case *string:
+			r.str(*value)
+		case *[]string:
+			r.strs(*value)
+		case *int64:
+			r.wnum(*value)
+		case *[]int64:
+			r.wnums(*value)
+		case *float64:
+			r.fnum(*value)
+		case *[]float64:
+			r.fnums(*value)
+		case *bool:
+			r.b(*value)
+		case *time.Time:
+			r.time(*value)
+		case **multipart.FileHeader:
 			r.file()
 		default:
 			continue

@@ -1,6 +1,6 @@
 package form
 
 // Interface
-type StructPtrForm interface {
+type FormPtr interface {
 	CJForm(*Fields)
 }

@@ -23,7 +23,7 @@ func (i *select_) CJForm(f *Fields) {
 
 	// Str
 	func() {
-		f := f.Init("Str", Select)
+		f := f.Init(&i.Str, "Str", Select)
 		f.Mandatory()
 		f.Options([]Option{
 			{Value: "Hello", Label: "Hello"},
@@ -33,7 +33,7 @@ func (i *select_) CJForm(f *Fields) {
 
 	// Strs
 	func() {
-		f := f.Init("Strs", Select)
+		f := f.Init(&i.Strs, "Strs", Select)
 		f.Mandatory()
 		f.Options([]Option{
 			{Value: "Hello", Label: "Hello"},
@@ -43,7 +43,7 @@ func (i *select_) CJForm(f *Fields) {
 
 	// W
 	func() {
-		f := f.Init("W", Select)
+		f := f.Init(&i.W, "W", Select)
 		f.Mandatory()
 		f.Options([]OptionInt{
 			{Value: 1, Label: "Hello"},
@@ -53,7 +53,7 @@ func (i *select_) CJForm(f *Fields) {
 
 	// Ws
 	func() {
-		f := f.Init("Ws", Select)
+		f := f.Init(&i.Ws, "Ws", Select)
 		f.Mandatory()
 		f.Options([]OptionInt{
 			{Value: 1, Label: "Hello"},
@@ -63,7 +63,7 @@ func (i *select_) CJForm(f *Fields) {
 
 	// F
 	func() {
-		f := f.Init("F", Select)
+		f := f.Init(&i.F, "F", Select)
 		f.Mandatory()
 		f.Options([]OptionFloat{
 			{Value: 1.5, Label: "Hello"},
@@ -73,7 +73,7 @@ func (i *select_) CJForm(f *Fields) {
 
 	// Fs
 	func() {
-		f := f.Init("Fs", Select)
+		f := f.Init(&i.Fs, "Fs", Select)
 		f.Mandatory()
 		f.Options([]OptionFloat{
 			{Value: 1.5, Label: "Hello"},

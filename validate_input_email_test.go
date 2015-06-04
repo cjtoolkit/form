@@ -19,13 +19,13 @@ func (i *inputEmail) CJForm(f *Fields) {
 
 	// First
 	func() {
-		f := f.Init("First", InputEmail)
+		f := f.Init(&i.First, "First", InputEmail)
 		f.Mandatory()
 	}()
 
 	// Second
 	func() {
-		f := f.Init("Second", InputEmail)
+		f := f.Init(&i.Second, "Second", InputEmail)
 
 		match := f.MustMatch()
 		match.Name = "First"

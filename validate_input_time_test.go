@@ -24,7 +24,7 @@ func (i *inputTime) CJForm(f *Fields) {
 
 	// Datetime
 	func() {
-		f := f.Init("Datetime", InputDatetime)
+		f := f.Init(&i.Datetime, "Datetime", InputDatetime)
 		r := f.RangeTime()
 		r.Min = time.Date(2014, 2, 15, 5, 0, 1, 0, time.UTC)
 		r.Max = time.Date(2014, 10, 15, 4, 59, 59, 0, time.UTC)
@@ -32,27 +32,27 @@ func (i *inputTime) CJForm(f *Fields) {
 
 	// Datetimelocal
 	func() {
-		f.Init("Datetimelocal", InputDatetimeLocal)
+		f.Init(&i.Datetimelocal, "Datetimelocal", InputDatetimeLocal)
 	}()
 
 	// Date
 	func() {
-		f.Init("Date", InputDate)
+		f.Init(&i.Date, "Date", InputDate)
 	}()
 
 	// Time
 	func() {
-		f.Init("Time", InputTime)
+		f.Init(&i.Time, "Time", InputTime)
 	}()
 
 	// Month
 	func() {
-		f.Init("Month", InputMonth)
+		f.Init(&i.Month, "Month", InputMonth)
 	}()
 
 	// Week
 	func() {
-		f.Init("Week", InputWeek)
+		f.Init(&i.Week, "Week", InputWeek)
 	}()
 
 }

@@ -18,7 +18,7 @@ func (i *inputColor) CJForm(f *Fields) {
 
 	// First
 	func() {
-		f.Init("First", InputColor)
+		f.Init(&i.First, "First", InputColor)
 	}()
 }
 
