@@ -14,21 +14,15 @@ func (f *form) validateSingle(structPtr StructPtrForm, name string, value []stri
 		return
 	}
 
-	var preStructPtr interface{} = structPtr
-
-	if v, ok := structPtr.(Hijacker); ok {
-		preStructPtr = v.CJStructPtr()
-	}
-
-	t := reflect.TypeOf(preStructPtr)
-	vc := reflect.ValueOf(preStructPtr)
+	t := reflect.TypeOf(structPtr)
+	vc := reflect.ValueOf(structPtr)
 
 	switch {
 	case isStructPtr(t):
 		t = t.Elem()
 		vc = vc.Elem()
 	default:
-		err = fmt.Errorf("form: '%p' is not a struct pointer", preStructPtr)
+		err = fmt.Errorf("form: '%p' is not a struct pointer", structPtr)
 		return
 	}
 

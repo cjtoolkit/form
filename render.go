@@ -18,21 +18,15 @@ type renderValue struct {
 }
 
 func (f *form) render(structPtr StructPtrForm, w io.Writer) {
-	var preStructPtr interface{} = structPtr
-
-	if v, ok := structPtr.(Hijacker); ok {
-		preStructPtr = v.CJStructPtr()
-	}
-
-	t := reflect.TypeOf(preStructPtr)
-	vc := reflect.ValueOf(preStructPtr)
+	t := reflect.TypeOf(structPtr)
+	vc := reflect.ValueOf(structPtr)
 
 	switch {
 	case isStructPtr(t):
 		t = t.Elem()
 		vc = vc.Elem()
 	default:
-		panic(fmt.Errorf("form: '%p' is not a struct pointer", preStructPtr))
+		panic(fmt.Errorf("form: '%p' is not a struct pointer", structPtr))
 	}
 
 	data := f.Data[structPtr]

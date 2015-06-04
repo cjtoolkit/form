@@ -14,16 +14,16 @@ import (
 type Form interface {
 	// Renders 'structPtr' to 'w', panic if structPtr is not a struct with pointer.
 	// Also renders validation errors if 'Validate' or 'MustValidate' was call before hand.
-	Render(structPtr StructPtrForm, w io.Writer)
+	Render(w io.Writer, structPtr StructPtrForm)
 	// As Render but Return string
 	RenderStr(structPtr StructPtrForm) string
 
 	// Validate User Input and Populate Field in struct with pointers.
 	// Must use struct with pointers otherwise it will return an error.
 	// r cannot be 'nil'
-	Validate(r *http.Request, structPtrs ...StructPtrForm) (bool, error)
+	Validate(structPtrs ...StructPtrForm) (bool, error)
 	// Same as validate but panic on error.
-	MustValidate(r *http.Request, structPtrs ...StructPtrForm) bool
+	MustValidate(structPtrs ...StructPtrForm) bool
 
 	// Validate Single Field, won't work with must match.
 	ValidateSingle(structPtr StructPtrForm, name string, value []string) (err error)
@@ -38,22 +38,27 @@ type Form interface {
 }
 
 // Create new form validator and renderer.
-// Panic if unable to verify languageSources.
-// To use Default Second Layer specify r as 'nil'.
+// Panic if unable to verify languageSources or r is nil
+// To use Default Second Layer specify rsl as 'nil'.
 //
 // Note: Stick to one instant per user request,
 // do not use it as a global variable, as it's not thread safe.
-func New(r RenderSecondLayer, languageSources ...string) Form {
+func New(r *http.Request, rsl RenderSecondLayer, languageSources ...string) Form {
 	if r == nil {
-		r = DefaultRenderSecondLayer
+		panic(fmt.Errorf("Form: 'r' cannot be 'nil'"))
+	}
+
+	if rsl == nil {
+		rsl = DefaultRenderSecondLayer
 	}
 
 	return &form{
 		T:        i18n.MustTfunc("cjtoolkit-form", languageSources...),
-		R:        r,
+		R:        rsl,
 		Data:     map[StructPtrForm]*formData{},
 		JsonData: []map[string]interface{}{},
 		loc:      time.Local,
+		req:      r,
 	}
 }
 
@@ -115,25 +120,23 @@ type form struct {
 	vcount    int
 	rcount    int
 	loc       *time.Location
+	req       *http.Request
 }
 
-func (f *form) Render(structPtr StructPtrForm, w io.Writer) {
+func (f *form) Render(w io.Writer, structPtr StructPtrForm) {
 	f.render(structPtr, w)
 }
 
 func (f *form) RenderStr(structPtr StructPtrForm) string {
 	w := &bytes.Buffer{}
 	defer w.Reset()
-	f.Render(structPtr, w)
+	f.Render(w, structPtr)
 	return w.String()
 }
 
-func (f *form) Validate(r *http.Request, structPtrs ...StructPtrForm) (bool, error) {
-	if r == nil {
-		return false, fmt.Errorf("Form: 'r' cannot be 'nil'")
-	}
+func (f *form) Validate(structPtrs ...StructPtrForm) (bool, error) {
 	if f.Value == nil {
-		f.Value = newValue(r)
+		f.Value = newValue(f.req)
 	}
 	valid := true
 	for _, structPtr := range structPtrs {
@@ -149,8 +152,8 @@ func (f *form) Validate(r *http.Request, structPtrs ...StructPtrForm) (bool, err
 	return valid, nil
 }
 
-func (f *form) MustValidate(r *http.Request, structPtrs ...StructPtrForm) bool {
-	b, err := f.Validate(r, structPtrs...)
+func (f *form) MustValidate(structPtrs ...StructPtrForm) bool {
+	b, err := f.Validate(structPtrs...)
 	if err != nil {
 		panic(err)
 	}

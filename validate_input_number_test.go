@@ -47,10 +47,10 @@ func TestInputNumber(t *testing.T) {
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		form := inputNumber{}
-		check := New(nil, "en-GB")
+		check := New(r, nil, "en-GB")
 
 		r.ParseForm()
-		b := check.MustValidate(r, &form)
+		b := check.MustValidate(&form)
 		outform = form
 		if b {
 			fmt.Fprint(w, "true")

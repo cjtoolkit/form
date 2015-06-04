@@ -2,6 +2,7 @@ package form
 
 import (
 	_ "github.com/cjtoolkit/form/lang/enGB"
+	"net/http"
 	"testing"
 )
 
@@ -38,7 +39,7 @@ func (t *testValidateSingle) CJForm(fs *Fields) {
 }
 
 func TestValidateSingle(t *testing.T) {
-	f := New(nil, "en-GB")
+	f := New(&http.Request{}, nil, "en-GB")
 
 	var err error
 
