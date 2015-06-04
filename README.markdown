@@ -78,7 +78,7 @@ func main() {
 
 	mux.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
 		f := &TestForm{}
-		v := form.New(nil, "en-GB")
+		v := form.New(req, nil, "en-GB")
 		get := func() {
 			res.Header().Set("Content-Type", "text/html")
 
