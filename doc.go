@@ -23,14 +23,14 @@ Usage
 	func (t *TestForm) CJForm(f *form.Fields) {
 		// Text
 		func() {
-			f := f.Init("Text", form.InputText)
+			f := f.Init(&t.Text, "Text", form.InputText)
 			html := f.HTML()
 			html.Before = "<h1>File Test</h1>"
 		}()
 
 		// File
 		func() {
-			f := f.Init("File", form.InputFile)
+			f := f.Init(&t.File, "File", form.InputFile)
 			file := f.File()
 			file.Size = 10 * 1024 * 1024
 			file.Accept = []string{"image/jpeg", "image/png"}

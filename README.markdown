@@ -15,9 +15,9 @@ Automated Form Rendering and Validation Library for Google Go.
     - Defining your own rules (see below).
     - i18n integration.
     - Database integration either with or without ORM, Your choice.
-  - No Struct tags are needed, not that there anything wrong with them.
+  - No Struct tags are needed, not that there anything wrong with them, just not suitable for forms, it's just too complex for struct tags.
+  - No Reflection, No Magic, just straight up pointers.
   - See example below, than have a look at document, it will help you understand the system.
-
 
 Documentation can be found at.
 
@@ -35,22 +35,6 @@ git checkout v2.0
 ~~~
 
 ## Example
-
-### Defining Custom Rules
-
-~~~ go 
-func (e *Example) CJForm(f *form.Fields) {
-	// Text
-	func() {
-		f := f.Init("Text", form.InputText)
-
-		f.Custom(func(e *error, w *string) {
-			*e = "Error message here!"
-			*w = "Warning message here!"
-		})
-	}()
-}
-~~~
 
 ### Actual Application
 
@@ -75,14 +59,14 @@ type TestForm struct {
 func (t *TestForm) CJForm(f *form.Fields) {
 	// Text
 	func() {
-		f := f.Init("Text", form.InputText)
+		f := f.Init(&t.Text, "Text", form.InputText)
 		html := f.HTML()
 		html.Before = "<h1>File Test</h1>"
 	}()
 
 	// File
 	func() {
-		f := f.Init("File", form.InputFile)
+		f := f.Init(&t.File, "File", form.InputFile)
 		file := f.File()
 		file.Size = 10 * 1024 * 1024
 		file.Accept = []string{"image/jpeg", "image/png"}
@@ -124,6 +108,23 @@ func main() {
 	http.ListenAndServe(":8080", mux)
 }
 ~~~
+
+### Defining Custom Rules
+
+~~~ go 
+func (e *Example) CJForm(f *form.Fields) {
+	// Text
+	func() {
+		f := f.Init(&e.Text, "Text", form.InputText)
+
+		f.Custom(func(e *error, w *string) {
+			*e = fmt.Errorf("Error message here!")
+			*w = "Warning message here!"
+		})
+	}()
+}
+~~~
+
 
 ## Demo
 
