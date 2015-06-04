@@ -48,7 +48,7 @@ Usage
 
 				fmt.Fprint(res, `<form action="/" method="post" enctype="multipart/form-data">
 	`)
-				v.Render(f, res)
+				v.Render(res, f)
 
 				fmt.Fprint(res, `<input type="submit" name="submit" value="Submit">
 	</form>`)
@@ -59,7 +59,7 @@ Usage
 				get()
 			case "POST":
 				req.ParseMultipartForm(10 * 1024 * 1024)
-				if !v.MustValidate(req, f) && f.File == nil {
+				if !v.MustValidate(f) && f.File == nil {
 					get()
 					return
 				}
