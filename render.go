@@ -17,7 +17,6 @@ type renderValue struct {
 }
 
 func (f *form) render(formPtr FormPtr, w io.Writer) {
-
 	if !isStructPtr(formPtr) {
 		panic(fmt.Errorf("form: '%T' is not a pointer", formPtr))
 	}
@@ -28,6 +27,7 @@ func (f *form) render(formPtr FormPtr, w io.Writer) {
 
 	fields.m = map[string]FieldFuncs{}
 	fields.f = []*Field{}
+	fields.R = f.req
 
 	formPtr.CJForm(fields)
 

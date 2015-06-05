@@ -2,6 +2,7 @@ package form
 
 import (
 	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -29,6 +30,7 @@ type Fields struct {
 	n          map[string]*Field
 	f          []*Field
 	validating bool
+	R          *http.Request
 }
 
 // Init Field

@@ -23,6 +23,7 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 	fields.m = map[string]FieldFuncs{}
 	fields.n = map[string]*Field{}
 	fields.validating = true
+	fields.R = f.req
 
 	formPtr.CJForm(fields)
 

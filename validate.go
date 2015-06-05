@@ -42,6 +42,8 @@ func (f *form) validate(formPtr FormPtr) (bool, error) {
 
 	fields.m = map[string]FieldFuncs{}
 	fields.f = []*Field{}
+	fields.validating = true
+	fields.R = f.req
 
 	formPtr.CJForm(fields)
 
