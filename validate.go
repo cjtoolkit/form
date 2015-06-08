@@ -264,23 +264,23 @@ and *time.Time`, ptr)
 
 		switch value := ptr.(type) {
 		case *string:
-			va.str(*value)
+			va.str(value)
 		case *[]string:
-			va.strs(*value)
+			va.strs(value)
 		case *int64:
-			va.wnum(*value)
+			va.wnum(value)
 		case *[]int64:
-			va.wnums(*value)
+			va.wnums(value)
 		case *float64:
-			va.fnum(*value)
+			va.fnum(value)
 		case *[]float64:
-			va.fnums(*value)
+			va.fnums(value)
 		case *bool:
-			va.b(*value)
+			va.b(value)
 		case *time.Time:
-			va.time(*value)
+			va.time(value)
 		case **multipart.FileHeader:
-			va.file(*value)
+			va.file(value)
 		}
 
 		if err == nil {
@@ -310,100 +310,100 @@ func (va validateValue) typeError() {
 	}))
 }
 
-func (va validateValue) str(value string) {
+func (va validateValue) str(value *string) {
 	switch va._type {
 	case InputText, InputPassword, InputSearch, InputHidden, InputUrl, InputTel:
-		va.strInputText(value)
+		va.strInputText(*value)
 	case InputEmail:
-		va.strInputEmail(value)
+		va.strInputEmail(*value)
 	case InputRadio:
-		va.strInputRadio(value)
+		va.strInputRadio(*value)
 	case InputColor:
-		va.strInputColor(value)
+		va.strInputColor(*value)
 	case Textarea:
-		va.strTextarea(value)
+		va.strTextarea(*value)
 	case Select:
-		va.strSelect(value)
+		va.strSelect(*value)
 	default:
 		va.typeError()
 	}
 }
 
-func (va validateValue) strs(values []string) {
+func (va validateValue) strs(values *[]string) {
 	switch va._type {
 	case Select:
-		va.strsSelect(values)
+		va.strsSelect(*values)
 	default:
 		va.typeError()
 	}
 }
 
-func (va validateValue) wnum(value int64) {
-	switch va._type {
-	case InputNumber, InputRange, InputHidden:
-		va.wnumInputNumber(value)
-	case InputRadio:
-		va.wnumInputRadio(value)
-	case Select:
-		va.wnumSelect(value)
-	default:
-		va.typeError()
-	}
-}
-
-func (va validateValue) wnums(values []int64) {
-	switch va._type {
-	case Select:
-		va.wnumsSelect(values)
-	default:
-		va.typeError()
-	}
-}
-
-func (va validateValue) fnum(value float64) {
+func (va validateValue) wnum(value *int64) {
 	switch va._type {
 	case InputNumber, InputRange, InputHidden:
-		va.fnumInputNumber(value)
+		va.wnumInputNumber(*value)
 	case InputRadio:
-		va.fnumInputRadio(value)
+		va.wnumInputRadio(*value)
 	case Select:
-		va.fnumSelect(value)
+		va.wnumSelect(*value)
 	default:
 		va.typeError()
 	}
 }
 
-func (va validateValue) fnums(values []float64) {
+func (va validateValue) wnums(values *[]int64) {
 	switch va._type {
 	case Select:
-		va.fnumsSelect(values)
+		va.wnumsSelect(*values)
 	default:
 		va.typeError()
 	}
 }
 
-func (va validateValue) b(value bool) {
+func (va validateValue) fnum(value *float64) {
+	switch va._type {
+	case InputNumber, InputRange, InputHidden:
+		va.fnumInputNumber(*value)
+	case InputRadio:
+		va.fnumInputRadio(*value)
+	case Select:
+		va.fnumSelect(*value)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) fnums(values *[]float64) {
+	switch va._type {
+	case Select:
+		va.fnumsSelect(*values)
+	default:
+		va.typeError()
+	}
+}
+
+func (va validateValue) b(value *bool) {
 	switch va._type {
 	case InputCheckbox, InputHidden:
-		va.bInputCheckbox(value)
+		va.bInputCheckbox(*value)
 	default:
 		va.typeError()
 	}
 }
 
-func (va validateValue) time(value time.Time) {
+func (va validateValue) time(value *time.Time) {
 	switch va._type {
 	case InputDatetime, InputDatetimeLocal, InputTime, InputDate, InputMonth, InputWeek:
-		va.timeInputTime(value)
+		va.timeInputTime(*value)
 	default:
 		va.typeError()
 	}
 }
 
-func (va validateValue) file(value *multipart.FileHeader) {
+func (va validateValue) file(value **multipart.FileHeader) {
 	switch va._type {
 	case InputFile:
-		va.fileInputFile(value)
+		va.fileInputFile(*value)
 	default:
 		va.typeError()
 	}

@@ -48,21 +48,21 @@ func (f *form) render(formPtr FormPtr, w io.Writer) {
 
 		switch value := field.ptr.(type) {
 		case *string:
-			r.str(*value)
+			r.str(value)
 		case *[]string:
-			r.strs(*value)
+			r.strs(value)
 		case *int64:
-			r.wnum(*value)
+			r.wnum(value)
 		case *[]int64:
-			r.wnums(*value)
+			r.wnums(value)
 		case *float64:
-			r.fnum(*value)
+			r.fnum(value)
 		case *[]float64:
-			r.fnums(*value)
+			r.fnums(value)
 		case *bool:
-			r.b(*value)
+			r.b(value)
 		case *time.Time:
-			r.time(*value)
+			r.time(value)
 		case **multipart.FileHeader:
 			r.file()
 		default:
@@ -87,77 +87,77 @@ func (f *form) render(formPtr FormPtr, w io.Writer) {
 	}
 }
 
-func (r renderValue) str(value string) {
+func (r renderValue) str(value *string) {
 	switch r._type {
 	case InputText, InputSearch, InputPassword, InputHidden, InputUrl, InputTel:
-		r.strInputText(value)
+		r.strInputText(*value)
 	case InputEmail:
-		r.strInputEmail(value)
+		r.strInputEmail(*value)
 	case InputRadio:
-		r.strInputRadio(value)
+		r.strInputRadio(*value)
 	case InputColor:
-		r.strInputColor(value)
+		r.strInputColor(*value)
 	case Textarea:
-		r.strTextarea(value)
+		r.strTextarea(*value)
 	case Select:
-		r.strSelect(value)
+		r.strSelect(*value)
 	}
 }
 
-func (r renderValue) strs(values []string) {
+func (r renderValue) strs(values *[]string) {
 	switch r._type {
 	case Select:
-		r.strsSelect(values)
+		r.strsSelect(*values)
 	}
 }
 
-func (r renderValue) wnum(value int64) {
-	switch r._type {
-	case InputNumber, InputRange, InputHidden:
-		r.numInputNumber(value)
-	case InputRadio:
-		r.wnumInputRadio(value)
-	case Select:
-		r.wnumSelect(value)
-	}
-}
-
-func (r renderValue) wnums(values []int64) {
-	switch r._type {
-	case Select:
-		r.wnumsSelect(values)
-	}
-}
-
-func (r renderValue) fnum(value float64) {
+func (r renderValue) wnum(value *int64) {
 	switch r._type {
 	case InputNumber, InputRange, InputHidden:
-		r.numInputNumber(value)
+		r.numInputNumber(*value)
 	case InputRadio:
-		r.fnumInputRadio(value)
+		r.wnumInputRadio(*value)
 	case Select:
-		r.fnumSelect(value)
+		r.wnumSelect(*value)
 	}
 }
 
-func (r renderValue) fnums(values []float64) {
+func (r renderValue) wnums(values *[]int64) {
 	switch r._type {
 	case Select:
-		r.fnumsSelect(values)
+		r.wnumsSelect(*values)
 	}
 }
 
-func (r renderValue) b(value bool) {
+func (r renderValue) fnum(value *float64) {
+	switch r._type {
+	case InputNumber, InputRange, InputHidden:
+		r.numInputNumber(*value)
+	case InputRadio:
+		r.fnumInputRadio(*value)
+	case Select:
+		r.fnumSelect(*value)
+	}
+}
+
+func (r renderValue) fnums(values *[]float64) {
+	switch r._type {
+	case Select:
+		r.fnumsSelect(*values)
+	}
+}
+
+func (r renderValue) b(value *bool) {
 	switch r._type {
 	case InputCheckbox, InputHidden:
-		r.bInputCheckbox(value)
+		r.bInputCheckbox(*value)
 	}
 }
 
-func (r renderValue) time(value time.Time) {
+func (r renderValue) time(value *time.Time) {
 	switch r._type {
 	case InputDatetime, InputDatetimeLocal, InputTime, InputDate, InputMonth, InputWeek:
-		r.timeInputTime(value)
+		r.timeInputTime(*value)
 	}
 }
 

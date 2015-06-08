@@ -63,14 +63,14 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 
 	case *string:
 		_value := strings.TrimSpace(value[0])
-		(*validator).str(_value)
+		(*validator).str(&_value)
 
 	case *[]string:
 		values := []string{}
 		for _, _value := range value {
 			values = append(values, strings.TrimSpace(_value))
 		}
-		(*validator).strs(values)
+		(*validator).strs(&values)
 
 	case *int64:
 		var _value int64
@@ -78,7 +78,7 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 		if err != nil {
 			return
 		}
-		(*validator).wnum(_value)
+		(*validator).wnum(&_value)
 
 	case *[]int64:
 		values := []int64{}
@@ -90,7 +90,7 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 			}
 			values = append(values, v)
 		}
-		(*validator).wnums(values)
+		(*validator).wnums(&values)
 
 	case *float64:
 		var _value float64
@@ -98,7 +98,7 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 		if err != nil {
 			return
 		}
-		(*validator).fnum(_value)
+		(*validator).fnum(&_value)
 
 	case *[]float64:
 		values := []float64{}
@@ -110,14 +110,14 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 			}
 			values = append(values, v)
 		}
-		(*validator).fnums(values)
+		(*validator).fnums(&values)
 
 	case *bool:
 		_value := false
 		if strings.TrimSpace(value[0]) == "1" {
 			_value = true
 		}
-		(*validator).b(_value)
+		(*validator).b(&_value)
 
 	case *time.Time:
 		_valueStr := strings.TrimSpace(value[0])
@@ -187,7 +187,7 @@ func (f *form) validateSingle(formPtr FormPtr, name string, value []string) (err
 
 	blank:
 
-		(*validator).time(_value)
+		(*validator).time(&_value)
 
 	default:
 		err = fmt.Errorf(`form: '%T' is not a supported data type for single validation,
