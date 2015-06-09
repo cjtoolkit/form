@@ -65,11 +65,11 @@ func (r renderValue) numInputNumber(value interface{}) {
 
 		if rangeInt != nil {
 
-			if rangeInt.Min != int64(-9223372036854775808) {
+			if rangeInt.Min != minInt64 {
 				input.Attr["min"] = fmt.Sprintf("%d", rangeInt.Min)
 			}
 
-			if rangeInt.Max != int64(9223372036854775807) {
+			if rangeInt.Max != maxInt64 {
 				input.Attr["max"] = fmt.Sprintf("%d", rangeInt.Max)
 			}
 

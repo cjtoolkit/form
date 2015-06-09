@@ -109,3 +109,8 @@ func RenderAttr(attr map[string]string) (str string) {
 
 	return
 }
+
+const (
+	minInt64 = int64(-9223372036854775808)
+	maxInt64 = int64(9223372036854775807)
+)

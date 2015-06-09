@@ -12,9 +12,9 @@ func (va validateValue) wnumInputNumber(value int64) {
 		"range": &rangeInt,
 	})
 
-	if rangeInt == nil || (rangeInt.Min == -9223372036854775808 && rangeInt.Max == 9223372036854775807) {
+	if rangeInt == nil || (rangeInt.Min == minInt64 && rangeInt.Max == maxInt64) {
 		goto dostep
-	} else if rangeInt.Min == -9223372036854775808 {
+	} else if rangeInt.Min == minInt64 {
 		goto doMax
 	}
 
@@ -30,7 +30,7 @@ func (va validateValue) wnumInputNumber(value int64) {
 
 doMax:
 
-	if rangeInt.Max == 9223372036854775807 {
+	if rangeInt.Max == maxInt64 {
 		goto dostep
 	}
 

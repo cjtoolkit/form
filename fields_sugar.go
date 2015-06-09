@@ -51,8 +51,8 @@ type RangeInt struct {
 // Range of Integer Field
 func (fns FieldFuncs) RangeInt() *RangeInt {
 	rangeInt := &RangeInt{}
-	rangeInt.Min = -9223372036854775808
-	rangeInt.Max = 9223372036854775807
+	rangeInt.Min = minInt64
+	rangeInt.Max = maxInt64
 
 	fns["range_int"] = func(m map[string]interface{}) {
 		*(m["range"].(**RangeInt)) = rangeInt
