@@ -1,5 +1,9 @@
 package form
 
+import (
+	"fmt"
+)
+
 func (r renderValue) strInputEmail(value string) {
 	input := &FirstLayerInput{}
 	r.fls.append(input)
@@ -25,6 +29,16 @@ func (r renderValue) strInputEmail(value string) {
 	input.Attr["name"] = r.preferedName
 	input.Attr["type"] = "email"
 	input.Attr["value"] = value
+
+	var size *Size
+
+	r.fieldsFns.Call("size", map[string]interface{}{
+		"size": &size,
+	})
+
+	if size != nil && size.Max > 0 {
+		input.Attr["maxlength"] = fmt.Sprintf("%d", size.Max)
+	}
 
 	_s := ""
 	mandatory := false

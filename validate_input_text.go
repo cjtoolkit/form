@@ -26,27 +26,23 @@ func (va validateValue) strInputText(value string) {
 
 	// MustMatch
 
-	mustMatchFieldName := ""
-	mustMatchFieldValue := ""
-	mustMatchErr := ""
+	var mustMatch *MustMatch
 
 	va.fieldsFns.Call("mustmatch", map[string]interface{}{
-		"name":  &mustMatchFieldName,
-		"value": &mustMatchFieldValue,
-		"err":   &mustMatchErr,
+		"mustmatch": &mustMatch,
 	})
 
-	if mustMatchFieldName == "" {
+	if mustMatch == nil || mustMatch.Name == "" {
 		goto skipmatch
 	}
 
-	if value != mustMatchFieldValue {
-		if mustMatchErr == "" {
-			mustMatchErr = va.form.T("ErrMustMatchMismatch", map[string]interface{}{
-				"Name": mustMatchFieldName,
+	if value != *mustMatch.Value {
+		if mustMatch.Err == "" {
+			mustMatch.Err = va.form.T("ErrMustMatchMismatch", map[string]interface{}{
+				"Name": mustMatch.Name,
 			})
 		}
-		*(va.err) = fmt.Errorf(mustMatchErr)
+		*(va.err) = fmt.Errorf(mustMatch.Err)
 		return
 	}
 
@@ -54,47 +50,43 @@ skipmatch:
 
 	// Size
 
-	min, max := int(-1), int(-1)
-	minErr, maxErr := "", ""
+	var size *Size
 
 	va.fieldsFns.Call("size", map[string]interface{}{
-		"min":    &min,
-		"max":    &max,
-		"minErr": &minErr,
-		"maxErr": &maxErr,
+		"size": &size,
 	})
 
-	if min <= -1 && max <= -1 {
+	if size == nil || (size.Min <= -1 && size.Max <= -1) {
 		goto skipmax
-	} else if min <= -1 {
+	} else if size.Min <= -1 {
 		goto skipmin
 	}
 
 	// Min Size
 
-	if len(value) < min {
-		if minErr == "" {
-			minErr = va.form.T("ErrMinChar", map[string]interface{}{
-				"Count": min,
+	if len(value) < size.Min {
+		if size.MinErr == "" {
+			size.MinErr = va.form.T("ErrMinChar", map[string]interface{}{
+				"Count": size.Min,
 			})
 		}
-		*(va.err) = fmt.Errorf(minErr)
+		*(va.err) = fmt.Errorf(size.MinErr)
 		return
 	}
 
 skipmin:
 
-	if max <= -1 {
+	if size.Max <= -1 {
 		goto skipmax
 	}
 
-	if len(value) > max {
-		if maxErr == "" {
-			maxErr = va.form.T("ErrMaxChar", map[string]interface{}{
-				"Count": max,
+	if len(value) > size.Max {
+		if size.MaxErr == "" {
+			size.MaxErr = va.form.T("ErrMaxChar", map[string]interface{}{
+				"Count": size.Max,
 			})
 		}
-		*(va.err) = fmt.Errorf(maxErr)
+		*(va.err) = fmt.Errorf(size.MaxErr)
 		return
 	}
 

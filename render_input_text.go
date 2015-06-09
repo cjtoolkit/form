@@ -61,17 +61,14 @@ func (r renderValue) strInputText(value string) {
 		input.Attr["pattern"] = pattern.String()
 	}
 
-	_n, max := int(-1), int(-1)
+	var size *Size
 
 	r.fieldsFns.Call("size", map[string]interface{}{
-		"min":    &_n,
-		"max":    &max,
-		"minErr": &_s,
-		"maxErr": &_s,
+		"size": &size,
 	})
 
-	if max > 0 {
-		input.Attr["maxlength"] = fmt.Sprintf("%d", max)
+	if size != nil && size.Max > 0 {
+		input.Attr["maxlength"] = fmt.Sprintf("%d", size.Max)
 	}
 
 	mandatory := false

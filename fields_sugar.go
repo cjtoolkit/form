@@ -31,13 +31,12 @@ type Size struct {
 
 // Size of Field
 func (fns FieldFuncs) Size() *Size {
-	size := &Size{-1, -1, "", ""}
+	size := &Size{}
+	size.Min = -1
+	size.Max = -1
 
 	fns["size"] = func(m map[string]interface{}) {
-		*(m["min"].(*int)) = size.Min
-		*(m["max"].(*int)) = size.Max
-		*(m["minErr"].(*string)) = size.MinErr
-		*(m["maxErr"].(*string)) = size.MaxErr
+		*(m["size"].(**Size)) = size
 	}
 
 	return size
@@ -134,9 +133,7 @@ func (fns FieldFuncs) MustMatch() *MustMatch {
 	mustMatch := &MustMatch{}
 
 	fns["mustmatch"] = func(m map[string]interface{}) {
-		*(m["name"].(*string)) = mustMatch.Name
-		*(m["value"].(*string)) = *mustMatch.Value
-		*(m["err"].(*string)) = mustMatch.Err
+		*(m["mustmatch"].(**MustMatch)) = mustMatch
 	}
 
 	return mustMatch

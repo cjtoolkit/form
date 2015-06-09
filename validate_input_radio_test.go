@@ -66,6 +66,8 @@ func TestInputRadio(t *testing.T) {
 		} else {
 			fmt.Fprint(w, "false")
 		}
+
+		check.RenderStr(&form)
 	})
 
 	ts := httptest.NewServer(mux)
