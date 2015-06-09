@@ -177,7 +177,7 @@ func (r renderValue) wnumSelect(value int64) {
 
 	var options []OptionInt
 
-	r.fieldsFns.Call("option", map[string]interface{}{
+	r.fieldsFns.Call("option_int", map[string]interface{}{
 		"option": &options,
 	})
 
@@ -245,7 +245,7 @@ func (r renderValue) wnumsSelect(values []int64) {
 
 	var options []OptionInt
 
-	r.fieldsFns.Call("option", map[string]interface{}{
+	r.fieldsFns.Call("option_int", map[string]interface{}{
 		"option": &options,
 	})
 
@@ -327,7 +327,7 @@ func (r renderValue) fnumSelect(value float64) {
 
 	var options []OptionFloat
 
-	r.fieldsFns.Call("option", map[string]interface{}{
+	r.fieldsFns.Call("option_float", map[string]interface{}{
 		"option": &options,
 	})
 
@@ -395,7 +395,7 @@ func (r renderValue) fnumsSelect(values []float64) {
 
 	var options []OptionFloat
 
-	r.fieldsFns.Call("option", map[string]interface{}{
+	r.fieldsFns.Call("option_float", map[string]interface{}{
 		"option": &options,
 	})
 

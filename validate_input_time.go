@@ -30,7 +30,7 @@ func (va validateValue) timeInputTime(value time.Time) {
 	minErr := ""
 	maxErr := ""
 
-	va.fieldsFns.Call("range", map[string]interface{}{
+	va.fieldsFns.Call("range_time", map[string]interface{}{
 		"min":    &min,
 		"max":    &max,
 		"minErr": &minErr,

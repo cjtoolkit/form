@@ -60,7 +60,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 		rangeMax := int64(9223372036854775807)
 		_s := ""
 
-		r.fieldsFns.Call("range", map[string]interface{}{
+		r.fieldsFns.Call("range_int", map[string]interface{}{
 			"min":    &rangeMin,
 			"max":    &rangeMax,
 			"minErr": &_s,
@@ -77,7 +77,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 
 		step := int64(1)
 
-		r.fieldsFns.Call("step", map[string]interface{}{
+		r.fieldsFns.Call("step_int", map[string]interface{}{
 			"step": &step,
 			"err":  &_s,
 		})
@@ -88,7 +88,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 		rangeMax := math.NaN()
 		_s := ""
 
-		r.fieldsFns.Call("range", map[string]interface{}{
+		r.fieldsFns.Call("range_float", map[string]interface{}{
 			"min":    &rangeMin,
 			"max":    &rangeMax,
 			"minErr": &_s,
@@ -115,7 +115,7 @@ func (r renderValue) numInputNumber(value interface{}) {
 			step = 0.5
 		}
 
-		input.Attr["step"] = fmt.Sprintf("%f", step)
+		input.Attr["step_float"] = fmt.Sprintf("%f", step)
 	}
 
 	_s := ""

@@ -53,7 +53,7 @@ func (r renderValue) strInputRadio(value string) {
 func (r renderValue) wnumInputRadio(value int64) {
 	var radios []RadioInt
 
-	r.fieldsFns.Call("radio", map[string]interface{}{
+	r.fieldsFns.Call("radio_int", map[string]interface{}{
 		"radio": &radios,
 	})
 
@@ -99,7 +99,7 @@ func (r renderValue) wnumInputRadio(value int64) {
 func (r renderValue) fnumInputRadio(value float64) {
 	var radios []RadioFloat
 
-	r.fieldsFns.Call("radio", map[string]interface{}{
+	r.fieldsFns.Call("radio_float", map[string]interface{}{
 		"radio": &radios,
 	})
 

@@ -18,6 +18,11 @@ func (fns FieldFuncs) Mandatory() *string {
 	return &err
 }
 
+// Alais of Mandatory
+func (fns FieldFuncs) Required() *string {
+	return fns.Mandatory()
+}
+
 // Size of Field
 type Size struct {
 	Min, Max       int
@@ -48,7 +53,7 @@ type RangeInt struct {
 func (fns FieldFuncs) RangeInt() *RangeInt {
 	rangeInt := &RangeInt{-9223372036854775808, 9223372036854775807, "", ""}
 
-	fns["range"] = func(m map[string]interface{}) {
+	fns["range_int"] = func(m map[string]interface{}) {
 		*(m["min"].(*int64)) = rangeInt.Min
 		*(m["max"].(*int64)) = rangeInt.Max
 		*(m["minErr"].(*string)) = rangeInt.MinErr
@@ -68,7 +73,7 @@ type RangeFloat struct {
 func (fns FieldFuncs) RangeFloat() *RangeFloat {
 	rangeInt := &RangeFloat{math.NaN(), math.NaN(), "", ""}
 
-	fns["range"] = func(m map[string]interface{}) {
+	fns["range_float"] = func(m map[string]interface{}) {
 		*(m["min"].(*float64)) = rangeInt.Min
 		*(m["max"].(*float64)) = rangeInt.Max
 		*(m["minErr"].(*string)) = rangeInt.MinErr
@@ -88,7 +93,7 @@ type RangeTime struct {
 func (fns FieldFuncs) RangeTime() *RangeTime {
 	rangeInt := &RangeTime{time.Time{}, time.Time{}, "", ""}
 
-	fns["range"] = func(m map[string]interface{}) {
+	fns["range_time"] = func(m map[string]interface{}) {
 		*(m["min"].(*time.Time)) = rangeInt.Min
 		*(m["max"].(*time.Time)) = rangeInt.Max
 		*(m["minErr"].(*string)) = rangeInt.MinErr
@@ -102,7 +107,7 @@ func (fns FieldFuncs) RangeTime() *RangeTime {
 func (fns FieldFuncs) StepInt(i int64) *string {
 	err := ""
 
-	fns["step"] = func(m map[string]interface{}) {
+	fns["step_int"] = func(m map[string]interface{}) {
 		*(m["step"].(*int64)) = i
 		*(m["err"].(*string)) = err
 	}
@@ -114,7 +119,7 @@ func (fns FieldFuncs) StepInt(i int64) *string {
 func (fns FieldFuncs) StepFloat(f float64) *string {
 	err := ""
 
-	fns["step"] = func(m map[string]interface{}) {
+	fns["step_float"] = func(m map[string]interface{}) {
 		*(m["step"].(*float64)) = f
 		*(m["err"].(*string)) = err
 	}
@@ -178,13 +183,17 @@ func (fns FieldFuncs) Attr(attr map[string]string) {
 
 // Append Options, accept []Option, []OptionInt, []OptionFloat
 func (fns FieldFuncs) Options(v interface{}) {
-	fns["option"] = func(m map[string]interface{}) {
-		switch v := v.(type) {
-		case []Option:
+	switch v := v.(type) {
+	case []Option:
+		fns["option"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]Option)) = v
-		case []OptionInt:
+		}
+	case []OptionInt:
+		fns["option_int"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]OptionInt)) = v
-		case []OptionFloat:
+		}
+	case []OptionFloat:
+		fns["option_float"] = func(m map[string]interface{}) {
 			*(m["option"].(*[]OptionFloat)) = v
 		}
 	}
@@ -192,13 +201,17 @@ func (fns FieldFuncs) Options(v interface{}) {
 
 // Append Radios, accept []Radio, []RadioInt, []RadioFloat
 func (fns FieldFuncs) Radios(v interface{}) {
-	fns["radio"] = func(m map[string]interface{}) {
-		switch v := v.(type) {
-		case []Radio:
+	switch v := v.(type) {
+	case []Radio:
+		fns["radio"] = func(m map[string]interface{}) {
 			*(m["radio"].(*[]Radio)) = v
-		case []RadioInt:
+		}
+	case []RadioInt:
+		fns["radio_int"] = func(m map[string]interface{}) {
 			*(m["radio"].(*[]RadioInt)) = v
-		case []RadioFloat:
+		}
+	case []RadioFloat:
+		fns["radio_float"] = func(m map[string]interface{}) {
 			*(m["radio"].(*[]RadioFloat)) = v
 		}
 	}

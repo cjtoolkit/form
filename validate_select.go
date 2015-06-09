@@ -88,7 +88,7 @@ func (va validateValue) strsSelect(values []string) {
 func (va validateValue) wnumSelect(value int64) {
 	var options []OptionInt
 
-	va.fieldsFns.Call("option", map[string]interface{}{
+	va.fieldsFns.Call("option_int", map[string]interface{}{
 		"option": &options,
 	})
 
@@ -130,7 +130,7 @@ func (va validateValue) wnumSelect(value int64) {
 func (va validateValue) wnumsSelect(values []int64) {
 	var options []OptionInt
 
-	va.fieldsFns.Call("option", map[string]interface{}{
+	va.fieldsFns.Call("option_int", map[string]interface{}{
 		"option": &options,
 	})
 
@@ -169,7 +169,7 @@ func (va validateValue) wnumsSelect(values []int64) {
 func (va validateValue) fnumSelect(value float64) {
 	var options []OptionFloat
 
-	va.fieldsFns.Call("option", map[string]interface{}{
+	va.fieldsFns.Call("option_float", map[string]interface{}{
 		"option": &options,
 	})
 
@@ -211,7 +211,7 @@ func (va validateValue) fnumSelect(value float64) {
 func (va validateValue) fnumsSelect(values []float64) {
 	var options []OptionFloat
 
-	va.fieldsFns.Call("option", map[string]interface{}{
+	va.fieldsFns.Call("option_float", map[string]interface{}{
 		"option": &options,
 	})
 

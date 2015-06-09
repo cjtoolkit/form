@@ -49,7 +49,7 @@ func (va validateValue) strInputRadio(value string) {
 func (va validateValue) wnumInputRadio(value int64) {
 	var radios []RadioInt
 
-	va.fieldsFns.Call("radio", map[string]interface{}{
+	va.fieldsFns.Call("radio_int", map[string]interface{}{
 		"radio": &radios,
 	})
 
@@ -91,7 +91,7 @@ func (va validateValue) wnumInputRadio(value int64) {
 func (va validateValue) fnumInputRadio(value float64) {
 	var radios []RadioFloat
 
-	va.fieldsFns.Call("radio", map[string]interface{}{
+	va.fieldsFns.Call("radio_float", map[string]interface{}{
 		"radio": &radios,
 	})
 

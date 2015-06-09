@@ -11,7 +11,7 @@ func (va validateValue) wnumInputNumber(value int64) {
 	rangeMinErr := ""
 	rangeMaxErr := ""
 
-	va.fieldsFns.Call("range", map[string]interface{}{
+	va.fieldsFns.Call("range_int", map[string]interface{}{
 		"min":    &rangeMin,
 		"max":    &rangeMax,
 		"minErr": &rangeMinErr,
@@ -55,7 +55,7 @@ dostep:
 	step := int64(1)
 	stepErr := ""
 
-	va.fieldsFns.Call("step", map[string]interface{}{
+	va.fieldsFns.Call("step_int", map[string]interface{}{
 		"step": &step,
 		"err":  &stepErr,
 	})
@@ -77,7 +77,7 @@ func (va validateValue) fnumInputNumber(value float64) {
 	rangeMinErr := ""
 	rangeMaxErr := ""
 
-	va.fieldsFns.Call("range", map[string]interface{}{
+	va.fieldsFns.Call("range_float", map[string]interface{}{
 		"min":    &rangeMin,
 		"max":    &rangeMax,
 		"minErr": &rangeMinErr,
@@ -121,7 +121,7 @@ dostep:
 	step := float64(1)
 	stepErr := ""
 
-	va.fieldsFns.Call("step", map[string]interface{}{
+	va.fieldsFns.Call("step_float", map[string]interface{}{
 		"step": &step,
 		"err":  &stepErr,
 	})
