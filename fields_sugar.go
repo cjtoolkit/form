@@ -51,13 +51,12 @@ type RangeInt struct {
 
 // Range of Integer Field
 func (fns FieldFuncs) RangeInt() *RangeInt {
-	rangeInt := &RangeInt{-9223372036854775808, 9223372036854775807, "", ""}
+	rangeInt := &RangeInt{}
+	rangeInt.Min = -9223372036854775808
+	rangeInt.Max = 9223372036854775807
 
 	fns["range_int"] = func(m map[string]interface{}) {
-		*(m["min"].(*int64)) = rangeInt.Min
-		*(m["max"].(*int64)) = rangeInt.Max
-		*(m["minErr"].(*string)) = rangeInt.MinErr
-		*(m["maxErr"].(*string)) = rangeInt.MaxErr
+		*(m["range"].(**RangeInt)) = rangeInt
 	}
 
 	return rangeInt
@@ -71,16 +70,15 @@ type RangeFloat struct {
 
 // Range of Float Field
 func (fns FieldFuncs) RangeFloat() *RangeFloat {
-	rangeInt := &RangeFloat{math.NaN(), math.NaN(), "", ""}
+	rangeFloat := &RangeFloat{}
+	rangeFloat.Min = math.NaN()
+	rangeFloat.Max = math.NaN()
 
 	fns["range_float"] = func(m map[string]interface{}) {
-		*(m["min"].(*float64)) = rangeInt.Min
-		*(m["max"].(*float64)) = rangeInt.Max
-		*(m["minErr"].(*string)) = rangeInt.MinErr
-		*(m["maxErr"].(*string)) = rangeInt.MaxErr
+		*(m["range"].(**RangeFloat)) = rangeFloat
 	}
 
-	return rangeInt
+	return rangeFloat
 }
 
 // Range of Time Field
@@ -91,16 +89,13 @@ type RangeTime struct {
 
 // Range of Time Field
 func (fns FieldFuncs) RangeTime() *RangeTime {
-	rangeInt := &RangeTime{time.Time{}, time.Time{}, "", ""}
+	rangeTime := &RangeTime{}
 
 	fns["range_time"] = func(m map[string]interface{}) {
-		*(m["min"].(*time.Time)) = rangeInt.Min
-		*(m["max"].(*time.Time)) = rangeInt.Max
-		*(m["minErr"].(*string)) = rangeInt.MinErr
-		*(m["maxErr"].(*string)) = rangeInt.MaxErr
+		*(m["range"].(**RangeTime)) = rangeTime
 	}
 
-	return rangeInt
+	return rangeTime
 }
 
 // Number of Step (int64)

@@ -6,47 +6,41 @@ import (
 )
 
 func (va validateValue) wnumInputNumber(value int64) {
-	rangeMin := int64(-9223372036854775808)
-	rangeMax := int64(9223372036854775807)
-	rangeMinErr := ""
-	rangeMaxErr := ""
+	var rangeInt *RangeInt
 
 	va.fieldsFns.Call("range_int", map[string]interface{}{
-		"min":    &rangeMin,
-		"max":    &rangeMax,
-		"minErr": &rangeMinErr,
-		"maxErr": &rangeMaxErr,
+		"range": &rangeInt,
 	})
 
-	if rangeMin == -9223372036854775808 && rangeMax == 9223372036854775807 {
+	if rangeInt == nil || (rangeInt.Min == -9223372036854775808 && rangeInt.Max == 9223372036854775807) {
 		goto dostep
-	} else if rangeMin == -9223372036854775808 {
+	} else if rangeInt.Min == -9223372036854775808 {
 		goto doMax
 	}
 
-	if value < rangeMin {
-		if rangeMinErr == "" {
-			rangeMinErr = va.form.T("ErrNumberMin", map[string]interface{}{
-				"Count": rangeMin,
+	if value < rangeInt.Min {
+		if rangeInt.MinErr == "" {
+			rangeInt.MinErr = va.form.T("ErrNumberMin", map[string]interface{}{
+				"Count": rangeInt.Min,
 			})
 		}
-		*(va.err) = fmt.Errorf(rangeMinErr)
+		*(va.err) = fmt.Errorf(rangeInt.MinErr)
 		return
 	}
 
 doMax:
 
-	if rangeMax == 9223372036854775807 {
+	if rangeInt.Max == 9223372036854775807 {
 		goto dostep
 	}
 
-	if value > rangeMax {
-		if rangeMaxErr == "" {
-			rangeMaxErr = va.form.T("ErrNumberMax", map[string]interface{}{
-				"Count": rangeMax,
+	if value > rangeInt.Max {
+		if rangeInt.MaxErr == "" {
+			rangeInt.MaxErr = va.form.T("ErrNumberMax", map[string]interface{}{
+				"Count": rangeInt.Max,
 			})
 		}
-		*(va.err) = fmt.Errorf(rangeMaxErr)
+		*(va.err) = fmt.Errorf(rangeInt.MaxErr)
 		return
 	}
 
@@ -72,47 +66,41 @@ dostep:
 }
 
 func (va validateValue) fnumInputNumber(value float64) {
-	rangeMin := math.NaN()
-	rangeMax := math.NaN()
-	rangeMinErr := ""
-	rangeMaxErr := ""
+	var rangeFloat *RangeFloat
 
 	va.fieldsFns.Call("range_float", map[string]interface{}{
-		"min":    &rangeMin,
-		"max":    &rangeMax,
-		"minErr": &rangeMinErr,
-		"maxErr": &rangeMaxErr,
+		"range": &rangeFloat,
 	})
 
-	if rangeMin == math.NaN() && rangeMax == math.NaN() {
+	if rangeFloat == nil || (rangeFloat.Min == math.NaN() && rangeFloat.Max == math.NaN()) {
 		goto dostep
-	} else if rangeMin == math.NaN() {
+	} else if rangeFloat.Min == math.NaN() {
 		goto doMax
 	}
 
-	if value < rangeMin {
-		if rangeMinErr == "" {
-			rangeMinErr = va.form.T("ErrNumberMin", map[string]interface{}{
-				"Count": rangeMin,
+	if value < rangeFloat.Min {
+		if rangeFloat.MinErr == "" {
+			rangeFloat.MinErr = va.form.T("ErrNumberMin", map[string]interface{}{
+				"Count": rangeFloat.Min,
 			})
 		}
-		*(va.err) = fmt.Errorf(rangeMinErr)
+		*(va.err) = fmt.Errorf(rangeFloat.MinErr)
 		return
 	}
 
 doMax:
 
-	if rangeMax == math.NaN() {
+	if rangeFloat.Max == math.NaN() {
 		goto dostep
 	}
 
-	if value > rangeMax {
-		if rangeMaxErr == "" {
-			rangeMaxErr = va.form.T("ErrNumberMax", map[string]interface{}{
-				"Count": rangeMax,
+	if value > rangeFloat.Max {
+		if rangeFloat.MaxErr == "" {
+			rangeFloat.MaxErr = va.form.T("ErrNumberMax", map[string]interface{}{
+				"Count": rangeFloat.Max,
 			})
 		}
-		*(va.err) = fmt.Errorf(rangeMaxErr)
+		*(va.err) = fmt.Errorf(rangeFloat.MaxErr)
 		return
 	}
 

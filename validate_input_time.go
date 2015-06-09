@@ -25,46 +25,40 @@ func (va validateValue) timeInputTime(value time.Time) {
 		return
 	}
 
-	min := time.Time{}
-	max := time.Time{}
-	minErr := ""
-	maxErr := ""
+	var rangeTime *RangeTime
 
 	va.fieldsFns.Call("range_time", map[string]interface{}{
-		"min":    &min,
-		"max":    &max,
-		"minErr": &minErr,
-		"maxErr": &maxErr,
+		"range": &rangeTime,
 	})
 
-	if min.IsZero() && max.IsZero() {
+	if rangeTime == nil || (rangeTime.Min.IsZero() && rangeTime.Max.IsZero()) {
 		goto check_mandatory
-	} else if min.IsZero() {
+	} else if rangeTime.Min.IsZero() {
 		goto check_max
 	}
 
-	if value.Unix() < min.Unix() {
-		if minErr == "" {
-			minErr = va.form.T("ErrTimeMin", map[string]interface{}{
-				"Time": formatter(min),
+	if value.Unix() < rangeTime.Min.Unix() {
+		if rangeTime.MinErr == "" {
+			rangeTime.MinErr = va.form.T("ErrTimeMin", map[string]interface{}{
+				"Time": formatter(rangeTime.Min),
 			})
-			*(va.err) = fmt.Errorf(minErr)
+			*(va.err) = fmt.Errorf(rangeTime.MinErr)
 			return
 		}
 	}
 
 check_max:
 
-	if max.IsZero() {
+	if rangeTime.Max.IsZero() {
 		goto check_mandatory
 	}
 
-	if value.Unix() > max.Unix() {
-		if maxErr == "" {
-			maxErr = va.form.T("ErrTimeMax", map[string]interface{}{
-				"Time": formatter(max),
+	if value.Unix() > rangeTime.Max.Unix() {
+		if rangeTime.MaxErr == "" {
+			rangeTime.MaxErr = va.form.T("ErrTimeMax", map[string]interface{}{
+				"Time": formatter(rangeTime.Max),
 			})
-			*(va.err) = fmt.Errorf(maxErr)
+			*(va.err) = fmt.Errorf(rangeTime.MaxErr)
 			return
 		}
 	}

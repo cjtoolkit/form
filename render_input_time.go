@@ -72,23 +72,20 @@ func (r renderValue) timeInputTime(value time.Time) {
 	input.Attr["type"] = _type()
 	input.Attr["value"] = formatter(value)
 
-	min := time.Time{}
-	max := time.Time{}
-	_s := ""
+	var rangeTime *RangeTime
 
-	r.fieldsFns.Call("range", map[string]interface{}{
-		"min":    &min,
-		"max":    &max,
-		"minErr": &_s,
-		"maxErr": &_s,
+	r.fieldsFns.Call("range_time", map[string]interface{}{
+		"range": &rangeTime,
 	})
 
-	if !min.IsZero() {
-		input.Attr["min"] = formatter(min)
-	}
+	if rangeTime != nil {
+		if !rangeTime.Min.IsZero() {
+			input.Attr["min"] = formatter(rangeTime.Min)
+		}
 
-	if !max.IsZero() {
-		input.Attr["max"] = formatter(max)
+		if !rangeTime.Max.IsZero() {
+			input.Attr["max"] = formatter(rangeTime.Max)
+		}
 	}
 
 	// Todo: add support for step.

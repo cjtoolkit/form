@@ -56,23 +56,23 @@ func (r renderValue) numInputNumber(value interface{}) {
 
 	switch value.(type) {
 	case int64:
-		rangeMin := int64(-9223372036854775808)
-		rangeMax := int64(9223372036854775807)
+		var rangeInt *RangeInt
 		_s := ""
 
 		r.fieldsFns.Call("range_int", map[string]interface{}{
-			"min":    &rangeMin,
-			"max":    &rangeMax,
-			"minErr": &_s,
-			"maxErr": &_s,
+			"range": &rangeInt,
 		})
 
-		if rangeMin != int64(-9223372036854775808) {
-			input.Attr["min"] = fmt.Sprintf("%d", rangeMin)
-		}
+		if rangeInt != nil {
 
-		if rangeMax != int64(9223372036854775807) {
-			input.Attr["max"] = fmt.Sprintf("%d", rangeMax)
+			if rangeInt.Min != int64(-9223372036854775808) {
+				input.Attr["min"] = fmt.Sprintf("%d", rangeInt.Min)
+			}
+
+			if rangeInt.Max != int64(9223372036854775807) {
+				input.Attr["max"] = fmt.Sprintf("%d", rangeInt.Max)
+			}
+
 		}
 
 		step := int64(1)
@@ -84,23 +84,23 @@ func (r renderValue) numInputNumber(value interface{}) {
 
 		input.Attr["step"] = fmt.Sprintf("%d", step)
 	case float64:
-		rangeMin := math.NaN()
-		rangeMax := math.NaN()
+		var rangeFloat *RangeFloat
 		_s := ""
 
 		r.fieldsFns.Call("range_float", map[string]interface{}{
-			"min":    &rangeMin,
-			"max":    &rangeMax,
-			"minErr": &_s,
-			"maxErr": &_s,
+			"range": &rangeFloat,
 		})
 
-		if rangeMin != math.NaN() {
-			input.Attr["min"] = fmt.Sprintf("%f", rangeMin)
-		}
+		if rangeFloat != nil {
 
-		if rangeMax != math.NaN() {
-			input.Attr["max"] = fmt.Sprintf("%f", rangeMax)
+			if rangeFloat.Min != math.NaN() {
+				input.Attr["min"] = fmt.Sprintf("%f", rangeFloat.Min)
+			}
+
+			if rangeFloat.Max != math.NaN() {
+				input.Attr["max"] = fmt.Sprintf("%f", rangeFloat.Max)
+			}
+
 		}
 
 		step := float64(1)
