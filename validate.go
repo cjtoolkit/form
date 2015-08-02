@@ -52,6 +52,15 @@ func (f *form) validate(formPtr FormPtr) (bool, error) {
 		fieldFns := field.funcs
 		var err error
 
+		var suffix func() []interface{}
+		fieldFns.Call("suffix", map[string]interface{}{
+			"suffix": &suffix,
+		})
+
+		if suffix != nil {
+			name += fmt.Sprint(suffix()...)
+		}
+
 		preferedName := name
 
 		_type := field.typecode

@@ -35,6 +35,15 @@ func (f *form) render(formPtr FormPtr, w io.Writer) {
 		name := field.name
 		fieldFns := field.funcs
 
+		var suffix func() []interface{}
+		fieldFns.Call("suffix", map[string]interface{}{
+			"suffix": &suffix,
+		})
+
+		if suffix != nil {
+			name += fmt.Sprint(suffix()...)
+		}
+
 		preferedName := name
 		_type := field.typecode
 

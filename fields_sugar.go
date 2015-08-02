@@ -274,3 +274,10 @@ func (fns FieldFuncs) Custom(fn func(*error, *string)) {
 		fn(m["error"].(*error), m["warning"].(*string))
 	}
 }
+
+// Add Suffix to Name, does not operate on validate single.
+func (fns FieldFuncs) Suffix(fn func() []interface{}) {
+	fns["suffix"] = func(m map[string]interface{}) {
+		*(m["suffix"]).(*func() []interface{}) = fn
+	}
+}
