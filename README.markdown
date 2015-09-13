@@ -130,7 +130,3 @@ func (e *Example) CJForm(f *form.Fields) {
 ## Demo
 
 https://formdemo.cj-jackson.com/
-
-## Buy me a beer!
-
-Bitcoin - 1MieXR5ANYY6VstNanhuLRtGQGn6zpjxK3
