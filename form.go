@@ -1,6 +1,7 @@
 package form
 
 import (
+	"fmt"
 	"mime/multipart"
 	"net/url"
 )
@@ -43,6 +44,8 @@ func (f *Form) handleError(errPtr *error) {
 		*errPtr = r
 	case error:
 		*errPtr = r
+	default:
+		*errPtr = ErrorUnknown(fmt.Sprint(r))
 	}
 }
 
@@ -52,7 +55,7 @@ func (f *Form) transform(errPtr *error, field FormFieldInterface) {
 }
 
 func (f *Form) checkErrorInLoop(err error, success *bool) {
-	if nil == err {
+	if nil != err {
 		*success = false
 	}
 }
