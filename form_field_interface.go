@@ -2,7 +2,7 @@ package form
 
 type FormFieldInterface interface {
 	GetErrorPtr() *error
-	PopulateNorm(value ValuesInterface)
+	PopulateNorm(values ValuesInterface)
 	Transform()
 	ReverseTransform()
 	ValidateModel()
