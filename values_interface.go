@@ -1,6 +1,6 @@
 package form
 
-type ValueInterface interface {
+type ValuesInterface interface {
 	GetOne(name string) string
 	GetAll(name string) []string
 }
