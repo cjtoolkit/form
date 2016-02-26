@@ -49,11 +49,6 @@ func (f *Form) handleError(errPtr *error) {
 	}
 }
 
-func (f *Form) transform(errPtr *error, field FormFieldInterface) {
-	defer f.handleError(errPtr)
-	field.Transform()
-}
-
 func (f *Form) checkErrorInLoop(err error, success *bool) {
 	if nil != err {
 		*success = false
@@ -78,8 +73,12 @@ func (f *Form) checkErrPtr(errPtr *error) {
 	}
 }
 
+func (f *Form) transform(errPtr *error, field FormFieldInterface) {
+	defer f.handleError(errPtr)
+	field.Transform()
+}
+
 func (f *Form) Transform(form FormBuilderInterface) bool {
-	f.checkValues()
 	f.checkForm(form)
 	success := true
 
@@ -95,7 +94,6 @@ func (f *Form) Transform(form FormBuilderInterface) bool {
 }
 
 func (f *Form) TransformSingle(field FormFieldInterface) error {
-	f.checkValues()
 	f.checkField(field)
 	errPtr := field.GetErrorPtr()
 	f.checkErrPtr(errPtr)

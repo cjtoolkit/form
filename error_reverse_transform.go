@@ -6,15 +6,21 @@ Implement:
 	error in "builtin"
 */
 type ErrorReverseTransform struct {
-	msg   string
+	Msg   string
 	Key   string
 	Value interface{}
 }
 
 func (eRT *ErrorReverseTransform) Error() string {
-	return eRT.msg
+	return eRT.Msg
 }
 
 func (eRT *ErrorReverseTransform) Translate(language Langauge) {
-	eRT.msg = language.Translate(eRT.Key, eRT.Value)
+	eRT.Msg = language.Translate(eRT.Key, eRT.Value)
+	eRT.clean()
+}
+
+func (eRT *ErrorReverseTransform) clean() {
+	eRT.Key = ""
+	eRT.Value = nil
 }

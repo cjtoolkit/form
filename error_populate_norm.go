@@ -6,15 +6,21 @@ Implement:
 	error in "builtin"
 */
 type ErrorPopulateNorm struct {
-	msg   string
+	Msg   string
 	Key   string
 	Value interface{}
 }
 
 func (ePN *ErrorPopulateNorm) Error() string {
-	return ePN.msg
+	return ePN.Msg
 }
 
 func (ePN *ErrorPopulateNorm) Translate(language Langauge) {
-	ePN.msg = language.Translate(ePN.Key, ePN.Value)
+	ePN.Msg = language.Translate(ePN.Key, ePN.Value)
+	ePN.clean()
+}
+
+func (ePN *ErrorPopulateNorm) clean() {
+	ePN.Key = ""
+	ePN.Value = nil
 }

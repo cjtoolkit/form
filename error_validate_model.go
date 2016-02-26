@@ -6,15 +6,20 @@ Implement:
 	error in "builtin"
 */
 type ErrorValidateModel struct {
-	msg   string
+	Msg   string
 	Key   string
 	Value interface{}
 }
 
 func (eVM *ErrorValidateModel) Error() string {
-	return eVM.msg
+	return eVM.Msg
 }
 
 func (eVM *ErrorValidateModel) Translate(language Langauge) {
-	eVM.msg = language.Translate(eVM.Key, eVM.Value)
+	eVM.Msg = language.Translate(eVM.Key, eVM.Value)
+}
+
+func (eVM *ErrorValidateModel) clean() {
+	eVM.Key = ""
+	eVM.Value = nil
 }

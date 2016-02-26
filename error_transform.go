@@ -6,15 +6,15 @@ Implement:
 	error in "builtin"
 */
 type ErrorTransform struct {
-	msg   string
+	Msg   string
 	Key   string
 	Value interface{}
 }
 
 func (eT *ErrorTransform) Error() string {
-	return eT.msg
+	return eT.Msg
 }
 
 func (eT *ErrorTransform) Translate(language Langauge) {
-	eT.msg = language.Translate(eT.Key, eT.Value)
+	eT.Msg = language.Translate(eT.Key, eT.Value)
 }
