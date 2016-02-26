@@ -42,7 +42,7 @@ func TestValuesFile(t *testing.T) {
 			So(v.GetAll("name"), ShouldBeNil)
 		})
 
-		Convey("Call 'GetOne' once, than Call 'GetAll', and compared the values", func() {
+		Convey("Call 'GetOne' once, than Call 'GetAll', and compare the values", func() {
 			v := newValuesFile(&multipart.Form{
 				Value: map[string][]string{
 					"name": {"a", "b", "c"},
@@ -103,7 +103,7 @@ func TestValuesFile(t *testing.T) {
 			So(v.GetAllFile("name"), ShouldBeNil)
 		})
 
-		Convey("Call 'GetOneFile' once, than Call 'GetAllFile', and compared the files", func() {
+		Convey("Call 'GetOneFile' once, than Call 'GetAllFile', and compare the files", func() {
 			v := newValuesFile(&multipart.Form{
 				File: map[string][]*multipart.FileHeader{
 					"name": {

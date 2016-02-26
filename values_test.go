@@ -34,7 +34,7 @@ func TestValues(t *testing.T) {
 		So(v.GetAll("name"), ShouldBeNil)
 	})
 
-	Convey("Call 'GetOne' once, than Call 'GetAll', and compared the values", t, func() {
+	Convey("Call 'GetOne' once, than Call 'GetAll', and compare the values", t, func() {
 		v := newValues(url.Values{
 			"name": {"a", "b", "c"},
 		})

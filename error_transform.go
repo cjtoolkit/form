@@ -17,4 +17,10 @@ func (eT *ErrorTransform) Error() string {
 
 func (eT *ErrorTransform) Translate(language Langauge) {
 	eT.Msg = language.Translate(eT.Key, eT.Value)
+	eT.clean()
+}
+
+func (eT *ErrorTransform) clean() {
+	eT.Key = ""
+	eT.Value = nil
 }
