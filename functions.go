@@ -5,16 +5,16 @@ import (
 	text "text/template"
 )
 
-func GetOneFile(value ValuesInterface, name string) (fh *multipart.FileHeader) {
-	if value, ok := value.(ValuesFileInterface); ok {
-		fh = value.GetOneFile(name)
+func GetOneFile(values ValuesInterface, name string) (fh *multipart.FileHeader) {
+	if values, ok := values.(ValuesFileInterface); ok {
+		fh = values.GetOneFile(name)
 	}
 	return
 }
 
-func GetAllFile(value ValuesInterface, name string) (fhs []*multipart.FileHeader) {
-	if value, ok := value.(ValuesFileInterface); ok {
-		fhs = value.GetAllFile(name)
+func GetAllFile(values ValuesInterface, name string) (fhs []*multipart.FileHeader) {
+	if values, ok := values.(ValuesFileInterface); ok {
+		fhs = values.GetAllFile(name)
 	}
 	return
 }
