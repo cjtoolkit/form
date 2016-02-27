@@ -78,13 +78,14 @@ func (f *Form) transform(errPtr *error, field FormFieldInterface) {
 	field.Transform()
 }
 
-// Panic if form and field are 'nil'
+// Panic if form and field are 'nil' or if field fails pre check.
 func (f *Form) Transform(form FormBuilderInterface) bool {
 	f.checkForm(form)
 	success := true
 
 	for _, field := range form.BuildForm() {
 		f.checkField(field)
+		field.PreCheck()
 		errPtr := field.GetErrorPtr()
 		f.checkErrPtr(errPtr)
 		f.transform(errPtr, field)
@@ -94,9 +95,10 @@ func (f *Form) Transform(form FormBuilderInterface) bool {
 	return success
 }
 
-// Panic if form and field are 'nil'
+// Panic if form and field are 'nil' or if field fails pre check.
 func (f *Form) TransformSingle(field FormFieldInterface) error {
 	f.checkField(field)
+	field.PreCheck()
 	errPtr := field.GetErrorPtr()
 	f.checkErrPtr(errPtr)
 	f.transform(errPtr, field)
@@ -110,7 +112,7 @@ func (f *Form) validate(errPtr *error, field FormFieldInterface) {
 	field.ValidateModel()
 }
 
-// Panic if values, form and field are 'nil'
+// Panic if values, form and field are 'nil' or if field fails pre check.
 func (f *Form) Validate(form FormBuilderInterface) bool {
 	f.checkValues()
 	f.checkForm(form)
@@ -118,6 +120,7 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 
 	for _, field := range form.BuildForm() {
 		f.checkField(field)
+		field.PreCheck()
 		errPtr := field.GetErrorPtr()
 		f.checkErrPtr(errPtr)
 		f.validate(errPtr, field)
@@ -127,10 +130,11 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 	return success
 }
 
-// Panic if values, form and field are 'nil'
+// Panic if values, form and field are 'nil' or if field fails pre check.
 func (f *Form) ValidateSingle(field FormFieldInterface) error {
 	f.checkValues()
 	f.checkField(field)
+	field.PreCheck()
 	errPtr := field.GetErrorPtr()
 	f.checkErrPtr(errPtr)
 	f.validate(errPtr, field)
