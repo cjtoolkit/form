@@ -10,11 +10,12 @@ Implement:
 	FormFieldInterface in "github.com/cjtoolkit/form"
 */
 type Text struct {
-	Name  string  // Mandatory
-	Label string  // Mandatory
-	Norm  *string // Mandatory
-	Model *string // Mandatory
-	Err   *error  // Mandatory
+	Name     string  // Mandatory
+	Label    string  // Mandatory
+	Norm     *string // Mandatory
+	Model    *string // Mandatory
+	Err      *error  // Mandatory
+	Required bool
 }
 
 func (t Text) PreCheck() {
@@ -49,5 +50,20 @@ func (t Text) ReverseTransform() {
 }
 
 func (t Text) ValidateModel() {
+	t.validateRequired()
+}
 
+func (t Text) validateRequired() {
+	if !t.Required {
+		return
+	}
+
+	if "" == *t.Model {
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_FIELD_REQUIRED,
+			Value: map[string]interface{}{
+				"Label": t.Label,
+			},
+		})
+	}
 }

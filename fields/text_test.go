@@ -83,4 +83,49 @@ func TestText(t *testing.T) {
 			}).PreCheck()
 		})
 	})
+
+	Convey("ValidateModel", t, func() {
+
+		Convey("Should not panic because field is not required", func() {
+			defer func() {
+				So(recover(), ShouldBeNil)
+			}()
+
+			(Text{}).validateRequired()
+		})
+
+		Convey("Panic because required field is an empty string", func() {
+			defer func() {
+				So(recover(), ShouldResemble, &form.ErrorValidateModel{
+					Key: form.LANG_FIELD_REQUIRED,
+					Value: map[string]interface{}{
+						"Label": "test",
+					},
+				})
+			}()
+
+			model := ""
+
+			(Text{
+				Label:    "test",
+				Model:    &model,
+				Required: true,
+			}).validateRequired()
+		})
+
+		Convey("Should not panic because required field is not an empty string", func() {
+			defer func() {
+				So(recover(), ShouldBeNil)
+			}()
+
+			model := "hello"
+
+			(Text{
+				Label:    "test",
+				Model:    &model,
+				Required: true,
+			}).validateRequired()
+		})
+
+	})
 }

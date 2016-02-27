@@ -6,6 +6,10 @@ Implement:
 */
 type fakeFormField struct{}
 
+func (fFF *fakeFormField) PreCheck() {
+
+}
+
 func (fFF *fakeFormField) GetErrorPtr() *error {
 	return nil
 }
