@@ -78,6 +78,7 @@ func (f *Form) transform(errPtr *error, field FormFieldInterface) {
 	field.Transform()
 }
 
+// Panic if form and field are 'nil'
 func (f *Form) Transform(form FormBuilderInterface) bool {
 	f.checkForm(form)
 	success := true
@@ -93,6 +94,7 @@ func (f *Form) Transform(form FormBuilderInterface) bool {
 	return success
 }
 
+// Panic if form and field are 'nil'
 func (f *Form) TransformSingle(field FormFieldInterface) error {
 	f.checkField(field)
 	errPtr := field.GetErrorPtr()
@@ -108,6 +110,7 @@ func (f *Form) validate(errPtr *error, field FormFieldInterface) {
 	field.ValidateModel()
 }
 
+// Panic if values, form and field are 'nil'
 func (f *Form) Validate(form FormBuilderInterface) bool {
 	f.checkValues()
 	f.checkForm(form)
@@ -124,6 +127,7 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 	return success
 }
 
+// Panic if values, form and field are 'nil'
 func (f *Form) ValidateSingle(field FormFieldInterface) error {
 	f.checkValues()
 	f.checkField(field)
