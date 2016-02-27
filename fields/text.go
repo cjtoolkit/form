@@ -10,11 +10,11 @@ Implement:
 	FormFieldInterface in "github.com/cjtoolkit/form"
 */
 type Text struct {
-	Name  string
-	Label string
-	Norm  *string
-	Model *string
-	Err   *error
+	Name  string  // Mandatory
+	Label string  // Mandatory
+	Norm  *string // Mandatory
+	Model *string // Mandatory
+	Err   *error  // Mandatory
 }
 
 func (t Text) PreCheck() {
