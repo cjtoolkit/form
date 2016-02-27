@@ -3,6 +3,7 @@ package fields
 import (
 	"github.com/cjtoolkit/form"
 	"strings"
+	"unicode/utf8"
 )
 
 /*
@@ -16,6 +17,8 @@ type Text struct {
 	Model    *string // Mandatory
 	Err      *error  // Mandatory
 	Required bool
+	MinChar  int
+	MaxChar  int
 }
 
 func (t Text) PreCheck() {
@@ -51,6 +54,8 @@ func (t Text) ReverseTransform() {
 
 func (t Text) ValidateModel() {
 	t.validateRequired()
+	t.validateMinChar()
+	t.validateMaxChar()
 }
 
 func (t Text) validateRequired() {
@@ -63,6 +68,38 @@ func (t Text) validateRequired() {
 			Key: form.LANG_FIELD_REQUIRED,
 			Value: map[string]interface{}{
 				"Label": t.Label,
+			},
+		})
+	}
+}
+
+func (t Text) validateMinChar() {
+	if 0 == t.MinChar {
+		return
+	}
+
+	if t.MinChar > utf8.RuneCountInString(*t.Model) {
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_MIN_CHAR,
+			Value: map[string]interface{}{
+				"Label":   t.Label,
+				"MinChar": t.MinChar,
+			},
+		})
+	}
+}
+
+func (t Text) validateMaxChar() {
+	if 0 == t.MaxChar {
+		return
+	}
+
+	if t.MaxChar < utf8.RuneCountInString(*t.Model) {
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_MAX_CHAR,
+			Value: map[string]interface{}{
+				"Label":   t.Label,
+				"MaxChar": t.MaxChar,
 			},
 		})
 	}

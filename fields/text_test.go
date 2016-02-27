@@ -86,45 +86,141 @@ func TestText(t *testing.T) {
 
 	Convey("ValidateModel", t, func() {
 
-		Convey("Should not panic because field is not required", func() {
-			defer func() {
-				So(recover(), ShouldBeNil)
-			}()
+		Convey("validateRequired", func() {
 
-			(Text{}).validateRequired()
+			Convey("Should not panic because field is not required", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				(Text{}).validateRequired()
+			})
+
+			Convey("Panic because required field is an empty string", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_FIELD_REQUIRED,
+						Value: map[string]interface{}{
+							"Label": "test",
+						},
+					})
+				}()
+
+				model := ""
+
+				(Text{
+					Label:    "test",
+					Model:    &model,
+					Required: true,
+				}).validateRequired()
+			})
+
+			Convey("Should not panic because required field is not an empty string", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				model := "hello"
+
+				(Text{
+					Label:    "test",
+					Model:    &model,
+					Required: true,
+				}).validateRequired()
+			})
+
 		})
 
-		Convey("Panic because required field is an empty string", func() {
-			defer func() {
-				So(recover(), ShouldResemble, &form.ErrorValidateModel{
-					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "test",
-					},
-				})
-			}()
+		Convey("validateMinChar", func() {
 
-			model := ""
+			Convey("Should not panic because MinChar has not been populated", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
 
-			(Text{
-				Label:    "test",
-				Model:    &model,
-				Required: true,
-			}).validateRequired()
+				(Text{}).validateMinChar()
+			})
+
+			Convey("Panic because model is less than MinChar", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_MIN_CHAR,
+						Value: map[string]interface{}{
+							"Label":   "test",
+							"MinChar": 4,
+						},
+					})
+				}()
+
+				model := "he"
+
+				(Text{
+					Label:   "test",
+					MinChar: 4,
+					Model:   &model,
+				}).validateMinChar()
+			})
+
+			Convey("Should not panic because model is more than MinChar", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				model := "hello"
+
+				(Text{
+					Label:   "test",
+					MinChar: 4,
+					Model:   &model,
+				}).validateMinChar()
+			})
+
 		})
 
-		Convey("Should not panic because required field is not an empty string", func() {
-			defer func() {
-				So(recover(), ShouldBeNil)
-			}()
+		Convey("validateMaxChar", func() {
 
-			model := "hello"
+			Convey("Should not panic because MaxChar has not been populated", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
 
-			(Text{
-				Label:    "test",
-				Model:    &model,
-				Required: true,
-			}).validateRequired()
+				(Text{}).validateMaxChar()
+			})
+
+			Convey("Panic because model is greater than MaxChar", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_MAX_CHAR,
+						Value: map[string]interface{}{
+							"Label":   "test",
+							"MaxChar": 4,
+						},
+					})
+				}()
+
+				model := "hello"
+
+				(Text{
+					Label:   "test",
+					MaxChar: 4,
+					Model:   &model,
+				}).validateMaxChar()
+			})
+
+			Convey("Should not panic because model is less tahn MinChar", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				model := "he"
+
+				(Text{
+					Label:   "test",
+					MaxChar: 4,
+					Model:   &model,
+				}).validateMaxChar()
+			})
+
 		})
 
 	})
