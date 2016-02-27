@@ -11,14 +11,16 @@ Implement:
 	FormFieldInterface in "github.com/cjtoolkit/form"
 */
 type Text struct {
-	Name     string  // Mandatory
-	Label    string  // Mandatory
-	Norm     *string // Mandatory
-	Model    *string // Mandatory
-	Err      *error  // Mandatory
-	Required bool
-	MinChar  int
-	MaxChar  int
+	Name           string  // Mandatory
+	Label          string  // Mandatory
+	Norm           *string // Mandatory
+	Model          *string // Mandatory
+	Err            *error  // Mandatory
+	Required       bool
+	MinChar        int
+	MaxChar        int
+	MustMatchLabel string
+	MustMatchModel *string
 }
 
 func (t Text) PreCheck() {
@@ -56,6 +58,7 @@ func (t Text) ValidateModel() {
 	t.validateRequired()
 	t.validateMinChar()
 	t.validateMaxChar()
+	t.validateMustMatch()
 }
 
 func (t Text) validateRequired() {
@@ -102,5 +105,15 @@ func (t Text) validateMaxChar() {
 				"MaxChar": t.MaxChar,
 			},
 		})
+	}
+}
+
+func (t Text) validateMustMatch() {
+	if nil == t.MustMatchModel && "" == t.MustMatchLabel {
+		return
+	}
+
+	if *t.MustMatchModel != *t.Model {
+		// Error
 	}
 }
