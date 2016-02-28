@@ -2,25 +2,10 @@ package form
 
 /*
 Implement:
-	TranslatableErrorInterface
 	error in "builtin"
 */
-type ErrorTransform struct {
-	Msg   string
-	Key   string
-	Value interface{}
-}
+type ErrorTransform string
 
-func (eT *ErrorTransform) Error() string {
-	return eT.Msg
-}
-
-func (eT *ErrorTransform) Translate(language Langauge) {
-	eT.Msg = language.Translate(eT.Key, eT.Value)
-	eT.clean()
-}
-
-func (eT *ErrorTransform) clean() {
-	eT.Key = ""
-	eT.Value = nil
+func (eT ErrorTransform) Error() string {
+	return string(eT)
 }
