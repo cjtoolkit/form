@@ -8,7 +8,7 @@ import (
 
 func TestText(t *testing.T) {
 	Convey("PreCheck", t, func() {
-		Convey("Panic because Name is empty string", func() {
+		Convey("Should panic because Name is empty string", func() {
 			defer func() {
 				So(recover(), ShouldEqual, form.ErrorPreCheck("Text Field: Name cannot be empty string"))
 			}()
@@ -16,7 +16,7 @@ func TestText(t *testing.T) {
 			(Text{}).PreCheck()
 		})
 
-		Convey("Panic because Label is empty string", func() {
+		Convey("Should panic because Label is empty string", func() {
 			defer func() {
 				So(recover(), ShouldEqual, form.ErrorPreCheck("Text Field: hello: Label cannot be empty string"))
 			}()
@@ -26,7 +26,7 @@ func TestText(t *testing.T) {
 			}).PreCheck()
 		})
 
-		Convey("Panic because Norm is nil value", func() {
+		Convey("Should panic because Norm is nil value", func() {
 			defer func() {
 				So(recover(), ShouldEqual, form.ErrorPreCheck("Text Field: hello: Norm cannot be nil value"))
 			}()
@@ -37,7 +37,7 @@ func TestText(t *testing.T) {
 			}).PreCheck()
 		})
 
-		Convey("Panic because Model is nil value", func() {
+		Convey("Should panic because Model is nil value", func() {
 			defer func() {
 				So(recover(), ShouldEqual, form.ErrorPreCheck("Text Field: hello: Model cannot be nil value"))
 			}()
@@ -51,7 +51,7 @@ func TestText(t *testing.T) {
 			}).PreCheck()
 		})
 
-		Convey("Panic because Err is nil value", func() {
+		Convey("Should panic because Err is nil value", func() {
 			defer func() {
 				So(recover(), ShouldEqual, form.ErrorPreCheck("Text Field: hello: Err cannot be nil value"))
 			}()
@@ -96,7 +96,7 @@ func TestText(t *testing.T) {
 				(Text{}).validateRequired()
 			})
 
-			Convey("Panic because required field is an empty string", func() {
+			Convey("Should panic because required field is an empty string", func() {
 				defer func() {
 					So(recover(), ShouldResemble, &form.ErrorValidateModel{
 						Key: form.LANG_FIELD_REQUIRED,
@@ -141,7 +141,7 @@ func TestText(t *testing.T) {
 				(Text{}).validateMinChar()
 			})
 
-			Convey("Panic because model is less than MinChar", func() {
+			Convey("Should panic because model is less than MinChar", func() {
 				defer func() {
 					So(recover(), ShouldResemble, &form.ErrorValidateModel{
 						Key: form.LANG_MIN_CHAR,
@@ -187,7 +187,7 @@ func TestText(t *testing.T) {
 				(Text{}).validateMaxChar()
 			})
 
-			Convey("Panic because model is greater than MaxChar", func() {
+			Convey("Should panic because model is greater than MaxChar", func() {
 				defer func() {
 					So(recover(), ShouldResemble, &form.ErrorValidateModel{
 						Key: form.LANG_MAX_CHAR,
@@ -219,6 +219,67 @@ func TestText(t *testing.T) {
 					MaxChar: 4,
 					Model:   &model,
 				}).validateMaxChar()
+			})
+
+		})
+
+		Convey("validateMustMatch", func() {
+
+			Convey("Should not panic because MustMatchModel and/or MustMatchLabel has been populated", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				mustMatchModel := "test"
+				mustMatchLabel := "Test"
+
+				(Text{}).validateMustMatch()
+				(Text{
+					MustMatchModel: &mustMatchModel,
+				}).validateMustMatch()
+				(Text{
+					MustMatchLabel: mustMatchLabel,
+				}).validateMustMatch()
+			})
+
+			Convey("Should not panic because MustMatchModel and Model are identical to each other", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				model := "apple"
+				mustMatchModel := "apple"
+				mustMatchLabel := "Matching Fruit"
+
+				(Text{
+					Model:          &model,
+					MustMatchModel: &mustMatchModel,
+					MustMatchLabel: mustMatchLabel,
+				}).validateMustMatch()
+			})
+
+			Convey("Should panic because MustMatchModel and Model are not identical to each other", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_MUST_MATCH,
+						Value: map[string]interface{}{
+							"Label":          "Fruit",
+							"MustMatchLabel": "Matching Fruit",
+						},
+					})
+				}()
+
+				model := "apple"
+				label := "Fruit"
+				mustMatchModel := "orange"
+				mustMatchLabel := "Matching Fruit"
+
+				(Text{
+					Label:          label,
+					Model:          &model,
+					MustMatchLabel: mustMatchLabel,
+					MustMatchModel: &mustMatchModel,
+				}).validateMustMatch()
 			})
 
 		})

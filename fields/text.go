@@ -62,11 +62,10 @@ func (t Text) ValidateModel() {
 }
 
 func (t Text) validateRequired() {
-	if !t.Required {
+	switch {
+	case !t.Required:
 		return
-	}
-
-	if "" == *t.Model {
+	case "" == *t.Model:
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_FIELD_REQUIRED,
 			Value: map[string]interface{}{
@@ -77,11 +76,10 @@ func (t Text) validateRequired() {
 }
 
 func (t Text) validateMinChar() {
-	if 0 == t.MinChar {
+	switch {
+	case 0 == t.MinChar:
 		return
-	}
-
-	if t.MinChar > utf8.RuneCountInString(*t.Model) {
+	case t.MinChar > utf8.RuneCountInString(*t.Model):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_MIN_CHAR,
 			Value: map[string]interface{}{
@@ -93,11 +91,10 @@ func (t Text) validateMinChar() {
 }
 
 func (t Text) validateMaxChar() {
-	if 0 == t.MaxChar {
+	switch {
+	case 0 == t.MaxChar:
 		return
-	}
-
-	if t.MaxChar < utf8.RuneCountInString(*t.Model) {
+	case t.MaxChar < utf8.RuneCountInString(*t.Model):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_MAX_CHAR,
 			Value: map[string]interface{}{
@@ -109,11 +106,16 @@ func (t Text) validateMaxChar() {
 }
 
 func (t Text) validateMustMatch() {
-	if nil == t.MustMatchModel && "" == t.MustMatchLabel {
+	switch {
+	case nil == t.MustMatchModel || "" == t.MustMatchLabel:
 		return
-	}
-
-	if *t.MustMatchModel != *t.Model {
-		// Error
+	case *t.MustMatchModel != *t.Model:
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_MUST_MATCH,
+			Value: map[string]interface{}{
+				"Label":          t.Label,
+				"MustMatchLabel": t.MustMatchLabel,
+			},
+		})
 	}
 }

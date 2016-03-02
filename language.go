@@ -9,6 +9,7 @@ const (
 	LANG_FIELD_REQUIRED = "field_required"
 	LANG_MIN_CHAR       = "min_char"
 	LANG_MAX_CHAR       = "max_char"
+	LANG_MUST_MATCH     = "must_match"
 )
 
 type Langauge map[string]*text.Template
@@ -18,6 +19,7 @@ func DefaultLanguage() Langauge {
 		LANG_FIELD_REQUIRED: BuildLanguageTemplate("'{{.Label}}' is required."),
 		LANG_MIN_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be greater than '{{.MinChar}}'"),
 		LANG_MAX_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be less than '{{.MaxChar}}'"),
+		LANG_MUST_MATCH:     BuildLanguageTemplate("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
 	}
 }
 
