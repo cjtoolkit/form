@@ -41,26 +41,71 @@ func TestForm(t *testing.T) {
 
 	Convey("handleError", t, func() {
 
-		Convey("check all three case", func() {
+		Convey("check all five case", func() {
 			var err interface{}
-			var output error
+			var errPtr error
 
 			checkError := func(err interface{}) {
-				defer form.handleError(&output)
+				defer form.handleError(&errPtr)
 				panic(err)
 			}
 
-			err = &ErrorTransform{}
-			checkError(err)
-			So(output, ShouldEqual, err)
+			func() {
+				err = &ErrorValidateModel{}
 
-			err = ErrorUnknown("Hi")
-			checkError(err)
-			So(output, ShouldEqual, err)
+				defer func() {
+					So(recover(), ShouldBeNil)
+					So(errPtr, ShouldEqual, err)
+				}()
 
-			err = "Hello, World!"
-			checkError(err)
-			So(output, ShouldEqual, ErrorUnknown("Hello, World!"))
+				checkError(err)
+			}()
+
+			func() {
+				err = ErrorUnknown("Hi")
+
+				defer func() {
+					So(recover(), ShouldBeNil)
+					So(errPtr, ShouldEqual, err)
+				}()
+
+				errPtr = nil
+				checkError(err)
+			}()
+
+			func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+					So(errPtr, ShouldEqual, ErrorUnknown("Hello, World!"))
+				}()
+
+				errPtr = nil
+				err = "Hello, World!"
+				checkError(err)
+			}()
+
+			func() {
+				errPtr = nil
+				defer func() {
+					So(recover(), ShouldBeNil)
+					So(errPtr, ShouldBeNil)
+				}()
+
+				err = nil
+				checkError(err)
+
+			}()
+
+			func() {
+				errPtr = nil
+				defer func() {
+					So(recover(), ShouldEqual, ErrorTransform("hello"))
+					So(errPtr, ShouldBeNil)
+				}()
+
+				err = ErrorTransform("hello")
+				checkError(err)
+			}()
 		})
 
 	})

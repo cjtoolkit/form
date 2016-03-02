@@ -39,6 +39,8 @@ func (f *Form) checkValues() {
 
 func (f *Form) handleError(errPtr *error) {
 	switch r := recover().(type) {
+	case nil:
+		// Not an error, therefore do nothing
 	case ErrorTransform: // Should be 500 error, not the client fault.  Usually the developers fault.
 		panic(r)
 	case TranslatableErrorInterface: // It's either that or a more complex FormFieldInterface (No thanks!)
