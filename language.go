@@ -2,7 +2,6 @@ package form
 
 import (
 	"bytes"
-	text "text/template"
 )
 
 const (
@@ -11,14 +10,14 @@ const (
 	LANG_MAX_CHAR       = "max_char"
 	LANG_MUST_MATCH     = "must_match"
 	LANG_PATTERN        = "pattern"
-	LANG_IN_LIST        = ""
+	LANG_IN_LIST        = "in_test"
 )
 
 /*
 Implement:
 	LangaugeInterface
 */
-type Langauge map[string]*text.Template
+type Langauge map[string]LangaugeTemplateInterface
 
 func DefaultLanguage() Langauge {
 	return Langauge{
@@ -27,7 +26,7 @@ func DefaultLanguage() Langauge {
 		LANG_MAX_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be less than '{{.MaxChar}}'"),
 		LANG_MUST_MATCH:     BuildLanguageTemplate("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
 		LANG_PATTERN:        BuildLanguageTemplate("'{{.Label}}' should match '{{.Pattern}}'"),
-		LANG_IN_LIST:        BuildLanguageTemplate("Value of '{{.Label}}' is not in {{.List}}"),
+		LANG_IN_LIST:        BuildLanguageTemplate("Value of '{{.Label}}' is not in '{{.List}}'"),
 	}
 }
 
