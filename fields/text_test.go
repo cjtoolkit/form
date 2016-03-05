@@ -335,5 +335,55 @@ func TestText(t *testing.T) {
 
 		})
 
+		Convey("validateInList", func() {
+
+			Convey("Should not panic, because InList is 'nil'", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				(Text{}).validateInList()
+			})
+
+			Convey("Should not panic, because Model is in the List", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				label := "List"
+				model := "apple"
+				list := []string{"orange", "apple", "pear"}
+
+				(Text{
+					Label:  label,
+					Model:  &model,
+					InList: list,
+				}).validateInList()
+			})
+
+			Convey("Should panic, because Model is not in the List", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_IN_LIST,
+						Value: map[string]interface{}{
+							"Label": "List",
+							"List":  []string{"orange", "apple", "pear"},
+						},
+					})
+				}()
+
+				label := "List"
+				model := "mango"
+				list := []string{"orange", "apple", "pear"}
+
+				(Text{
+					Label:  label,
+					Model:  &model,
+					InList: list,
+				}).validateInList()
+			})
+
+		})
+
 	})
 }

@@ -23,6 +23,7 @@ type Text struct {
 	MustMatchLabel string
 	MustMatchModel *string
 	Pattern        *regexp.Regexp
+	InList         []string
 }
 
 func (t Text) PreCheck() {
@@ -62,6 +63,7 @@ func (t Text) ValidateModel() {
 	t.validateMaxChar()
 	t.validateMustMatch()
 	t.validatePattern()
+	t.validateInList()
 }
 
 func (t Text) validateRequired() {
@@ -136,4 +138,26 @@ func (t Text) validatePattern() {
 			},
 		})
 	}
+}
+
+func (t Text) validateInList() {
+	if nil == t.InList {
+		return
+	}
+
+	model := *t.Model
+
+	for _, value := range t.InList {
+		if model == value {
+			return
+		}
+	}
+
+	panic(&form.ErrorValidateModel{
+		Key: form.LANG_IN_LIST,
+		Value: map[string]interface{}{
+			"Label": t.Label,
+			"List":  t.InList,
+		},
+	})
 }

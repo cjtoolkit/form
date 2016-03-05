@@ -11,6 +11,7 @@ const (
 	LANG_MAX_CHAR       = "max_char"
 	LANG_MUST_MATCH     = "must_match"
 	LANG_PATTERN        = "pattern"
+	LANG_IN_LIST        = ""
 )
 
 /*
@@ -26,6 +27,7 @@ func DefaultLanguage() Langauge {
 		LANG_MAX_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be less than '{{.MaxChar}}'"),
 		LANG_MUST_MATCH:     BuildLanguageTemplate("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
 		LANG_PATTERN:        BuildLanguageTemplate("'{{.Label}}' should match '{{.Pattern}}'"),
+		LANG_IN_LIST:        BuildLanguageTemplate("Value of '{{.Label}}' is not in {{.List}}"),
 	}
 }
 
