@@ -3,6 +3,7 @@ package fields
 import (
 	"github.com/cjtoolkit/form"
 	. "github.com/smartystreets/goconvey/convey"
+	"regexp"
 	"testing"
 )
 
@@ -280,6 +281,56 @@ func TestText(t *testing.T) {
 					MustMatchLabel: mustMatchLabel,
 					MustMatchModel: &mustMatchModel,
 				}).validateMustMatch()
+			})
+
+		})
+
+		Convey("validatePattern", func() {
+
+			Convey("Should not panic, because Pattern is 'nil'", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				(Text{}).validatePattern()
+			})
+
+			Convey("Should not panic, because Model matches Pattern", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				label := "Pattern"
+				pattern := regexp.MustCompile(`\d`)
+				model := "5"
+
+				(Text{
+					Label:   label,
+					Pattern: pattern,
+					Model:   &model,
+				}).validatePattern()
+			})
+
+			Convey("Panic, because Model does not match Pattern", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_PATTERN,
+						Value: map[string]interface{}{
+							"Label":   "Pattern",
+							"Pattern": `\d`,
+						},
+					})
+				}()
+
+				label := "Pattern"
+				pattern := regexp.MustCompile(`\d`)
+				model := "a"
+
+				(Text{
+					Label:   label,
+					Pattern: pattern,
+					Model:   &model,
+				}).validatePattern()
 			})
 
 		})

@@ -2,6 +2,7 @@ package fields
 
 import (
 	"github.com/cjtoolkit/form"
+	"regexp"
 	"strings"
 	"unicode/utf8"
 )
@@ -21,6 +22,7 @@ type Text struct {
 	MaxChar        int
 	MustMatchLabel string
 	MustMatchModel *string
+	Pattern        *regexp.Regexp
 }
 
 func (t Text) PreCheck() {
@@ -59,6 +61,7 @@ func (t Text) ValidateModel() {
 	t.validateMinChar()
 	t.validateMaxChar()
 	t.validateMustMatch()
+	t.validatePattern()
 }
 
 func (t Text) validateRequired() {
@@ -115,6 +118,21 @@ func (t Text) validateMustMatch() {
 			Value: map[string]interface{}{
 				"Label":          t.Label,
 				"MustMatchLabel": t.MustMatchLabel,
+			},
+		})
+	}
+}
+
+func (t Text) validatePattern() {
+	switch {
+	case nil == t.Pattern:
+		return
+	case !t.Pattern.MatchString(*t.Model):
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_PATTERN,
+			Value: map[string]interface{}{
+				"Label":   t.Label,
+				"Pattern": t.Pattern.String(),
 			},
 		})
 	}

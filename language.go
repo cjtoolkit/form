@@ -10,6 +10,7 @@ const (
 	LANG_MIN_CHAR       = "min_char"
 	LANG_MAX_CHAR       = "max_char"
 	LANG_MUST_MATCH     = "must_match"
+	LANG_PATTERN        = "pattern"
 )
 
 /*
@@ -24,6 +25,7 @@ func DefaultLanguage() Langauge {
 		LANG_MIN_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be greater than '{{.MinChar}}'"),
 		LANG_MAX_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be less than '{{.MaxChar}}'"),
 		LANG_MUST_MATCH:     BuildLanguageTemplate("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
+		LANG_PATTERN:        BuildLanguageTemplate("'{{.Label}}' should match '{{.Pattern}}'"),
 	}
 }
 
