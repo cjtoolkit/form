@@ -7,18 +7,26 @@ import (
 )
 
 type Form struct {
-	language Langauge
+	language LanguageInterface
 	values   ValuesInterface
 }
 
-func NewForm(language Langauge) *Form {
-	return &Form{
+func NewForm(language LanguageInterface) (f *Form) {
+	f = &Form{
 		language: language,
 	}
+	f.checkLanguage()
+	return
 }
 
 func NewFormDefaultLanguage() *Form {
 	return NewForm(DefaultLanguage())
+}
+
+func (f *Form) checkLanguage() {
+	if nil == f.language {
+		panic("Form language cannot be set to nil")
+	}
 }
 
 func (f *Form) SetForm(form url.Values) {

@@ -10,6 +10,30 @@ func TestForm(t *testing.T) {
 	form := &Form{}
 	// end let
 
+	Convey("checkLanguage", t, func() {
+
+		Convey("Panic if 'language' is nil", func() {
+			defer func() {
+				So(recover(), ShouldEqual, "Form language cannot be set to nil")
+			}()
+
+			form.checkLanguage()
+		})
+
+		Convey("'language' is not nil, therefore should not panic", func() {
+			defer func() {
+				So(recover(), ShouldBeNil)
+			}()
+
+			form.language = Langauge{}
+
+			form.checkLanguage()
+
+			form.language = nil
+		})
+
+	})
+
 	Convey("checkValues", t, func() {
 
 		Convey("Panic if 'values' is 'nil'", func() {
@@ -40,6 +64,8 @@ func TestForm(t *testing.T) {
 	})
 
 	Convey("handleError", t, func() {
+
+		form.language = Langauge{}
 
 		Convey("check all five case", func() {
 			var err interface{}
@@ -107,6 +133,8 @@ func TestForm(t *testing.T) {
 				checkError(err)
 			}()
 		})
+
+		form.language = nil
 
 	})
 

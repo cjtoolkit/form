@@ -15,7 +15,7 @@ func (ePN *ErrorPopulateNorm) Error() string {
 	return ePN.Msg
 }
 
-func (ePN *ErrorPopulateNorm) Translate(language Langauge) {
+func (ePN *ErrorPopulateNorm) Translate(language LanguageInterface) {
 	ePN.Msg = language.Translate(ePN.Key, ePN.Value)
 	ePN.clean()
 }

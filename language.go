@@ -12,6 +12,10 @@ const (
 	LANG_MUST_MATCH     = "must_match"
 )
 
+/*
+Implement:
+	LangaugeInterface
+*/
 type Langauge map[string]*text.Template
 
 func DefaultLanguage() Langauge {

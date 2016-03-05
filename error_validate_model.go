@@ -15,7 +15,7 @@ func (eVM *ErrorValidateModel) Error() string {
 	return eVM.Msg
 }
 
-func (eVM *ErrorValidateModel) Translate(language Langauge) {
+func (eVM *ErrorValidateModel) Translate(language LanguageInterface) {
 	eVM.Msg = language.Translate(eVM.Key, eVM.Value)
 }
 

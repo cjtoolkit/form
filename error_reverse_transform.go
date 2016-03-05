@@ -15,7 +15,7 @@ func (eRT *ErrorReverseTransform) Error() string {
 	return eRT.Msg
 }
 
-func (eRT *ErrorReverseTransform) Translate(language Langauge) {
+func (eRT *ErrorReverseTransform) Translate(language LanguageInterface) {
 	eRT.Msg = language.Translate(eRT.Key, eRT.Value)
 	eRT.clean()
 }
