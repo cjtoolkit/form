@@ -26,7 +26,7 @@ func DefaultLanguage() Langauge {
 		LANG_MAX_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be less than '{{.MaxChar}}'"),
 		LANG_MUST_MATCH:     BuildLanguageTemplate("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
 		LANG_PATTERN:        BuildLanguageTemplate("'{{.Label}}' should match '{{.Pattern}}'"),
-		LANG_IN_LIST:        BuildLanguageTemplate("Value of '{{.Label}}' is not in '{{.List}}'"),
+		LANG_IN_LIST:        BuildLanguageTemplate("Value of '{{.Label}}' is not in the list '{{list .List \"and\"}}'"),
 	}
 }
 

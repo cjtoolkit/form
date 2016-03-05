@@ -9,7 +9,8 @@ func TestLanguage(t *testing.T) {
 	// start let
 
 	langs := Langauge{
-		"test": BuildLanguageTemplate("{{.Hello}}"),
+		"test":       BuildLanguageTemplate("{{.Hello}}"),
+		"listFilter": BuildLanguageTemplate(`{{list .List "and"}}`),
 	}
 
 	// end let
@@ -24,5 +25,11 @@ func TestLanguage(t *testing.T) {
 		So(langs.Translate("test", map[string]interface{}{
 			"Hello": "World",
 		}), ShouldEqual, "World")
+	})
+
+	Convey("Test List Filter", t, func() {
+		So(langs.Translate("listFilter", map[string]interface{}{
+			"List": []string{"apple", "mango", "pear"},
+		}), ShouldEqual, "apple, mango and pear")
 	})
 }
