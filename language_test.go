@@ -10,7 +10,7 @@ func TestLanguage(t *testing.T) {
 
 	langs := Langauge{
 		"test":       BuildLanguageTemplate("{{.Hello}}"),
-		"listFilter": BuildLanguageTemplate(`{{list .List "and"}}`),
+		"listFilter": BuildLanguageTemplate(`{{.List|list "and"}}`),
 	}
 
 	// end let

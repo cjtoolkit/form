@@ -31,7 +31,7 @@ func BuildLanguageTemplate(tpl string) *text.Template {
 	return tmpl
 }
 
-func templateListFilter(value interface{}, and string) (str string) {
+func templateListFilter(and string, value interface{}) (str string) {
 	switch value := value.(type) {
 	case []string:
 		switch valueLen := len(value); valueLen {

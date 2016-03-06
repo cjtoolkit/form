@@ -27,7 +27,7 @@ func DefaultLanguage() Langauge {
 		LANG_MAX_CHAR:       bLT("'{{.Label}}' should be less than '{{.MaxChar}}' characters"),
 		LANG_MUST_MATCH:     bLT("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
 		LANG_PATTERN:        bLT("'{{.Label}}' should match '{{.Pattern}}'"),
-		LANG_IN_LIST:        bLT("Value of '{{.Label}}' is not in the list '{{list .List \"and\"}}'"),
+		LANG_IN_LIST:        bLT(`Value of '{{.Label}}' is not in the list '{{.List|list "and"}}'`),
 	}
 }
 
