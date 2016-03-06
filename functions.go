@@ -68,7 +68,6 @@ func templateListFilter(value interface{}, and string) (str string) {
 		case 0:
 			return
 		case 1:
-			//strconv.FormatFloat(f, fmt, prec, bitSize)
 			str = strconv.FormatFloat(value[0], 'f', -1, 64)
 		default:
 			last := strconv.FormatFloat(value[valueLen-1], 'f', -1, 64)
