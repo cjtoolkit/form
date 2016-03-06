@@ -10,7 +10,7 @@ const (
 	LANG_MAX_CHAR       = "max_char"
 	LANG_MUST_MATCH     = "must_match"
 	LANG_PATTERN        = "pattern"
-	LANG_IN_LIST        = "in_test"
+	LANG_IN_LIST        = "in_list"
 )
 
 /*
