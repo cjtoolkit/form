@@ -15,13 +15,13 @@ func TestLanguage(t *testing.T) {
 
 	// end let
 
-	Convey("Bad parameters", t, func() {
+	Convey("Bad data", t, func() {
 		So(langs.Translate("test", map[string]interface{}{
 			"hello": "World",
 		}), ShouldEqual, "<no value>")
 	})
 
-	Convey("Good parameters", t, func() {
+	Convey("Good data", t, func() {
 		So(langs.Translate("test", map[string]interface{}{
 			"Hello": "World",
 		}), ShouldEqual, "World")
