@@ -4,6 +4,12 @@ import (
 	"bytes"
 )
 
+/*
+Implement:
+	LangaugeInterface
+*/
+type Langauge map[string]LangaugeTemplateInterface
+
 const (
 	LANG_FIELD_REQUIRED = "field_required"
 	LANG_MIN_CHAR       = "min_char"
@@ -13,20 +19,15 @@ const (
 	LANG_IN_LIST        = "in_list"
 )
 
-/*
-Implement:
-	LangaugeInterface
-*/
-type Langauge map[string]LangaugeTemplateInterface
-
 func DefaultLanguage() Langauge {
+	bLT := BuildLanguageTemplate
 	return Langauge{
-		LANG_FIELD_REQUIRED: BuildLanguageTemplate("'{{.Label}}' is required."),
-		LANG_MIN_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be greater than '{{.MinChar}}'"),
-		LANG_MAX_CHAR:       BuildLanguageTemplate("'{{.Label}}' should be less than '{{.MaxChar}}'"),
-		LANG_MUST_MATCH:     BuildLanguageTemplate("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
-		LANG_PATTERN:        BuildLanguageTemplate("'{{.Label}}' should match '{{.Pattern}}'"),
-		LANG_IN_LIST:        BuildLanguageTemplate("Value of '{{.Label}}' is not in the list '{{list .List \"and\"}}'"),
+		LANG_FIELD_REQUIRED: bLT("'{{.Label}}' is required."),
+		LANG_MIN_CHAR:       bLT("'{{.Label}}' should be greater than '{{.MinChar}}' characters"),
+		LANG_MAX_CHAR:       bLT("'{{.Label}}' should be less than '{{.MaxChar}}' characters"),
+		LANG_MUST_MATCH:     bLT("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
+		LANG_PATTERN:        bLT("'{{.Label}}' should match '{{.Pattern}}'"),
+		LANG_IN_LIST:        bLT("Value of '{{.Label}}' is not in the list '{{list .List \"and\"}}'"),
 	}
 }
 
