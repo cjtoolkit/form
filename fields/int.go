@@ -1,0 +1,68 @@
+package fields
+
+import (
+	"github.com/cjtoolkit/form"
+	"strconv"
+	"strings"
+)
+
+/*
+Implement:
+	FormFieldInterface in "github.com/cjtoolkit/form"
+*/
+type Int struct {
+	Name  string  // Mandatory
+	Label string  // Mandatory
+	Norm  *string // Mandatory
+	Model *int64  // Mandatory
+	Err   *error  // Mandatory
+}
+
+const (
+	INT_DECIMAL = 10
+	INT_BIT     = 64
+)
+
+func (i Int) PreCheck() {
+	switch {
+	case "" == strings.TrimSpace(i.Name):
+		panic(form.ErrorPreCheck("Int Field: Name cannot be empty string"))
+	case "" == strings.TrimSpace(i.Label):
+		panic(form.ErrorPreCheck("Int Field: " + i.Name + ": Label cannot be empty string"))
+	case nil == i.Norm:
+		panic(form.ErrorPreCheck("Int Field: " + i.Name + ": Norm cannot be nil value"))
+	case nil == i.Model:
+		panic(form.ErrorPreCheck("Int Field: " + i.Name + ": Model cannot be nil value"))
+	case nil == i.Err:
+		panic(form.ErrorPreCheck("Int Field: " + i.Name + ": Err cannot be nil value"))
+	}
+}
+
+func (i Int) GetErrorPtr() *error {
+	return i.Err
+}
+
+func (i Int) PopulateNorm(values form.ValuesInterface) {
+	*i.Norm = values.GetOne(i.Name)
+}
+
+func (i Int) Transform() {
+	*i.Norm = strconv.FormatInt(*i.Model, INT_DECIMAL)
+}
+
+func (i Int) ReverseTransform() {
+	num, err := strconv.ParseInt(strings.TrimSpace(*i.Norm), INT_BIT, INT_DECIMAL)
+	ExecFuncIfErrIsNotNil(err, func() {
+		panic(&form.ErrorReverseTransform{
+			Key: form.LANG_NOT_INT,
+			Value: map[string]interface{}{
+				"Label": i.Label,
+			},
+		})
+	})
+	*i.Model = num
+}
+
+func (i Int) ValidateModel() {
+
+}
