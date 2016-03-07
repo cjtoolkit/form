@@ -85,4 +85,98 @@ func TestInt(t *testing.T) {
 			}).PreCheck()
 		})
 	})
+
+	Convey("ValidateModel", t, func() {
+
+		Convey("validateMin", func() {
+
+			Convey("Don't validate 0 if MinZero is false", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				label := "min"
+				model := int64(-5)
+
+				(Int{
+					Label: label,
+					Model: &model,
+				}).validateMin()
+			})
+
+			Convey("Validate 0 if MinZero is true, should panic because it's less than 0", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_NUMBER_MIN,
+						Value: map[string]interface{}{
+							"Label": "min",
+							"Min":   int64(0),
+						},
+					})
+				}()
+
+				label := "min"
+				model := int64(-5)
+
+				(Int{
+					Label:   label,
+					Model:   &model,
+					MinZero: true,
+				}).validateMin()
+			})
+
+			Convey("Validate 0 if MinZero is true, shoud not panic because it's more than 0", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				label := "min"
+				model := int64(5)
+
+				(Int{
+					Label:   label,
+					Model:   &model,
+					MinZero: true,
+				}).validateMin()
+			})
+
+			Convey("Validate 5, should panic because it's less than 5", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_NUMBER_MIN,
+						Value: map[string]interface{}{
+							"Label": "min",
+							"Min":   int64(5),
+						},
+					})
+				}()
+
+				label := "min"
+				model := int64(2)
+
+				(Int{
+					Label: label,
+					Model: &model,
+					Min:   5,
+				}).validateMin()
+			})
+
+			Convey("Validate 5, should not panic because it's more than 5", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				label := "min"
+				model := int64(6)
+
+				(Int{
+					Label: label,
+					Model: &model,
+					Min:   5,
+				}).validateMin()
+			})
+
+		})
+
+	})
 }
