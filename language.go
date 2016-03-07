@@ -22,11 +22,11 @@ const (
 func DefaultLanguage() Langauge {
 	bLT := BuildLanguageTemplate
 	return Langauge{
-		LANG_FIELD_REQUIRED: bLT("'{{.Label}}' is required."),
-		LANG_MIN_CHAR:       bLT("'{{.Label}}' should be greater than '{{.MinChar}}' characters"),
-		LANG_MAX_CHAR:       bLT("'{{.Label}}' should be less than '{{.MaxChar}}' characters"),
-		LANG_MUST_MATCH:     bLT("'{{.Label}}' should match '{{.MustMatchLabel}}'"),
-		LANG_PATTERN:        bLT("'{{.Label}}' should match '{{.Pattern}}'"),
+		LANG_FIELD_REQUIRED: bLT(`'{{.Label}}' is required.`),
+		LANG_MIN_CHAR:       bLT(`'{{.Label}}' should be greater than '{{.MinChar}}' character{{.MinChar|pluralise "s"}}`),
+		LANG_MAX_CHAR:       bLT(`'{{.Label}}' should be less than '{{.MaxChar}}' character{{.MaxChar|pluralise "s"}}`),
+		LANG_MUST_MATCH:     bLT(`'{{.Label}}' should match '{{.MustMatchLabel}}'`),
+		LANG_PATTERN:        bLT(`'{{.Label}}' should match '{{.Pattern}}'`),
 		LANG_IN_LIST:        bLT(`Value of '{{.Label}}' is not in the list '{{.List|list "and"}}'`),
 	}
 }

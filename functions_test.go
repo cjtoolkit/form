@@ -85,4 +85,15 @@ func TestFunctions(t *testing.T) {
 		So(templateListFilter("and", []float64{1.5, 2.5}), ShouldEqual, "1.5 and 2.5")
 		So(templateListFilter("and", []float64{1.5, 2.5, 3.5}), ShouldEqual, "1.5, 2.5 and 3.5")
 	})
+
+	Convey("templatePluraliseFilter", t, func() {
+		So(templatePluraliseFilter("s", 1), ShouldBeEmpty)
+		So(templatePluraliseFilter("s", 5), ShouldEqual, "s")
+		So(templatePluraliseFilter("s", int64(1)), ShouldBeEmpty)
+		So(templatePluraliseFilter("s", int64(5)), ShouldEqual, "s")
+		So(templatePluraliseFilter("s", float64(1)), ShouldBeEmpty)
+		So(templatePluraliseFilter("s", float64(1.5)), ShouldEqual, "s")
+		So(templatePluraliseFilter("s", uint64(1)), ShouldBeEmpty)
+		So(templatePluraliseFilter("s", uint64(5)), ShouldEqual, "s")
+	})
 }

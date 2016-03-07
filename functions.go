@@ -23,7 +23,8 @@ func GetAllFile(values ValuesInterface, name string) (fhs []*multipart.FileHeade
 
 func BuildLanguageTemplate(tpl string) *text.Template {
 	tmpl, err := text.New("").Funcs(text.FuncMap{
-		"list": templateListFilter,
+		"list":      templateListFilter,
+		"pluralise": templatePluraliseFilter,
 	}).Parse(tpl)
 	if nil != err {
 		panic(err)
@@ -77,6 +78,28 @@ func templateListFilter(and string, value interface{}) (str string) {
 				newValue = append(newValue, strconv.FormatFloat(v, 'f', -1, 64), ", ")
 			}
 			str = fmt.Sprint(append(newValue[:len(newValue)-1], " ", and, " ", last)...)
+		}
+	}
+	return
+}
+
+func templatePluraliseFilter(plural string, count interface{}) (output string) {
+	switch count := count.(type) {
+	case int64:
+		if count > 1 {
+			output = plural
+		}
+	case int:
+		if count > 1 {
+			output = plural
+		}
+	case uint64:
+		if count > 1 {
+			output = plural
+		}
+	case float64:
+		if count > 1 {
+			output = plural
 		}
 	}
 	return

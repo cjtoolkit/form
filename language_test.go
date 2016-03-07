@@ -9,8 +9,9 @@ func TestLanguage(t *testing.T) {
 	// start let
 
 	langs := Langauge{
-		"test":       BuildLanguageTemplate("{{.Hello}}"),
+		"test":       BuildLanguageTemplate(`{{.Hello}}`),
 		"listFilter": BuildLanguageTemplate(`{{.List|list "and"}}`),
+		"plural":     BuildLanguageTemplate(`{{.Count|pluralise "s"}}`),
 	}
 
 	// end let
@@ -31,5 +32,11 @@ func TestLanguage(t *testing.T) {
 		So(langs.Translate("listFilter", map[string]interface{}{
 			"List": []string{"apple", "mango", "pear"},
 		}), ShouldEqual, "apple, mango and pear")
+	})
+
+	Convey("Test Plural", t, func() {
+		So(langs.Translate("plural", map[string]interface{}{
+			"Count": 5,
+		}), ShouldEqual, "s")
 	})
 }
