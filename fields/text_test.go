@@ -208,7 +208,7 @@ func TestText(t *testing.T) {
 				}).validateMaxChar()
 			})
 
-			Convey("Should not panic because model is less tahn MinChar", func() {
+			Convey("Should not panic because model is less tahn MaxChar", func() {
 				defer func() {
 					So(recover(), ShouldBeNil)
 				}()

@@ -23,6 +23,7 @@ type Text struct {
 	MustMatchLabel string
 	MustMatchModel *string
 	Pattern        *regexp.Regexp
+	PatternErrKey  string
 	InList         []string
 }
 
@@ -131,7 +132,7 @@ func (t Text) validatePattern() {
 		return
 	case !t.Pattern.MatchString(*t.Model):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_PATTERN,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_PATTERN, t.PatternErrKey),
 			Value: map[string]interface{}{
 				"Label":   t.Label,
 				"Pattern": t.Pattern.String(),
