@@ -22,6 +22,7 @@ type Int struct {
 	Max      int64
 	MaxZero  bool
 	Step     int64
+	InList   []int64
 }
 
 const (
@@ -133,4 +134,26 @@ func (i Int) validateStep() {
 			},
 		})
 	}
+}
+
+func (i Int) validateInList() {
+	if nil == i.InList {
+		return
+	}
+
+	model := *i.Model
+
+	for _, value := range i.InList {
+		if model == value {
+			return
+		}
+	}
+
+	panic(&form.ErrorValidateModel{
+		Key: form.LANG_IN_LIST,
+		Value: map[string]interface{}{
+			"Label": i.Label,
+			"List":  i.InList,
+		},
+	})
 }
