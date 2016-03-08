@@ -19,6 +19,8 @@ const (
 	LANG_IN_LIST        = "in_list"
 	LANG_NOT_INT        = "not_int"
 	LANG_NUMBER_MIN     = "number_min"
+	LANG_NUMBER_MAX     = "number_max"
+	LANG_NUMBER_STEP    = "number_step"
 )
 
 func DefaultLanguage() Langauge {
@@ -31,7 +33,9 @@ func DefaultLanguage() Langauge {
 		LANG_PATTERN:        bLT(`'{{.Label}}' should match '{{.Pattern}}.'`),
 		LANG_IN_LIST:        bLT(`Value of '{{.Label}}' is not in the list '{{.List|list "and"}}'.`),
 		LANG_NOT_INT:        bLT(`'{{.Label}}' is not a whole number.`),
-		LANG_NUMBER_MIN:     bLT(`'{{.Label}}' should be greater than or equal to {{.Min}}`),
+		LANG_NUMBER_MIN:     bLT(`'{{.Label}}' should be greater than or equal to '{{.Min}}'.`),
+		LANG_NUMBER_MAX:     bLT(`'{{.Label}}' should be less than or equal to '{{.Max}}'.`),
+		LANG_NUMBER_STEP:    bLT(`'{{.Label}}' should be in step of '{{.Step}}'.`),
 	}
 }
 

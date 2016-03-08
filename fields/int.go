@@ -18,6 +18,9 @@ type Int struct {
 	Err     *error  // Mandatory
 	Min     int64
 	MinZero bool
+	Max     int64
+	MaxZero bool
+	Step    int64
 }
 
 const (
@@ -79,6 +82,36 @@ func (i Int) validateMin() {
 			Value: map[string]interface{}{
 				"Label": i.Label,
 				"Min":   i.Min,
+			},
+		})
+	}
+}
+
+func (i Int) validateMax() {
+	switch {
+	case 0 == i.Max && !i.MaxZero:
+		return
+	case i.Max < *i.Model:
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_NUMBER_MAX,
+			Value: map[string]interface{}{
+				"Label": i.Label,
+				"Max":   i.Max,
+			},
+		})
+	}
+}
+
+func (i Int) validateStep() {
+	switch {
+	case 0 == i.Step:
+		return
+	case 0 != *i.Model%i.Step:
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_NUMBER_STEP,
+			Value: map[string]interface{}{
+				"Label": i.Label,
+				"Step":  i.Step,
 			},
 		})
 	}
