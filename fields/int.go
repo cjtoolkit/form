@@ -11,16 +11,17 @@ Implement:
 	FormFieldInterface in "github.com/cjtoolkit/form"
 */
 type Int struct {
-	Name    string  // Mandatory
-	Label   string  // Mandatory
-	Norm    *string // Mandatory
-	Model   *int64  // Mandatory
-	Err     *error  // Mandatory
-	Min     int64
-	MinZero bool
-	Max     int64
-	MaxZero bool
-	Step    int64
+	Name     string  // Mandatory
+	Label    string  // Mandatory
+	Norm     *string // Mandatory
+	Model    *int64  // Mandatory
+	Err      *error  // Mandatory
+	Required bool
+	Min      int64
+	MinZero  bool
+	Max      int64
+	MaxZero  bool
+	Step     int64
 }
 
 const (
@@ -69,7 +70,24 @@ func (i Int) ReverseTransform() {
 }
 
 func (i Int) ValidateModel() {
+	i.validateRequired()
 	i.validateMin()
+	i.validateMax()
+	i.validateStep()
+}
+
+func (i Int) validateRequired() {
+	switch {
+	case !i.Required:
+		return
+	case 0 == *i.Model:
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_FIELD_REQUIRED,
+			Value: map[string]interface{}{
+				"Label": i.Label,
+			},
+		})
+	}
 }
 
 func (i Int) validateMin() {

@@ -90,6 +90,51 @@ func TestInt(t *testing.T) {
 
 	Convey("ValidateModel", t, func() {
 
+		Convey("validateRequired", func() {
+
+			Convey("Should not panic because field is not required", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				(Int{}).validateRequired()
+			})
+
+			Convey("Should panic because required field is an empty string", func() {
+				defer func() {
+					So(recover(), ShouldResemble, &form.ErrorValidateModel{
+						Key: form.LANG_FIELD_REQUIRED,
+						Value: map[string]interface{}{
+							"Label": "required",
+						},
+					})
+				}()
+
+				model := int64(0)
+
+				(Int{
+					Label:    "required",
+					Model:    &model,
+					Required: true,
+				}).validateRequired()
+			})
+
+			Convey("Should not panic because required field is not an empty string", func() {
+				defer func() {
+					So(recover(), ShouldBeNil)
+				}()
+
+				model := int64(5)
+
+				(Int{
+					Label:    "required",
+					Model:    &model,
+					Required: true,
+				}).validateRequired()
+			})
+
+		})
+
 		Convey("validateMin", func() {
 
 			Convey("Don't validate 0 if MinZero is false", func() {
