@@ -7,6 +7,6 @@ Implement:
 type fakeForm struct {
 }
 
-func (fF *fakeForm) BuildForm() []FormFieldInterface {
+func (fF *fakeForm) Fields() []FormFieldInterface {
 	return nil
 }

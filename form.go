@@ -95,7 +95,7 @@ func (f *Form) Transform(form FormBuilderInterface) bool {
 	f.checkForm(form)
 	success := true
 
-	for _, field := range form.BuildForm() {
+	for _, field := range form.Fields() {
 		f.checkField(field)
 		field.PreCheck()
 		errPtr := field.GetErrorPtr()
@@ -130,7 +130,7 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 	f.checkForm(form)
 	success := true
 
-	for _, field := range form.BuildForm() {
+	for _, field := range form.Fields() {
 		f.checkField(field)
 		field.PreCheck()
 		errPtr := field.GetErrorPtr()

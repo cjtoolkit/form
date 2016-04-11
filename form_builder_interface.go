@@ -1,5 +1,5 @@
 package form
 
 type FormBuilderInterface interface {
-	BuildForm() []FormFieldInterface
+	Fields() []FormFieldInterface
 }
