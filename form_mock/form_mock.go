@@ -69,7 +69,7 @@ func (f *FormMock) ExpectTransform(expectForm form.FormBuilderInterface, willRet
 }
 
 func (f *FormMock) Transform(form form.FormBuilderInterface) bool {
-	f.C.So(form, ShouldResemble, f.transformParamForm)
+	f.C.So(form, ShouldResemble, <-f.transformParamForm)
 
 	return <-f.transformWillReturn
 }
