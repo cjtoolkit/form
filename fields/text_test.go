@@ -132,14 +132,14 @@ func TestText(t *testing.T) {
 
 		})
 
-		Convey("validateMinChar", func() {
+		Convey("validateMinRune", func() {
 
 			Convey("Should not panic because MinChar has not been populated", func() {
 				defer func() {
 					So(recover(), ShouldBeNil)
 				}()
 
-				(Text{}).validateMinChar()
+				(Text{}).validateMinRune()
 			})
 
 			Convey("Should panic because model is less than MinChar", func() {
@@ -148,7 +148,7 @@ func TestText(t *testing.T) {
 						Key: form.LANG_MIN_CHAR,
 						Value: map[string]interface{}{
 							"Label":   "test",
-							"MinChar": 4,
+							"MinRune": 4,
 						},
 					})
 				}()
@@ -157,9 +157,9 @@ func TestText(t *testing.T) {
 
 				(Text{
 					Label:   "test",
-					MinChar: 4,
+					MinRune: 4,
 					Model:   &model,
-				}).validateMinChar()
+				}).validateMinRune()
 			})
 
 			Convey("Should not panic because model is more than MinChar", func() {
@@ -171,21 +171,21 @@ func TestText(t *testing.T) {
 
 				(Text{
 					Label:   "test",
-					MinChar: 4,
+					MinRune: 4,
 					Model:   &model,
-				}).validateMinChar()
+				}).validateMinRune()
 			})
 
 		})
 
-		Convey("validateMaxChar", func() {
+		Convey("validateMaxRune", func() {
 
 			Convey("Should not panic because MaxChar has not been populated", func() {
 				defer func() {
 					So(recover(), ShouldBeNil)
 				}()
 
-				(Text{}).validateMaxChar()
+				(Text{}).validateMaxRune()
 			})
 
 			Convey("Should panic because model is greater than MaxChar", func() {
@@ -194,7 +194,7 @@ func TestText(t *testing.T) {
 						Key: form.LANG_MAX_CHAR,
 						Value: map[string]interface{}{
 							"Label":   "test",
-							"MaxChar": 4,
+							"MaxRune": 4,
 						},
 					})
 				}()
@@ -203,9 +203,9 @@ func TestText(t *testing.T) {
 
 				(Text{
 					Label:   "test",
-					MaxChar: 4,
+					MaxRune: 4,
 					Model:   &model,
-				}).validateMaxChar()
+				}).validateMaxRune()
 			})
 
 			Convey("Should not panic because model is less tahn MaxChar", func() {
@@ -217,9 +217,9 @@ func TestText(t *testing.T) {
 
 				(Text{
 					Label:   "test",
-					MaxChar: 4,
+					MaxRune: 4,
 					Model:   &model,
-				}).validateMaxChar()
+				}).validateMaxRune()
 			})
 
 		})

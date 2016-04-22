@@ -1,5 +1,7 @@
 package fields
 
+import "regexp"
+
 func UseDefaultKeyIfCustomKeyIsEmpty(defaultKey, customKey string) string {
 	if "" != customKey {
 		return customKey
@@ -13,4 +15,24 @@ func ExecFuncIfErrIsNotNil(err error, fn func()) (b bool) {
 		b = true
 	}
 	return
+}
+
+func getMessageFromError(err error) string {
+	if nil == err {
+		return ""
+	}
+	return err.Error()
+}
+
+func getPatternFromRegExp(re *regexp.Regexp) string {
+	if nil == re {
+		return ""
+	}
+	return re.String()
+}
+
+func execFnIfNotNil(fn func()) {
+	if nil != fn {
+		fn()
+	}
 }

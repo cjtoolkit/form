@@ -27,8 +27,8 @@ func DefaultLanguage() Langauge {
 	bLT := BuildLanguageTemplate
 	return Langauge{
 		LANG_FIELD_REQUIRED: bLT(`'{{.Label}}' is required.`),
-		LANG_MIN_CHAR:       bLT(`'{{.Label}}' should be greater than or equal to '{{.MinChar}}' character{{.MinChar|pluralise "s"}}.`),
-		LANG_MAX_CHAR:       bLT(`'{{.Label}}' should be less than or equal '{{.MaxChar}}' character{{.MaxChar|pluralise "s"}}.`),
+		LANG_MIN_CHAR:       bLT(`'{{.Label}}' should be greater than or equal to '{{.MinRune}}' character{{.MinRune|pluralise "s"}}.`),
+		LANG_MAX_CHAR:       bLT(`'{{.Label}}' should be less than or equal '{{.MaxRune}}' character{{.MaxRune|pluralise "s"}}.`),
 		LANG_MUST_MATCH:     bLT(`'{{.Label}}' should match '{{.MustMatchLabel}}.'`),
 		LANG_PATTERN:        bLT(`'{{.Label}}' should match '{{.Pattern}}.'`),
 		LANG_IN_LIST:        bLT(`Value of '{{.Label}}' is not in the list '{{.List|list "and"}}'.`),

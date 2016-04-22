@@ -1,6 +1,7 @@
 package fields
 
 import (
+	"encoding/json"
 	"github.com/cjtoolkit/form"
 	"regexp"
 	"strings"
@@ -18,13 +19,43 @@ type Text struct {
 	Model          *string // Mandatory
 	Err            *error  // Mandatory
 	Required       bool
-	MinChar        int
-	MaxChar        int
+	MinRune        int
+	MaxRune        int
+	MustMatchName  string
 	MustMatchLabel string
 	MustMatchModel *string
 	Pattern        *regexp.Regexp
 	PatternErrKey  string
 	InList         []string
+	Extra          func()
+}
+
+type textJson struct {
+	Type      string   `json:"type"`
+	Name      string   `json:"name"`
+	Required  bool     `json:"required"`
+	Success   bool     `json:"success"`
+	Error     string   `json:"error,omitempty"`
+	Min       int      `json:"min,omitempty"`
+	Max       int      `json:"max,omitempty"`
+	MustMatch string   `json:"mustMatch,omitempty"`
+	Pattern   string   `json:"pattern,omitempty"`
+	List      []string `json:"list,omitempty"`
+}
+
+func (t Text) MarshalJSON() ([]byte, error) {
+	return json.Marshal(textJson{
+		Type:      "text",
+		Name:      t.Name,
+		Required:  t.Required,
+		Success:   nil == *t.Err,
+		Error:     getMessageFromError(*t.Err),
+		Min:       t.MinRune,
+		Max:       t.MaxRune,
+		MustMatch: t.MustMatchName,
+		Pattern:   getPatternFromRegExp(t.Pattern),
+		List:      t.InList,
+	})
 }
 
 func (t Text) PreCheck() {
@@ -60,11 +91,12 @@ func (t Text) ReverseTransform() {
 
 func (t Text) ValidateModel() {
 	t.validateRequired()
-	t.validateMinChar()
-	t.validateMaxChar()
+	t.validateMinRune()
+	t.validateMaxRune()
 	t.validateMustMatch()
 	t.validatePattern()
 	t.validateInList()
+	execFnIfNotNil(t.Extra)
 }
 
 func (t Text) validateRequired() {
@@ -81,31 +113,31 @@ func (t Text) validateRequired() {
 	}
 }
 
-func (t Text) validateMinChar() {
+func (t Text) validateMinRune() {
 	switch {
-	case 0 == t.MinChar:
+	case 0 == t.MinRune:
 		return
-	case t.MinChar > utf8.RuneCountInString(*t.Model):
+	case t.MinRune > utf8.RuneCountInString(*t.Model):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_MIN_CHAR,
 			Value: map[string]interface{}{
 				"Label":   t.Label,
-				"MinChar": t.MinChar,
+				"MinRune": t.MinRune,
 			},
 		})
 	}
 }
 
-func (t Text) validateMaxChar() {
+func (t Text) validateMaxRune() {
 	switch {
-	case 0 == t.MaxChar:
+	case 0 == t.MaxRune:
 		return
-	case t.MaxChar < utf8.RuneCountInString(*t.Model):
+	case t.MaxRune < utf8.RuneCountInString(*t.Model):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_MAX_CHAR,
 			Value: map[string]interface{}{
 				"Label":   t.Label,
-				"MaxChar": t.MaxChar,
+				"MaxRune": t.MaxRune,
 			},
 		})
 	}
