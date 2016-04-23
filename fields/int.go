@@ -1,6 +1,7 @@
 package fields
 
 import (
+	"encoding/json"
 	"github.com/cjtoolkit/form"
 	"strconv"
 	"strings"
@@ -23,12 +24,42 @@ type Int struct {
 	MaxZero  bool
 	Step     int64
 	InList   []int64
+	Extra    func()
+}
+
+type intJson struct {
+	Type     string  `json:"type"`
+	Name     string  `json:"name"`
+	Required bool    `json:"required"`
+	Success  bool    `json:"success"`
+	Error    string  `json:"error,omitempty"`
+	Min      int64   `json:"min,omitempty"`
+	MinZero  bool    `json:"minZero,omitempty"`
+	Max      int64   `json:"max,omitempty"`
+	MaxZero  bool    `json:"maxZero,omitempty"`
+	Step     int64   `json:"step,omitempty"`
+	List     []int64 `json:"list,omitempty"`
 }
 
 const (
 	INT_DECIMAL = 10
 	INT_BIT     = 64
 )
+
+func (i Int) MarshalJSON() ([]byte, error) {
+	return json.Marshal(intJson{
+		Type:     "int",
+		Name:     i.Name,
+		Required: i.Required,
+		Success:  nil == *i.Err,
+		Min:      i.Min,
+		MinZero:  i.MinZero,
+		Max:      i.Max,
+		MaxZero:  i.MaxZero,
+		Step:     i.Step,
+		List:     i.InList,
+	})
+}
 
 func (i Int) PreCheck() {
 	switch {
@@ -75,6 +106,8 @@ func (i Int) ValidateModel() {
 	i.validateMin()
 	i.validateMax()
 	i.validateStep()
+	i.validateInList()
+	execFnIfNotNil(i.Extra)
 }
 
 func (i Int) validateRequired() {
