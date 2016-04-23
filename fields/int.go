@@ -52,6 +52,7 @@ func (i Int) MarshalJSON() ([]byte, error) {
 		Name:     i.Name,
 		Required: i.Required,
 		Success:  nil == *i.Err,
+		Error:    getMessageFromError(*i.Err),
 		Min:      i.Min,
 		MinZero:  i.MinZero,
 		Max:      i.Max,
