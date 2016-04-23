@@ -107,6 +107,10 @@ func (t Time) validateMin() {
 	}
 }
 
+func (t Time) MinStr() string {
+	return t.Min.Format(t.Formats[0])
+}
+
 func (t Time) validateMax() {
 	switch {
 	case t.Max.IsZero() && t.MaxZero:
@@ -119,5 +123,38 @@ func (t Time) validateMax() {
 				"Max":   t.Max.Format(t.Formats[0]),
 			},
 		})
+	}
+}
+
+func (t Time) MaxStr() {
+	return t.Max.Format(t.Formats[0])
+}
+
+func DateTimeLocalFormats() []string {
+	// All meets html5 specification.
+	return []string{
+		"2006-01-02T15:04.05",
+		"2006-01-02T15:04:05",
+		"2006-01-02T15:04",
+		"2006-01-02",
+		"15:04.05",
+		"15:04:05",
+		"15:04",
+	}
+}
+
+func DateFormats() []string{
+	// All meets html5 specification.
+	return []string{
+		"2006-01-02",
+	}
+}
+
+func TimeFormats() []string{
+	// All meets html5 specification.
+	return []string{
+		"15:04.05",
+		"15:04:05",
+		"15:04",
 	}
 }
