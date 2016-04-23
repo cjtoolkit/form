@@ -119,6 +119,7 @@ func (f *Form) TransformSingle(field FormFieldInterface) error {
 
 func (f *Form) validate(errPtr *error, field FormFieldInterface) {
 	defer f.handleError(errPtr)
+	*errPtr = nil
 	field.PopulateNorm(f.values)
 	field.ReverseTransform()
 	field.ValidateModel()
