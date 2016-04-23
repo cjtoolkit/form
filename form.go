@@ -20,7 +20,7 @@ func NewForm(language LanguageInterface) (f *Form) {
 }
 
 func NewFormDefaultLanguage() *Form {
-	return NewForm(DefaultLanguage())
+	return NewForm(defaultLanguageMap)
 }
 
 func (f *Form) checkLanguage() {
