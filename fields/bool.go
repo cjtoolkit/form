@@ -49,7 +49,7 @@ func (b Bool) PreCheck() {
 	case nil == b.Err:
 		panic(form.ErrorPreCheck("Bool Field: " + b.Name + ": Err cannot be nil value"))
 	case "" == strings.TrimSpace(b.Value):
-		panic(form.ErrorPreCheck("Bool Field: " + b.Name + ": Value cannot be empty"))
+		panic(form.ErrorPreCheck("Bool Field: " + b.Name + ": Value cannot be empty string"))
 	}
 }
 
