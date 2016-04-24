@@ -30,7 +30,9 @@ type timeJson struct {
 	Success  bool   `json:"success"`
 	Error    string `json:"error,omitempty"`
 	Min      string `json:"min,omitempty"`
+	MinUnix  int64  `json:"minUnix,omitempty"`
 	Max      string `json:"max,omitempty"`
+	MaxUnix  int64  `json:"maxUnix"`
 }
 
 func (t Time) timeToString(tt time.Time, zero bool) string {
@@ -49,6 +51,8 @@ func (t Time) MarshalJSON() ([]byte, error) {
 		Error:    getMessageFromError(*t.Err),
 		Min:      t.timeToString(t.Min, t.MinZero),
 		Max:      t.timeToString(t.Max, t.MaxZero),
+		MinUnix:  t.Min.Unix(),
+		MaxUnix:  t.Max.Unix(),
 	})
 }
 
