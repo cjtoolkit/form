@@ -194,3 +194,12 @@ func (s String) validateInList() {
 		},
 	})
 }
+
+func EmailRegExp() *regexp.Regexp {
+	// From http://www.w3.org/TR/html5/states-of-the-type-attribute.html#valid-e-mail-address
+	return regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")
+}
+
+func UrlRegExp() *regexp.Regexp {
+	return regexp.MustCompile(`^(https?|ftp)://[^\s/$.?#].[^\s]*$`)
+}

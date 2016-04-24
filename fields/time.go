@@ -1,6 +1,7 @@
 package fields
 
 import (
+	"encoding/json"
 	"github.com/cjtoolkit/form"
 	"strings"
 	"time"
@@ -20,6 +21,35 @@ type Time struct {
 	Max      time.Time
 	MaxZero  bool
 	Extra    func()
+}
+
+type timeJson struct {
+	Type     string `json:"type"`
+	Name     string `json:"name"`
+	Required bool   `json:"required"`
+	Success  bool   `json:"success"`
+	Error    string `json:"error,omitempty"`
+	Min      string `json:"min,omitempty"`
+	Max      string `json:"max,omitempty"`
+}
+
+func (t Time) timeToString(tt time.Time, zero bool) string {
+	if tt.IsZero() && !zero {
+		return ""
+	}
+	return tt.Format(t.Formats[0])
+}
+
+func (t Time) MarshalJSON() ([]byte, error) {
+	return json.Marshal(timeJson{
+		Type:     "time",
+		Name:     t.Name,
+		Required: t.Required,
+		Success:  nil == *t.Err,
+		Error:    getMessageFromError(*t.Err),
+		Min: t.timeToString(t.Min, t.MinZero),
+		Max: t.timeToString(t.Max, t.MaxZero),
+	})
 }
 
 func (t Time) PreCheck() {
@@ -94,7 +124,7 @@ func (t Time) validateRequired() {
 
 func (t Time) validateMin() {
 	switch {
-	case t.Min.IsZero() && t.MinZero:
+	case t.Min.IsZero() && !t.MinZero:
 		return
 	case t.Min.Unix() > (*t.Model).Unix() && t.Min.UnixNano() > (*t.Model).UnixNano():
 		panic(&form.ErrorValidateModel{
@@ -113,7 +143,7 @@ func (t Time) MinStr() string {
 
 func (t Time) validateMax() {
 	switch {
-	case t.Max.IsZero() && t.MaxZero:
+	case t.Max.IsZero() && !t.MaxZero:
 		return
 	case t.Max.Unix() < (*t.Model).Unix() && t.Max.UnixNano() < (*t.Model).UnixNano():
 		panic(&form.ErrorValidateModel{
@@ -143,14 +173,14 @@ func DateTimeLocalFormats() []string {
 	}
 }
 
-func DateFormats() []string{
+func DateFormats() []string {
 	// All meets html5 specification.
 	return []string{
 		"2006-01-02",
 	}
 }
 
-func TimeFormats() []string{
+func TimeFormats() []string {
 	// All meets html5 specification.
 	return []string{
 		"15:04.05",

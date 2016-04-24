@@ -223,19 +223,23 @@ func TestString(t *testing.T) {
 				mustMatchLabel := "Test"
 
 				go panicTrap(func() { (String{}).validateMustMatch() })
+
+				So(<-panicChannel, ShouldBeNil)
+
 				go panicTrap(func() {
 					(String{
 						MustMatchModel: &mustMatchModel,
 					}).validateMustMatch()
 				})
+
+				So(<-panicChannel, ShouldBeNil)
+
 				go panicTrap(func() {
 					(String{
 						MustMatchLabel: mustMatchLabel,
 					}).validateMustMatch()
 				})
 
-				So(<-panicChannel, ShouldBeNil)
-				So(<-panicChannel, ShouldBeNil)
 				So(<-panicChannel, ShouldBeNil)
 			})
 
@@ -379,3 +383,4 @@ func TestString(t *testing.T) {
 
 	})
 }
+
