@@ -6,6 +6,15 @@ import (
 	"testing"
 )
 
+var panicChannel = make(chan interface{})
+
+func panicTrap(fn func()) {
+	defer func() {
+		panicChannel <- recover()
+	}()
+	fn()
+}
+
 func TestFunctions(t *testing.T) {
 	Convey("UseDefaultKeyIfCustomKeyIsEmpty", t, func() {
 

@@ -14,7 +14,7 @@ type Time struct {
 	Model    *time.Time     // Mandatory
 	Err      *error         // Mandatory
 	Location *time.Location // Mandatory
-	Formats  []string       // Mandatory, most ideal should be at top
+	Formats  []string       // Mandatory, most ideal format should be at the top
 	Required bool
 	Min      time.Time
 	MinZero  bool
@@ -47,8 +47,8 @@ func (t Time) MarshalJSON() ([]byte, error) {
 		Required: t.Required,
 		Success:  nil == *t.Err,
 		Error:    getMessageFromError(*t.Err),
-		Min: t.timeToString(t.Min, t.MinZero),
-		Max: t.timeToString(t.Max, t.MaxZero),
+		Min:      t.timeToString(t.Min, t.MinZero),
+		Max:      t.timeToString(t.Max, t.MaxZero),
 	})
 }
 
@@ -126,7 +126,7 @@ func (t Time) validateMin() {
 	switch {
 	case t.Min.IsZero() && !t.MinZero:
 		return
-	case t.Min.Unix() > (*t.Model).Unix() && t.Min.UnixNano() > (*t.Model).UnixNano():
+	case t.Min.Unix() > (*t.Model).Unix() || (t.Min.Unix() == (*t.Model).Unix() && t.Min.UnixNano() > (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_TIME_MIN,
 			Value: map[string]interface{}{
@@ -145,7 +145,7 @@ func (t Time) validateMax() {
 	switch {
 	case t.Max.IsZero() && !t.MaxZero:
 		return
-	case t.Max.Unix() < (*t.Model).Unix() && t.Max.UnixNano() < (*t.Model).UnixNano():
+	case t.Max.Unix() < (*t.Model).Unix() || (t.Max.Unix() == (*t.Model).Unix() && t.Max.UnixNano() < (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_TIME_MAX,
 			Value: map[string]interface{}{
@@ -174,7 +174,7 @@ func DateTimeLocalFormats() []string {
 }
 
 func DateFormats() []string {
-	// All meets html5 specification.
+	// Meets html5 specification.
 	return []string{
 		"2006-01-02",
 	}
