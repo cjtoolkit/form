@@ -157,9 +157,9 @@ func TestTime(t *testing.T) {
 
 			go panicTrap(func() {
 				(Time{
-					Model: &model,
-					Norm:  &norm,
-					Formats: TimeFormats(),
+					Model:    &model,
+					Norm:     &norm,
+					Formats:  TimeFormats(),
 					Location: time.Local,
 				}).ReverseTransform()
 			})
@@ -178,9 +178,9 @@ func TestTime(t *testing.T) {
 
 			go panicTrap(func() {
 				(Time{
-					Model: &model,
-					Norm:  &norm,
-					Formats: TimeFormats(),
+					Model:    &model,
+					Norm:     &norm,
+					Formats:  TimeFormats(),
 					Location: time.Local,
 				}).ReverseTransform()
 			})
@@ -235,6 +235,98 @@ func TestTime(t *testing.T) {
 				So(<-panicChannel, ShouldBeNil)
 			})
 
+		})
+
+		Convey("validateMin", func() {
+			Convey("Do nothing as min and minzero not been specified", func() {
+				go panicTrap(func() {
+					(Time{}).validateMin()
+				})
+
+				So(<-panicChannel, ShouldBeNil)
+			})
+
+			Convey("Panic because it's less than minimum", func() {
+				model := time.Unix(3, 0)
+
+				go panicTrap(func() {
+					(Time{
+						Model:    &model,
+						Location: time.UTC,
+						Formats:  []string{"15:04:05"},
+						Min:      time.Unix(4, 0),
+					}).validateMin()
+				})
+
+				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
+					Key: form.LANG_TIME_MIN,
+					Value: map[string]interface{}{
+						"Label": "",
+						"Min":   "00:00:04",
+					},
+				})
+			})
+
+			Convey("Should not because it's more than minimum", func() {
+				model := time.Unix(5, 0)
+
+				go panicTrap(func() {
+					(Time{
+						Model:    &model,
+						Location: time.UTC,
+						Formats:  []string{"15:04:05"},
+						Min:      time.Unix(4, 0),
+					}).validateMin()
+				})
+
+				So(<-panicChannel, ShouldBeNil)
+			})
+		})
+
+		Convey("validateMax", func() {
+			Convey("Do nothing as max and maxzero not been specified", func() {
+				go panicTrap(func() {
+					(Time{}).validateMax()
+				})
+
+				So(<-panicChannel, ShouldBeNil)
+			})
+
+			Convey("Panic because it's more than maximum", func() {
+				model := time.Unix(5, 0)
+
+				go panicTrap(func() {
+					(Time{
+						Model:    &model,
+						Location: time.UTC,
+						Formats:  []string{"15:04:05"},
+						Max:      time.Unix(4, 0),
+					}).validateMax()
+				})
+
+				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
+					Key: form.LANG_TIME_MAX,
+					Value: map[string]interface{}{
+						"Label": "",
+						"Max":   "00:00:04",
+					},
+				})
+			})
+
+			Convey("Should not because it's less than maximum", func() {
+				model := time.Unix(3, 0)
+
+				go panicTrap(func() {
+					(Time{
+						Model:    &model,
+						Location: time.UTC,
+						Formats:  []string{"15:04:05"},
+						Max:      time.Unix(4, 0),
+					}).validateMax()
+				})
+
+				So(<-panicChannel, ShouldBeNil)
+			})
 		})
 
 	})
