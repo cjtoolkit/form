@@ -41,7 +41,7 @@ func (f *Form) SetMultipartForm(form *multipart.Form) {
 
 func (f *Form) checkValues() {
 	if nil == f.values {
-		panic("SetForm or SetMultipartForm has not been called or nil value has been passed to either.")
+		panic("SetForm or SetMultipartForm cannot be nil value.")
 	}
 }
 
@@ -120,14 +120,15 @@ func (f *Form) TransformSingle(field FormFieldInterface) error {
 func (f *Form) validate(errPtr *error, field FormFieldInterface) {
 	defer f.handleError(errPtr)
 	*errPtr = nil
-	field.PopulateNorm(f.values)
-	field.ReverseTransform()
+	if nil != f.values {
+		field.PopulateNorm(f.values)
+		field.ReverseTransform()
+	}
 	field.ValidateModel()
 }
 
 // Panic if values, form and field are 'nil' or if field fails pre check.
 func (f *Form) Validate(form FormBuilderInterface) bool {
-	f.checkValues()
 	f.checkForm(form)
 	success := true
 
@@ -145,7 +146,6 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 
 // Panic if values, form and field are 'nil' or if field fails pre check.
 func (f *Form) ValidateSingle(field FormFieldInterface) error {
-	f.checkValues()
 	f.checkField(field)
 	field.PreCheck()
 	errPtr := field.GetErrorPtr()

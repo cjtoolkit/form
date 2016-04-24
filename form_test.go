@@ -39,7 +39,7 @@ func TestForm(t *testing.T) {
 		Convey("Panic if 'values' is 'nil'", func() {
 			defer func() {
 				So(recover(), ShouldEqual,
-					"SetForm or SetMultipartForm has not been called or nil value has been passed to either.")
+					"SetForm or SetMultipartForm cannot be nil value.")
 			}()
 
 			form.checkValues()

@@ -126,7 +126,7 @@ func (t Time) validateMax() {
 	}
 }
 
-func (t Time) MaxStr() {
+func (t Time) MaxStr() string {
 	return t.Max.Format(t.Formats[0])
 }
 

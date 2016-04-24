@@ -6,6 +6,10 @@ Implement:
 */
 type fakeFormField struct{}
 
+func (fFF *fakeFormField) MarshalJSON() ([]byte, error) {
+	return nil, nil
+}
+
 func (fFF *fakeFormField) PreCheck() {
 
 }
