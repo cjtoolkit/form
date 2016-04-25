@@ -5,6 +5,7 @@ import (
 	"github.com/cjtoolkit/form"
 	"mime/multipart"
 	"strings"
+	"path"
 )
 
 type File struct {
@@ -91,7 +92,26 @@ func (f File) validateRequired() {
 }
 
 func (f File) validateMime() {
+	if 0 == len(f.Mime) {
+		return
+	}
 
+	var fileType string
+
+	if nil != *f.File {
+		fileType = (*f.File).Header.Get(FILE_CONTENT_TYPE)
+	}
+
+	for _, mime := range f.Mime {
+		matched, err := path.Match(mime, fileType)
+		if err != nil {
+			continue
+		} else if matched {
+			return
+		}
+	}
+
+	// Do error message here
 }
 
 func (f File) getFileSize() (size int64) {
@@ -117,5 +137,10 @@ func (f File) getFileSize() (size int64) {
 }
 
 func (f File) validateSizeInByte() {
-
+	switch {
+	case 0 == f.SizeInByte:
+		return
+	case f.getFileSize() > f.SizeInByte:
+		// Do error message here
+	}
 }
