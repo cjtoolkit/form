@@ -84,7 +84,7 @@ func (f Float) GetErrorPtr() *error {
 }
 
 func (f Float) PopulateNorm(values form.ValuesInterface) {
-	*f.Norm = strings.TrimSpace(values.GetOne(f.Name))
+	*f.Norm = values.GetOne(f.Name)
 }
 
 func (f Float) Transform() {

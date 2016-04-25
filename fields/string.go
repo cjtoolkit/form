@@ -61,15 +61,15 @@ func (s String) MarshalJSON() ([]byte, error) {
 func (s String) PreCheck() {
 	switch {
 	case "" == strings.TrimSpace(s.Name):
-		panic(form.ErrorPreCheck("Text Field: Name cannot be empty string"))
+		panic(form.ErrorPreCheck("String Field: Name cannot be empty string"))
 	case "" == strings.TrimSpace(s.Label):
-		panic(form.ErrorPreCheck("Text Field: " + s.Name + ": Label cannot be empty string"))
+		panic(form.ErrorPreCheck("String Field: " + s.Name + ": Label cannot be empty string"))
 	case nil == s.Norm:
-		panic(form.ErrorPreCheck("Text Field: " + s.Name + ": Norm cannot be nil value"))
+		panic(form.ErrorPreCheck("String Field: " + s.Name + ": Norm cannot be nil value"))
 	case nil == s.Model:
-		panic(form.ErrorPreCheck("Text Field: " + s.Name + ": Model cannot be nil value"))
+		panic(form.ErrorPreCheck("String Field: " + s.Name + ": Model cannot be nil value"))
 	case nil == s.Err:
-		panic(form.ErrorPreCheck("Text Field: " + s.Name + ": Err cannot be nil value"))
+		panic(form.ErrorPreCheck("String Field: " + s.Name + ": Err cannot be nil value"))
 	}
 }
 

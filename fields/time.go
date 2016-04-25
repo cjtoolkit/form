@@ -80,7 +80,7 @@ func (t Time) GetErrorPtr() *error {
 }
 
 func (t Time) PopulateNorm(values form.ValuesInterface) {
-	*t.Norm = strings.TrimSpace(values.GetOne(t.Name))
+	*t.Norm = values.GetOne(t.Name)
 }
 
 func (t Time) Transform() {
@@ -88,8 +88,9 @@ func (t Time) Transform() {
 }
 
 func (t Time) ReverseTransform() {
+	norm := strings.TrimSpace(*t.Norm)
 	for _, format := range t.Formats {
-		out, err := time.ParseInLocation(format, *t.Norm, t.Location)
+		out, err := time.ParseInLocation(format, norm, t.Location)
 		if nil != err {
 			continue
 		}

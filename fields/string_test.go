@@ -12,7 +12,7 @@ func TestString(t *testing.T) {
 		Convey("Should panic because Name is empty string", func() {
 			go panicTrap(func() { (String{}).PreCheck() })
 
-			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("Text Field: Name cannot be empty string"))
+			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("String Field: Name cannot be empty string"))
 		})
 
 		Convey("Should panic because Label is empty string", func() {
@@ -22,7 +22,7 @@ func TestString(t *testing.T) {
 				}).PreCheck()
 			})
 
-			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("Text Field: hello: Label cannot be empty string"))
+			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("String Field: hello: Label cannot be empty string"))
 		})
 
 		Convey("Should panic because Norm is nil value", func() {
@@ -33,7 +33,7 @@ func TestString(t *testing.T) {
 				}).PreCheck()
 			})
 
-			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("Text Field: hello: Norm cannot be nil value"))
+			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("String Field: hello: Norm cannot be nil value"))
 		})
 
 		Convey("Should panic because Model is nil value", func() {
@@ -47,7 +47,7 @@ func TestString(t *testing.T) {
 				}).PreCheck()
 			})
 
-			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("Text Field: hello: Model cannot be nil value"))
+			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("String Field: hello: Model cannot be nil value"))
 		})
 
 		Convey("Should panic because Err is nil value", func() {
@@ -62,7 +62,7 @@ func TestString(t *testing.T) {
 				}).PreCheck()
 			})
 
-			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("Text Field: hello: Err cannot be nil value"))
+			So(<-panicChannel, ShouldEqual, form.ErrorPreCheck("String Field: hello: Err cannot be nil value"))
 		})
 
 		Convey("Every mandatory field is in order, so therefore should not panic", func() {
@@ -383,4 +383,3 @@ func TestString(t *testing.T) {
 
 	})
 }
-

@@ -58,7 +58,7 @@ func (b Bool) GetErrorPtr() *error {
 }
 
 func (b Bool) PopulateNorm(values form.ValuesInterface) {
-	*b.Norm = strings.TrimSpace(values.GetOne(b.Name))
+	*b.Norm = values.GetOne(b.Name)
 }
 
 func (b Bool) Transform() {
@@ -69,7 +69,7 @@ func (b Bool) Transform() {
 }
 
 func (b Bool) ReverseTransform() {
-	*b.Model = *b.Norm == b.Value
+	*b.Model = strings.TrimSpace(*b.Norm) == b.Value
 }
 
 func (b Bool) ValidateModel() {
