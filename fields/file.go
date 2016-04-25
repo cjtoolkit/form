@@ -111,7 +111,13 @@ func (f File) validateMime() {
 		}
 	}
 
-	// Do error message here
+	panic(&form.ErrorValidateModel{
+		Key: form.LANG_FILE_MIME,
+		Value: map[string]interface{}{
+			"Label": f.Label,
+			"Mime": f.Mime,
+		},
+	})
 }
 
 func (f File) getFileSize() (size int64) {
@@ -141,6 +147,12 @@ func (f File) validateSizeInByte() {
 	case 0 == f.SizeInByte:
 		return
 	case f.getFileSize() > f.SizeInByte:
-		// Do error message here
+		panic(&form.ErrorValidateModel{
+			Key: form.LANG_FILE_SIZE,
+			Value: map[string]interface{}{
+				"Label": f.Label,
+				"Size": f.SizeInByte,
+			},
+		})
 	}
 }
