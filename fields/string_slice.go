@@ -63,7 +63,7 @@ func (s StringSlice) Transform() {
 	for _, str := range *s.Model {
 		*s.Norm = append(*s.Norm, strings.TrimSpace(str))
 	}
-	sort.Sort(sort.StringSlice{*s.Norm})
+	sort.Strings(*s.Norm)
 }
 
 func (s StringSlice) ReverseTransform() {
@@ -71,7 +71,7 @@ func (s StringSlice) ReverseTransform() {
 	for _, str := range *s.Norm {
 		*s.Model = append(*s.Model, strings.TrimSpace(str))
 	}
-	sort.Sort(sort.StringSlice{*s.Model})
+	sort.Strings(*s.Model)
 }
 
 func (s StringSlice) ValidateModel() {
