@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/cjtoolkit/form"
 	"mime/multipart"
-	"strings"
 	"path"
+	"strings"
 )
 
 type File struct {
@@ -115,7 +115,7 @@ func (f File) validateMime() {
 		Key: form.LANG_FILE_MIME,
 		Value: map[string]interface{}{
 			"Label": f.Label,
-			"Mime": f.Mime,
+			"Mime":  f.Mime,
 		},
 	})
 }
@@ -151,7 +151,7 @@ func (f File) validateSizeInByte() {
 			Key: form.LANG_FILE_SIZE,
 			Value: map[string]interface{}{
 				"Label": f.Label,
-				"Size": f.SizeInByte,
+				"Size":  f.SizeInByte,
 			},
 		})
 	}

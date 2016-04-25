@@ -238,7 +238,7 @@ func TestFile(t *testing.T) {
 					Key: form.LANG_FILE_SIZE,
 					Value: map[string]interface{}{
 						"Label": "",
-						"Size": int64(6),
+						"Size":  int64(6),
 					},
 				})
 			})

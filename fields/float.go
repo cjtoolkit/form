@@ -1,11 +1,11 @@
 package fields
 
 import (
+	"encoding/json"
 	"github.com/cjtoolkit/form"
 	"math"
 	"strconv"
 	"strings"
-	"encoding/json"
 )
 
 /*

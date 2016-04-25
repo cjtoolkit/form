@@ -149,7 +149,7 @@ func TestBool(t *testing.T) {
 			var model bool
 
 			(Bool{
-				Norm: &norm,
+				Norm:  &norm,
 				Model: &model,
 				Value: "hi",
 			}).ReverseTransform()
@@ -162,7 +162,7 @@ func TestBool(t *testing.T) {
 			var model bool
 
 			(Bool{
-				Norm: &norm,
+				Norm:  &norm,
 				Model: &model,
 				Value: "hi",
 			}).ReverseTransform()
@@ -191,7 +191,7 @@ func TestBool(t *testing.T) {
 
 			go panicTrap(func() {
 				(Bool{
-					Model: &model,
+					Model:    &model,
 					Required: true,
 				}).validateRequired()
 			})
@@ -209,7 +209,7 @@ func TestBool(t *testing.T) {
 
 			go panicTrap(func() {
 				(Bool{
-					Model: &model,
+					Model:    &model,
 					Required: true,
 				}).validateRequired()
 			})
