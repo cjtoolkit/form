@@ -71,6 +71,7 @@ func (f File) ReverseTransform() {
 
 func (f File) ValidateModel() {
 	f.validateRequired()
+	f.validateMime()
 	f.validateSizeInByte()
 	execFnIfNotNil(f.Extra)
 }
@@ -87,6 +88,10 @@ func (f File) validateRequired() {
 			},
 		})
 	}
+}
+
+func (f File) validateMime() {
+
 }
 
 func (f File) getFileSize() (size int64) {
