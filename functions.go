@@ -102,3 +102,20 @@ func templatePluraliseFilter(plural string, count interface{}) (output string) {
 	}
 	return
 }
+
+// Returns nil if all is good.
+func CheckAllFields(fields []FormFieldInterface) interface{} {
+	panicChannel := make(chan interface{})
+
+	go func() {
+		defer func() {
+			panicChannel <- recover()
+		}()
+
+		for _, field := range fields {
+			field.PreCheck()
+		}
+	}()
+
+	return <-panicChannel
+}
