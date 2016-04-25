@@ -3,8 +3,8 @@ package fields
 import (
 	"encoding/json"
 	"github.com/cjtoolkit/form"
-	"strings"
 	"sort"
+	"strings"
 )
 
 type StringSlice struct {
