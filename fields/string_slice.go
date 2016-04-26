@@ -83,7 +83,7 @@ func (s StringSlice) validateRequired() {
 	switch {
 	case !s.Required:
 		return
-	case nil == *s.Model:
+	case 0 == len(*s.Model):
 		panic(&form.ErrorValidateModel{
 			Key: form.LANG_FIELD_REQUIRED,
 			Value: map[string]interface{}{
