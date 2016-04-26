@@ -62,3 +62,7 @@ func defaultLanguage() Langauge {
 }
 
 var defaultLanguageMap = defaultLanguage()
+
+func AddToDefaultLanguageMap(key string, tmp LangaugeTemplateInterface) {
+	defaultLanguageMap[key] = tmp
+}

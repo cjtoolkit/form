@@ -36,3 +36,10 @@ func execFnIfNotNil(fn func()) {
 		fn()
 	}
 }
+
+func defaultErrorKey(_default, user string) string {
+	if "" == user {
+		return _default
+	}
+	return user
+}

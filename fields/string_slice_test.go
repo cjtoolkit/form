@@ -114,7 +114,7 @@ func TestStringSlice(t *testing.T) {
 
 				go panicTrap(func() {
 					(StringSlice{
-						Model: &model,
+						Model:    &model,
 						Required: true,
 					}).validateRequired()
 				})
@@ -130,7 +130,7 @@ func TestStringSlice(t *testing.T) {
 
 				go panicTrap(func() {
 					(StringSlice{
-						Model: &model,
+						Model:    &model,
 						Required: true,
 					}).validateRequired()
 				})
@@ -148,7 +148,7 @@ func TestStringSlice(t *testing.T) {
 
 				go panicTrap(func() {
 					(StringSlice{
-						Model: &model,
+						Model:    &model,
 						Required: true,
 					}).validateRequired()
 				})

@@ -3,9 +3,9 @@ package fields
 import (
 	"encoding/json"
 	"github.com/cjtoolkit/form"
-	"strings"
-	"strconv"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 type IntSlice struct {
@@ -28,7 +28,7 @@ type intSliceJson struct {
 
 const (
 	INT_SLICE_DECIMAL = 10
-	INT_SLICE_BIT = 64
+	INT_SLICE_BIT     = 64
 )
 
 func (i IntSlice) MarshalJSON() ([]byte, error) {

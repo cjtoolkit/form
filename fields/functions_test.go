@@ -1,8 +1,10 @@
 package fields
 
 import (
+	"fmt"
 	"github.com/cjtoolkit/form"
 	. "github.com/smartystreets/goconvey/convey"
+	"regexp"
 	"testing"
 )
 
@@ -48,6 +50,42 @@ func TestFunctions(t *testing.T) {
 			}), ShouldEqual, true)
 
 			So(execute, ShouldEqual, true)
+		})
+
+	})
+
+	Convey("getMessageFromError", t, func() {
+
+		Convey("Err is nil, return empty string", func() {
+			So(getMessageFromError(nil), ShouldBeEmpty)
+		})
+
+		Convey("Err is not nil, return message", func() {
+			So(getMessageFromError(fmt.Errorf("Hi")), ShouldEqual, "Hi")
+		})
+
+	})
+
+	Convey("getPatternFromRegExp", t, func() {
+
+		Convey("Re is nil, return empty string", func() {
+			So(getPatternFromRegExp(nil), ShouldBeEmpty)
+		})
+
+		Convey("Re is not nil, return pattern", func() {
+			So(getPatternFromRegExp(regexp.MustCompile(`[a-z]`)), ShouldEqual, `[a-z]`)
+		})
+
+	})
+
+	Convey("defaultErrorKey", t, func() {
+
+		Convey("User key is not defined return default key", func() {
+			So(defaultErrorKey("hello", ""), ShouldEqual, "hello")
+		})
+
+		Convey("User Key is defined, return user key", func() {
+			So(defaultErrorKey("hello", "hi"), ShouldEqual, "hi")
 		})
 
 	})
