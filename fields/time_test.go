@@ -104,7 +104,7 @@ func TestTime(t *testing.T) {
 					Norm:     &norm,
 					Model:    &model,
 					Err:      &err,
-					Location: time.Local,
+					Location: time.UTC,
 				}).PreCheck()
 			})
 
@@ -118,7 +118,7 @@ func TestTime(t *testing.T) {
 					Norm:     &norm,
 					Model:    &model,
 					Err:      &err,
-					Location: time.Local,
+					Location: time.UTC,
 					Formats:  []string{},
 				}).PreCheck()
 			})
@@ -139,7 +139,7 @@ func TestTime(t *testing.T) {
 					Norm:     &norm,
 					Model:    &model,
 					Err:      &err,
-					Location: time.Local,
+					Location: time.UTC,
 					Formats:  []string{"hi"},
 				}).PreCheck()
 			})
@@ -160,7 +160,7 @@ func TestTime(t *testing.T) {
 					Model:    &model,
 					Norm:     &norm,
 					Formats:  TimeFormats(),
-					Location: time.Local,
+					Location: time.UTC,
 				}).ReverseTransform()
 			})
 
@@ -181,7 +181,7 @@ func TestTime(t *testing.T) {
 					Model:    &model,
 					Norm:     &norm,
 					Formats:  TimeFormats(),
-					Location: time.Local,
+					Location: time.UTC,
 				}).ReverseTransform()
 			})
 
