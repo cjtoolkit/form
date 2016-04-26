@@ -247,14 +247,14 @@ func TestTime(t *testing.T) {
 			})
 
 			Convey("Panic because it's less than minimum", func() {
-				model := time.Unix(3, 0)
+				model := time.Unix(3, 0).In(time.UTC)
 
 				go panicTrap(func() {
 					(Time{
 						Model:    &model,
 						Location: time.UTC,
 						Formats:  []string{"15:04:05"},
-						Min:      time.Unix(4, 0),
+						Min:      time.Unix(4, 0).In(time.UTC),
 					}).validateMin()
 				})
 
@@ -268,14 +268,14 @@ func TestTime(t *testing.T) {
 			})
 
 			Convey("Should not because it's more than minimum", func() {
-				model := time.Unix(5, 0)
+				model := time.Unix(5, 0).In(time.UTC)
 
 				go panicTrap(func() {
 					(Time{
 						Model:    &model,
 						Location: time.UTC,
 						Formats:  []string{"15:04:05"},
-						Min:      time.Unix(4, 0),
+						Min:      time.Unix(4, 0).In(time.UTC),
 					}).validateMin()
 				})
 
@@ -293,14 +293,14 @@ func TestTime(t *testing.T) {
 			})
 
 			Convey("Panic because it's more than maximum", func() {
-				model := time.Unix(5, 0)
+				model := time.Unix(5, 0).In(time.UTC)
 
 				go panicTrap(func() {
 					(Time{
 						Model:    &model,
 						Location: time.UTC,
 						Formats:  []string{"15:04:05"},
-						Max:      time.Unix(4, 0),
+						Max:      time.Unix(4, 0).In(time.UTC),
 					}).validateMax()
 				})
 
@@ -314,14 +314,14 @@ func TestTime(t *testing.T) {
 			})
 
 			Convey("Should not because it's less than maximum", func() {
-				model := time.Unix(3, 0)
+				model := time.Unix(3, 0).In(time.UTC)
 
 				go panicTrap(func() {
 					(Time{
 						Model:    &model,
 						Location: time.UTC,
 						Formats:  []string{"15:04:05"},
-						Max:      time.Unix(4, 0),
+						Max:      time.Unix(4, 0).In(time.UTC),
 					}).validateMax()
 				})
 
