@@ -8,13 +8,14 @@ import (
 )
 
 type StringSlice struct {
-	Name     string    // Mandatory
-	Label    string    // Mandatory
-	Norm     *[]string // Mandatory
-	Model    *[]string // Mandatory
-	Err      *error    // Mandatory
-	Required bool
-	Extra    func()
+	Name           string    // Mandatory
+	Label          string    // Mandatory
+	Norm           *[]string // Mandatory
+	Model          *[]string // Mandatory
+	Err            *error    // Mandatory
+	Required       bool
+	RequiredErrKey string
+	Extra          func()
 }
 
 type stringSliceJson struct {
@@ -85,7 +86,7 @@ func (s StringSlice) validateRequired() {
 		return
 	case 0 == len(*s.Model):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, s.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": s.Label,
 			},

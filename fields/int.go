@@ -12,19 +12,24 @@ Implement:
 	FormFieldInterface in "github.com/cjtoolkit/form"
 */
 type Int struct {
-	Name     string  // Mandatory
-	Label    string  // Mandatory
-	Norm     *string // Mandatory
-	Model    *int64  // Mandatory
-	Err      *error  // Mandatory
-	Required bool
-	Min      int64
-	MinZero  bool
-	Max      int64
-	MaxZero  bool
-	Step     int64
-	InList   []int64
-	Extra    func()
+	Name           string  // Mandatory
+	Label          string  // Mandatory
+	Norm           *string // Mandatory
+	Model          *int64  // Mandatory
+	Err            *error  // Mandatory
+	Required       bool
+	RequiredErrKey string
+	Min            int64
+	MinZero        bool
+	MinErrKey      string
+	Max            int64
+	MaxZero        bool
+	MaxErrKey      string
+	Step           int64
+	StepErrKey     string
+	InList         []int64
+	IsListErrKey   string
+	Extra          func()
 }
 
 type intJson struct {
@@ -117,7 +122,7 @@ func (i Int) validateRequired() {
 		return
 	case 0 == *i.Model:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, i.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": i.Label,
 			},
@@ -131,7 +136,7 @@ func (i Int) validateMin() {
 		return
 	case i.Min > *i.Model:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_NUMBER_MIN,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_NUMBER_MIN, i.MinErrKey),
 			Value: map[string]interface{}{
 				"Label": i.Label,
 				"Min":   i.Min,
@@ -146,7 +151,7 @@ func (i Int) validateMax() {
 		return
 	case i.Max < *i.Model:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_NUMBER_MAX,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_NUMBER_MAX, i.MaxErrKey),
 			Value: map[string]interface{}{
 				"Label": i.Label,
 				"Max":   i.Max,
@@ -161,7 +166,7 @@ func (i Int) validateStep() {
 		return
 	case 0 != *i.Model%i.Step:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_NUMBER_STEP,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_NUMBER_STEP, i.StepErrKey),
 			Value: map[string]interface{}{
 				"Label": i.Label,
 				"Step":  i.Step,
@@ -184,7 +189,7 @@ func (i Int) validateInList() {
 	}
 
 	panic(&form.ErrorValidateModel{
-		Key: form.LANG_IN_LIST,
+		Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_IN_LIST, i.IsListErrKey),
 		Value: map[string]interface{}{
 			"Label": i.Label,
 			"List":  i.InList,

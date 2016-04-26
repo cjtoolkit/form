@@ -9,14 +9,17 @@ import (
 )
 
 type File struct {
-	Name       string                 // Mandatory
-	Label      string                 // Mandatory
-	File       **multipart.FileHeader // Mandatory
-	Err        *error                 // Mandatory
-	Required   bool
-	Mime       []string
-	SizeInByte int64
-	Extra      func()
+	Name             string                 // Mandatory
+	Label            string                 // Mandatory
+	File             **multipart.FileHeader // Mandatory
+	Err              *error                 // Mandatory
+	Required         bool
+	RequiredErrKey   string
+	Mime             []string
+	MimeErrKey       string
+	SizeInByte       int64
+	SizeInByteErrKey string
+	Extra            func()
 }
 
 type fileJson struct {
@@ -83,7 +86,7 @@ func (f File) validateRequired() {
 		return
 	case nil == *f.File:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, f.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": f.Label,
 			},
@@ -112,7 +115,7 @@ func (f File) validateMime() {
 	}
 
 	panic(&form.ErrorValidateModel{
-		Key: form.LANG_FILE_MIME,
+		Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FILE_MIME, f.MimeErrKey),
 		Value: map[string]interface{}{
 			"Label": f.Label,
 			"Mime":  f.Mime,
@@ -148,7 +151,7 @@ func (f File) validateSizeInByte() {
 		return
 	case f.getFileSize() > f.SizeInByte:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FILE_SIZE,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FILE_SIZE, f.SizeInByteErrKey),
 			Value: map[string]interface{}{
 				"Label": f.Label,
 				"Size":  f.SizeInByte,

@@ -8,19 +8,22 @@ import (
 )
 
 type Time struct {
-	Name     string         // Mandatory
-	Label    string         // Mandatory
-	Norm     *string        // Mandatory
-	Model    *time.Time     // Mandatory
-	Err      *error         // Mandatory
-	Location *time.Location // Mandatory
-	Formats  []string       // Mandatory, most ideal format should be at the top
-	Required bool
-	Min      time.Time
-	MinZero  bool
-	Max      time.Time
-	MaxZero  bool
-	Extra    func()
+	Name           string         // Mandatory
+	Label          string         // Mandatory
+	Norm           *string        // Mandatory
+	Model          *time.Time     // Mandatory
+	Err            *error         // Mandatory
+	Location       *time.Location // Mandatory
+	Formats        []string       // Mandatory, most ideal format should be at the top
+	Required       bool
+	RequiredErrKey string
+	Min            time.Time
+	MinZero        bool
+	MinErrKey      string
+	Max            time.Time
+	MaxZero        bool
+	MaxErrKey      string
+	Extra          func()
 }
 
 type timeJson struct {
@@ -119,7 +122,7 @@ func (t Time) validateRequired() {
 		return
 	case (*t.Model).IsZero():
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, t.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": t.Label,
 			},
@@ -133,7 +136,7 @@ func (t Time) validateMin() {
 		return
 	case t.Min.Unix() > (*t.Model).Unix() || (t.Min.Unix() == (*t.Model).Unix() && t.Min.UnixNano() > (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_TIME_MIN,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MIN, t.MinErrKey),
 			Value: map[string]interface{}{
 				"Label": t.Label,
 				"Min":   t.Min.Format(t.Formats[0]),
@@ -152,7 +155,7 @@ func (t Time) validateMax() {
 		return
 	case t.Max.Unix() < (*t.Model).Unix() || (t.Max.Unix() == (*t.Model).Unix() && t.Max.UnixNano() < (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_TIME_MAX,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MAX, t.MaxErrKey),
 			Value: map[string]interface{}{
 				"Label": t.Label,
 				"Max":   t.Max.Format(t.Formats[0]),

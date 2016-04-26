@@ -7,13 +7,14 @@ import (
 )
 
 type Bool struct {
-	Name     string  // Mandatory
-	Label    string  // Mandatory
-	Norm     *string // Mandatory
-	Model    *bool   // Mandatory
-	Err      *error  // Mandatory
-	Value    string  // Mandatory
-	Required bool
+	Name           string  // Mandatory
+	Label          string  // Mandatory
+	Norm           *string // Mandatory
+	Model          *bool   // Mandatory
+	Err            *error  // Mandatory
+	Value          string  // Mandatory
+	Required       bool
+	RequiredErrKey string
 }
 
 type boolJson struct {
@@ -82,7 +83,7 @@ func (b Bool) validateRequired() {
 		return
 	case !*b.Model:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, b.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": b.Label,
 			},

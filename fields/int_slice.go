@@ -9,13 +9,14 @@ import (
 )
 
 type IntSlice struct {
-	Name     string    // Mandatory
-	Label    string    // Mandatory
-	Norm     *[]string // Mandatory
-	Model    *[]int64  // Mandatory
-	Err      *error    // Mandatory
-	Required bool
-	Extra    func()
+	Name           string    // Mandatory
+	Label          string    // Mandatory
+	Norm           *[]string // Mandatory
+	Model          *[]int64  // Mandatory
+	Err            *error    // Mandatory
+	Required       bool
+	RequiredErrKey string
+	Extra          func()
 }
 
 type intSliceJson struct {
@@ -100,7 +101,7 @@ func (i IntSlice) validateRequired() {
 		return
 	case 0 == len(*i.Model):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, i.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": i.Label,
 			},
