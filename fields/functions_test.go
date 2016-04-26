@@ -77,16 +77,4 @@ func TestFunctions(t *testing.T) {
 		})
 
 	})
-
-	Convey("defaultErrorKey", t, func() {
-
-		Convey("User key is not defined return default key", func() {
-			So(defaultErrorKey("hello", ""), ShouldEqual, "hello")
-		})
-
-		Convey("User Key is defined, return user key", func() {
-			So(defaultErrorKey("hello", "hi"), ShouldEqual, "hi")
-		})
-
-	})
 }

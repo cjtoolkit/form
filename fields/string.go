@@ -13,21 +13,26 @@ Implement:
 	FormFieldInterface in "github.com/cjtoolkit/form"
 */
 type String struct {
-	Name           string  // Mandatory
-	Label          string  // Mandatory
-	Norm           *string // Mandatory
-	Model          *string // Mandatory
-	Err            *error  // Mandatory
-	Required       bool
-	MinRune        int
-	MaxRune        int
-	MustMatchName  string
-	MustMatchLabel string
-	MustMatchModel *string
-	Pattern        *regexp.Regexp
-	PatternErrKey  string
-	InList         []string
-	Extra          func()
+	Name            string  // Mandatory
+	Label           string  // Mandatory
+	Norm            *string // Mandatory
+	Model           *string // Mandatory
+	Err             *error  // Mandatory
+	Required        bool
+	RequiredErrKey  string
+	MinRune         int
+	MinRuneErrKey   string
+	MaxRune         int
+	MaxRuneErrKey   string
+	MustMatchName   string
+	MustMatchLabel  string
+	MustMatchModel  *string
+	MustMatchErrKey string
+	Pattern         *regexp.Regexp
+	PatternErrKey   string
+	InList          []string
+	InListErrKey    string
+	Extra           func()
 }
 
 type stringJson struct {
@@ -105,7 +110,7 @@ func (s String) validateRequired() {
 		return
 	case "" == *s.Model:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_FIELD_REQUIRED,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, s.RequiredErrKey),
 			Value: map[string]interface{}{
 				"Label": s.Label,
 			},
@@ -119,7 +124,7 @@ func (s String) validateMinRune() {
 		return
 	case s.MinRune > utf8.RuneCountInString(*s.Model):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_MIN_CHAR,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MIN_CHAR, s.MinRuneErrKey),
 			Value: map[string]interface{}{
 				"Label":   s.Label,
 				"MinRune": s.MinRune,
@@ -134,7 +139,7 @@ func (s String) validateMaxRune() {
 		return
 	case s.MaxRune < utf8.RuneCountInString(*s.Model):
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_MAX_CHAR,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MAX_CHAR, s.MaxRuneErrKey),
 			Value: map[string]interface{}{
 				"Label":   s.Label,
 				"MaxRune": s.MaxRune,
@@ -149,7 +154,7 @@ func (s String) validateMustMatch() {
 		return
 	case *s.MustMatchModel != *s.Model:
 		panic(&form.ErrorValidateModel{
-			Key: form.LANG_MUST_MATCH,
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MUST_MATCH, s.MustMatchErrKey),
 			Value: map[string]interface{}{
 				"Label":          s.Label,
 				"MustMatchLabel": s.MustMatchLabel,
@@ -187,7 +192,7 @@ func (s String) validateInList() {
 	}
 
 	panic(&form.ErrorValidateModel{
-		Key: form.LANG_IN_LIST,
+		Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_IN_LIST, s.InListErrKey),
 		Value: map[string]interface{}{
 			"Label": s.Label,
 			"List":  s.InList,
