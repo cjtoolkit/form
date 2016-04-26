@@ -13,7 +13,7 @@ type StringSlice struct {
 	Norm     *[]string // Mandatory
 	Model    *[]string // Mandatory
 	Err      *error    // Mandatory
-	Required bool      // Mandatory
+	Required bool
 	Extra    func()
 }
 
