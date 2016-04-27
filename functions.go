@@ -123,16 +123,10 @@ func CheckAllFields(fields []FormFieldInterface) interface{} {
 
 func SearchString(a []string, x string) bool {
 	i := sort.SearchStrings(a, x)
-	if 0 == i {
-		return false
-	}
 	return x == a[i]
 }
 
 func SearchInt64(a []int64, x int64) bool {
 	i := sort.Search(len(a), func(i int) bool { return a[i] >= x })
-	if 0 == i {
-		return false
-	}
 	return x == a[i]
 }
