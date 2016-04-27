@@ -39,7 +39,7 @@ const (
 	LANG_FILE_SIZE      = "file_size"
 )
 
-func defaultLanguage() Langauge {
+func englishLanguage() Langauge {
 	T := BuildLanguageTemplate
 	return Langauge{
 		LANG_FIELD_REQUIRED: T(`'{{.Label}}' is required.`),
@@ -61,8 +61,8 @@ func defaultLanguage() Langauge {
 	}
 }
 
-var defaultLanguageMap = defaultLanguage()
+var englishLanguageMap = englishLanguage()
 
-func AddToDefaultLanguageMap(key string, tmp LangaugeTemplateInterface) {
-	defaultLanguageMap[key] = tmp
+func AddToEnglishLanguageMap(key string, tmp LangaugeTemplateInterface) {
+	englishLanguageMap[key] = tmp
 }

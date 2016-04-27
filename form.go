@@ -19,8 +19,8 @@ func NewForm(language LanguageInterface) (f *Form) {
 	return
 }
 
-func NewFormDefaultLanguage() *Form {
-	return NewForm(defaultLanguageMap)
+func NewFormEnglishLanguage() *Form {
+	return NewForm(englishLanguageMap)
 }
 
 func (f *Form) checkLanguage() {
@@ -77,6 +77,7 @@ func (f *Form) checkField(field FormFieldInterface) {
 	if nil == field {
 		panic("'field' cannot be nil")
 	}
+	field.PreCheck()
 }
 
 func (f *Form) checkErrPtr(errPtr *error) {
@@ -97,7 +98,6 @@ func (f *Form) Transform(form FormBuilderInterface) bool {
 
 	for _, field := range form.Fields() {
 		f.checkField(field)
-		field.PreCheck()
 		errPtr := field.GetErrorPtr()
 		f.checkErrPtr(errPtr)
 		f.transform(errPtr, field)
@@ -110,7 +110,6 @@ func (f *Form) Transform(form FormBuilderInterface) bool {
 // Panic if form and field are 'nil' or if field fails pre check.
 func (f *Form) TransformSingle(field FormFieldInterface) error {
 	f.checkField(field)
-	field.PreCheck()
 	errPtr := field.GetErrorPtr()
 	f.checkErrPtr(errPtr)
 	f.transform(errPtr, field)
@@ -134,7 +133,6 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 
 	for _, field := range form.Fields() {
 		f.checkField(field)
-		field.PreCheck()
 		errPtr := field.GetErrorPtr()
 		f.checkErrPtr(errPtr)
 		f.validate(errPtr, field)
@@ -147,7 +145,6 @@ func (f *Form) Validate(form FormBuilderInterface) bool {
 // Panic if values, form and field are 'nil' or if field fails pre check.
 func (f *Form) ValidateSingle(field FormFieldInterface) error {
 	f.checkField(field)
-	field.PreCheck()
 	errPtr := field.GetErrorPtr()
 	f.checkErrPtr(errPtr)
 	f.validate(errPtr, field)
