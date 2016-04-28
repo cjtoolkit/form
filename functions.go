@@ -8,6 +8,7 @@ import (
 	"sort"
 )
 
+// Get One File from Value
 func GetOneFile(values ValuesInterface, name string) (fh *multipart.FileHeader) {
 	if values, ok := values.(ValuesFileInterface); ok {
 		fh = values.GetOneFile(name)
@@ -15,6 +16,7 @@ func GetOneFile(values ValuesInterface, name string) (fh *multipart.FileHeader) 
 	return
 }
 
+// Get All File from Value
 func GetAllFile(values ValuesInterface, name string) (fhs []*multipart.FileHeader) {
 	if values, ok := values.(ValuesFileInterface); ok {
 		fhs = values.GetAllFile(name)
@@ -121,6 +123,7 @@ func CheckAllFields(fields []FormFieldInterface) interface{} {
 	return <-panicChannel
 }
 
+// Binary Search String
 func SearchString(a []string, x string) bool {
 	count := len(a)
 	if 0 == count {
@@ -130,6 +133,7 @@ func SearchString(a []string, x string) bool {
 	return x == a[i]
 }
 
+// Binary Search Int64
 func SearchInt64(a []int64, x int64) bool {
 	count := len(a)
 	if 0 == count {

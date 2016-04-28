@@ -6,15 +6,11 @@ import (
 )
 
 func TestLanguage(t *testing.T) {
-	// start let
-
 	langs := Langauge{
 		"test":       BuildLanguageTemplate(`{{.Hello}}`),
 		"listFilter": BuildLanguageTemplate(`{{.List|list "and"}}`),
 		"plural":     BuildLanguageTemplate(`apple{{.Count|pluralise "s"}}`),
 	}
-
-	// end let
 
 	Convey("Bad data", t, func() {
 		So(langs.Translate("test", map[string]interface{}{

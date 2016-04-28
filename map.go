@@ -2,6 +2,7 @@ package form
 
 type StringMap map[string]bool
 
+// Convert String Slice to Map
 func StringSliceToMap(a []string) StringMap {
 	m := StringMap{}
 	for _, v := range a {
@@ -16,6 +17,7 @@ func (s StringMap) Index(v string) bool {
 
 type IntMap map[int64]bool
 
+// Convert Int Slice to Map
 func IntSliceToMap(a []int64) IntMap {
 	m := IntMap{}
 	for _, v := range a {
