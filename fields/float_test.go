@@ -105,7 +105,6 @@ func TestFloat(t *testing.T) {
 
 				go panicTrap(func() {
 					(Float{
-						Label:    "required",
 						Model:    &model,
 						Required: true,
 					}).validateRequired()
@@ -114,7 +113,7 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
 					Value: map[string]interface{}{
-						"Label": "required",
+						"Label": "",
 					},
 				})
 			})
@@ -124,7 +123,6 @@ func TestFloat(t *testing.T) {
 
 				go panicTrap(func() {
 					(Float{
-						Label:    "required",
 						Model:    &model,
 						Required: true,
 					}).validateRequired()
@@ -138,12 +136,10 @@ func TestFloat(t *testing.T) {
 		Convey("validateMin", func() {
 
 			Convey("Don't validate 0 if MinZero is false", func() {
-				label := "min"
 				model := float64(-5)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 					}).validateMin()
 				})
@@ -152,12 +148,10 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Validate 0 if MinZero is true, should panic because it's less than 0", func() {
-				label := "min"
 				model := float64(-0.1)
 
 				go panicTrap(func() {
 					(Float{
-						Label:   label,
 						Model:   &model,
 						MinZero: true,
 					}).validateMin()
@@ -166,19 +160,17 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MIN,
 					Value: map[string]interface{}{
-						"Label": "min",
+						"Label": "",
 						"Min":   float64(0),
 					},
 				})
 			})
 
 			Convey("Validate 0 if MinZero is true, shoud not panic because it's more than 0", func() {
-				label := "min"
 				model := float64(0.1)
 
 				go panicTrap(func() {
 					(Float{
-						Label:   label,
 						Model:   &model,
 						MinZero: true,
 					}).validateMin()
@@ -188,12 +180,10 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Validate 5, should panic because it's less than 5", func() {
-				label := "min"
 				model := float64(4.9)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 						Min:   5,
 					}).validateMin()
@@ -202,19 +192,17 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MIN,
 					Value: map[string]interface{}{
-						"Label": "min",
+						"Label": "",
 						"Min":   float64(5),
 					},
 				})
 			})
 
 			Convey("Validate 5, should not panic because it's more than 5", func() {
-				label := "min"
 				model := float64(5.1)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 						Min:   5,
 					}).validateMin()
@@ -228,12 +216,10 @@ func TestFloat(t *testing.T) {
 		Convey("validateMax", func() {
 
 			Convey("Don't validate 0 if MaxZero is false", func() {
-				label := "max"
 				model := float64(-5)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 					}).validateMax()
 				})
@@ -242,12 +228,10 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Validate 0 if MaxZero is true, should panic because it's more than 0", func() {
-				label := "max"
 				model := float64(0.1)
 
 				go panicTrap(func() {
 					(Float{
-						Label:   label,
 						Model:   &model,
 						MaxZero: true,
 					}).validateMax()
@@ -256,19 +240,17 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MAX,
 					Value: map[string]interface{}{
-						"Label": "max",
+						"Label": "",
 						"Max":   float64(0),
 					},
 				})
 			})
 
 			Convey("Validate 0 if MaxZero is true, shoud not panic because it's less than 0", func() {
-				label := "max"
 				model := float64(-0.1)
 
 				go panicTrap(func() {
 					(Float{
-						Label:   label,
 						Model:   &model,
 						MaxZero: true,
 					}).validateMax()
@@ -278,12 +260,10 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Validate 5, should panic because it's more than 5", func() {
-				label := "max"
 				model := float64(5.1)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 						Max:   5,
 					}).validateMax()
@@ -292,19 +272,17 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MAX,
 					Value: map[string]interface{}{
-						"Label": "max",
+						"Label": "",
 						"Max":   float64(5),
 					},
 				})
 			})
 
 			Convey("Validate 5, should not panic because it's less than 5", func() {
-				label := "min"
 				model := float64(4.9)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 						Max:   5,
 					}).validateMax()
@@ -318,7 +296,6 @@ func TestFloat(t *testing.T) {
 		Convey("validateStep", func() {
 
 			Convey("Do nothing because step is set to Zero", func() {
-
 				model := float64(3)
 
 				go panicTrap(func() {
@@ -329,13 +306,10 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Should because panic because model is not in step", func() {
-
-				label := "step"
 				model := float64(3)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 						Step:  2,
 					}).validateStep()
@@ -344,20 +318,17 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_STEP,
 					Value: map[string]interface{}{
-						"Label": "step",
+						"Label": "",
 						"Step":  float64(2),
 					},
 				})
 			})
 
 			Convey("Should not panic because model is in step", func() {
-
-				label := "step"
 				model := float64(4)
 
 				go panicTrap(func() {
 					(Float{
-						Label: label,
 						Model: &model,
 						Step:  2,
 					}).validateStep()
@@ -371,7 +342,6 @@ func TestFloat(t *testing.T) {
 		Convey("validateInList", func() {
 
 			Convey("Should not panic, because InList is 'nil'", func() {
-
 				go panicTrap(func() {
 					(Float{}).validateInList()
 				})
@@ -380,14 +350,11 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Should not panic, because Model is in the List", func() {
-
-				label := "List"
 				model := float64(1.5)
 				list := []float64{1.4, 1.5, 1.6}
 
 				go panicTrap(func() {
 					(Float{
-						Label:  label,
 						Model:  &model,
 						InList: list,
 					}).validateInList()
@@ -397,14 +364,11 @@ func TestFloat(t *testing.T) {
 			})
 
 			Convey("Should panic, because Model is not in the List", func() {
-
-				label := "List"
 				model := float64(1.3)
 				list := []float64{1.4, 1.5, 1.6}
 
 				go panicTrap(func() {
 					(Float{
-						Label:  label,
 						Model:  &model,
 						InList: list,
 					}).validateInList()
@@ -413,7 +377,7 @@ func TestFloat(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_IN_LIST,
 					Value: map[string]interface{}{
-						"Label": "List",
+						"Label": "",
 						"List":  []float64{1.4, 1.5, 1.6},
 					},
 				})
