@@ -8,6 +8,8 @@ import (
 )
 
 func TestTime(t *testing.T) {
+	form.FormFieldInterfaceCheck(Time{})
+
 	Convey("PreCheck", t, func() {
 
 		Convey("Should panic because name is empty", func() {

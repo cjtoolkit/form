@@ -8,6 +8,8 @@ import (
 )
 
 func TestString(t *testing.T) {
+	form.FormFieldInterfaceCheck(String{})
+
 	Convey("PreCheck", t, func() {
 		Convey("Should panic because Name is empty string", func() {
 			go panicTrap(func() { (String{}).PreCheck() })

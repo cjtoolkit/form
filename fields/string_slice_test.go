@@ -7,6 +7,8 @@ import (
 )
 
 func TestStringSlice(t *testing.T) {
+	form.FormFieldInterfaceCheck(StringSlice{})
+
 	Convey("PreCheck", t, func() {
 
 		Convey("Panic because Name is empty", func() {

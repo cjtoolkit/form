@@ -52,6 +52,8 @@ func init() {
 }
 
 func TestFile(t *testing.T) {
+	form.FormFieldInterfaceCheck(File{})
+
 	Convey("PreCheck", t, func() {
 		Convey("Panic because name is empty", func() {
 			go panicTrap(func() {

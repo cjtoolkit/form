@@ -142,3 +142,7 @@ func SearchInt64(a []int64, x int64) bool {
 	i := sort.Search(count, func(i int) bool { return a[i] >= x })
 	return x == a[i]
 }
+
+func FormFieldInterfaceCheck(v FormFieldInterface) {
+
+}

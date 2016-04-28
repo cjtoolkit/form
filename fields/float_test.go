@@ -7,6 +7,8 @@ import (
 )
 
 func TestFloat(t *testing.T) {
+	form.FormFieldInterfaceCheck(Float{})
+
 	Convey("PreCheck", t, func() {
 
 		Convey("Should panic because Name is empty string", func() {

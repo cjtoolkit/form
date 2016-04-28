@@ -7,6 +7,8 @@ import (
 )
 
 func TestInt(t *testing.T) {
+	form.FormFieldInterfaceCheck(Int{})
+
 	Convey("PreCheck", t, func() {
 
 		Convey("Should panic because Name is empty string", func() {

@@ -7,6 +7,8 @@ import (
 )
 
 func TestBool(t *testing.T) {
+	form.FormFieldInterfaceCheck(Bool{})
+
 	Convey("PreCheck", t, func() {
 
 		Convey("Panic because name is empty", func() {
