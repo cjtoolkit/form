@@ -98,7 +98,6 @@ func TestString(t *testing.T) {
 
 				go panicTrap(func() {
 					(String{
-						Label:    "test",
 						Model:    &model,
 						Required: true,
 					}).validateRequired()
@@ -107,7 +106,7 @@ func TestString(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
 					Value: map[string]interface{}{
-						"Label": "test",
+						"Label": "",
 					},
 				})
 			})
@@ -117,7 +116,6 @@ func TestString(t *testing.T) {
 
 				go panicTrap(func() {
 					(String{
-						Label:    "test",
 						Model:    &model,
 						Required: true,
 					}).validateRequired()
@@ -141,7 +139,6 @@ func TestString(t *testing.T) {
 
 				go panicTrap(func() {
 					(String{
-						Label:   "test",
 						MinRune: 4,
 						Model:   &model,
 					}).validateMinRune()
@@ -150,7 +147,7 @@ func TestString(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_MIN_CHAR,
 					Value: map[string]interface{}{
-						"Label":   "test",
+						"Label":   "",
 						"MinRune": 4,
 					},
 				})
@@ -161,7 +158,6 @@ func TestString(t *testing.T) {
 
 				go panicTrap(func() {
 					(String{
-						Label:   "test",
 						MinRune: 4,
 						Model:   &model,
 					}).validateMinRune()
@@ -185,7 +181,6 @@ func TestString(t *testing.T) {
 
 				go panicTrap(func() {
 					(String{
-						Label:   "test",
 						MaxRune: 4,
 						Model:   &model,
 					}).validateMaxRune()
@@ -194,7 +189,7 @@ func TestString(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_MAX_CHAR,
 					Value: map[string]interface{}{
-						"Label":   "test",
+						"Label":   "",
 						"MaxRune": 4,
 					},
 				})
@@ -205,7 +200,6 @@ func TestString(t *testing.T) {
 
 				go panicTrap(func() {
 					(String{
-						Label:   "test",
 						MaxRune: 4,
 						Model:   &model,
 					}).validateMaxRune()
@@ -261,13 +255,11 @@ func TestString(t *testing.T) {
 
 			Convey("Should panic because MustMatchModel and Model are not identical to each other", func() {
 				model := "apple"
-				label := "Fruit"
 				mustMatchModel := "orange"
 				mustMatchLabel := "Matching Fruit"
 
 				go panicTrap(func() {
 					(String{
-						Label:          label,
 						Model:          &model,
 						MustMatchLabel: mustMatchLabel,
 						MustMatchModel: &mustMatchModel,
@@ -277,7 +269,7 @@ func TestString(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_MUST_MATCH,
 					Value: map[string]interface{}{
-						"Label":          "Fruit",
+						"Label":          "",
 						"MustMatchLabel": "Matching Fruit",
 					},
 				})
@@ -294,13 +286,11 @@ func TestString(t *testing.T) {
 			})
 
 			Convey("Should not panic, because Model matches Pattern", func() {
-				label := "Pattern"
 				pattern := regexp.MustCompile(`\d`)
 				model := "5"
 
 				go panicTrap(func() {
 					(String{
-						Label:   label,
 						Pattern: pattern,
 						Model:   &model,
 					}).validatePattern()
@@ -310,13 +300,11 @@ func TestString(t *testing.T) {
 			})
 
 			Convey("Panic, because Model does not match Pattern", func() {
-				label := "Pattern"
 				pattern := regexp.MustCompile(`\d`)
 				model := "a"
 
 				go panicTrap(func() {
 					(String{
-						Label:   label,
 						Pattern: pattern,
 						Model:   &model,
 					}).validatePattern()
@@ -325,7 +313,7 @@ func TestString(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_PATTERN,
 					Value: map[string]interface{}{
-						"Label":   "Pattern",
+						"Label":   "",
 						"Pattern": `\d`,
 					},
 				})
@@ -342,13 +330,11 @@ func TestString(t *testing.T) {
 			})
 
 			Convey("Should not panic, because Model is in the List", func() {
-				label := "List"
 				model := "apple"
 				list := []string{"orange", "apple", "pear"}
 
 				go panicTrap(func() {
 					(String{
-						Label:  label,
 						Model:  &model,
 						InList: list,
 					}).validateInList()
@@ -358,13 +344,11 @@ func TestString(t *testing.T) {
 			})
 
 			Convey("Should panic, because Model is not in the List", func() {
-				label := "List"
 				model := "mango"
 				list := []string{"orange", "apple", "pear"}
 
 				go panicTrap(func() {
 					(String{
-						Label:  label,
 						Model:  &model,
 						InList: list,
 					}).validateInList()
@@ -373,7 +357,7 @@ func TestString(t *testing.T) {
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_IN_LIST,
 					Value: map[string]interface{}{
-						"Label": "List",
+						"Label": "",
 						"List":  []string{"orange", "apple", "pear"},
 					},
 				})
