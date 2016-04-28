@@ -7,8 +7,9 @@ import (
 )
 
 type Form struct {
-	language LanguageInterface
-	values   ValuesInterface
+	language        LanguageInterface
+	values          ValuesInterface
+	disablePreCheck bool
 }
 
 func NewForm(language LanguageInterface) (f *Form) {
@@ -21,6 +22,11 @@ func NewForm(language LanguageInterface) (f *Form) {
 
 func NewFormEnglishLanguage() *Form {
 	return NewForm(englishLanguageMap)
+}
+
+func (f *Form) DisablePreCheck() *Form {
+	f.disablePreCheck = true
+	return f
 }
 
 func (f *Form) checkLanguage() {
@@ -77,7 +83,9 @@ func (f *Form) checkField(field FormFieldInterface) {
 	if nil == field {
 		panic("'field' cannot be nil")
 	}
-	field.PreCheck()
+	if !f.disablePreCheck {
+		field.PreCheck()
+	}
 }
 
 func (f *Form) checkErrPtr(errPtr *error) {
