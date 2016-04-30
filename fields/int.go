@@ -96,14 +96,14 @@ func (i Int) Transform() {
 
 func (i Int) ReverseTransform() {
 	num, err := strconv.ParseInt(strings.TrimSpace(*i.Norm), INT_BIT, INT_DECIMAL)
-	ExecFuncIfErrIsNotNil(err, func() {
+	if nil != err {
 		panic(&form.ErrorReverseTransform{
 			Key: form.LANG_NOT_INT,
 			Value: map[string]interface{}{
 				"Label": i.Label,
 			},
 		})
-	})
+	}
 	*i.Model = num
 }
 

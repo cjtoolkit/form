@@ -77,14 +77,14 @@ func (i IntSlice) ReverseTransform() {
 	*i.Model = nil
 	for _, str := range *i.Norm {
 		num, err := strconv.ParseInt(strings.TrimSpace(str), INT_SLICE_DECIMAL, INT_SLICE_BIT)
-		ExecFuncIfErrIsNotNil(err, func() {
+		if nil != err {
 			panic(&form.ErrorReverseTransform{
 				Key: form.LANG_NOT_INT,
 				Value: map[string]interface{}{
 					"Label": i.Label,
 				},
 			})
-		})
+		}
 		*i.Model = append(*i.Model, num)
 	}
 	sort.Sort(Int64Sort(*i.Model))

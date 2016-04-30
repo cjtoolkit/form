@@ -98,14 +98,14 @@ func (f Float) Transform() {
 
 func (f Float) ReverseTransform() {
 	num, err := strconv.ParseFloat(strings.TrimSpace(*f.Norm), FLOAT_BIT)
-	ExecFuncIfErrIsNotNil(err, func() {
+	if nil != err {
 		panic(&form.ErrorReverseTransform{
 			Key: form.LANG_NOT_FLOAT,
 			Value: map[string]interface{}{
 				"Label": f.Label,
 			},
 		})
-	})
+	}
 	*f.Model = num
 }
 
