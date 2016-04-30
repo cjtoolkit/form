@@ -63,6 +63,7 @@ func (b Bool) PopulateNorm(values form.ValuesInterface) {
 }
 
 func (b Bool) Transform() {
+	*b.Norm = false
 	if !*b.Model {
 		return
 	}

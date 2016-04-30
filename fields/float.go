@@ -97,6 +97,7 @@ func (f Float) Transform() {
 }
 
 func (f Float) ReverseTransform() {
+	*f.Model = 0
 	num, err := strconv.ParseFloat(strings.TrimSpace(*f.Norm), FLOAT_BIT)
 	if nil != err {
 		panic(&form.ErrorReverseTransform{

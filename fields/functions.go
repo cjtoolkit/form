@@ -36,3 +36,10 @@ func execFnIfNotNil(fn func()) {
 		fn()
 	}
 }
+
+func addSuffix(name string, suffix *string) string {
+	if nil != suffix {
+		return name + "-" + *suffix
+	}
+	return name
+}

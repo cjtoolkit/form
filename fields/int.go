@@ -95,6 +95,7 @@ func (i Int) Transform() {
 }
 
 func (i Int) ReverseTransform() {
+	*i.Model = 0
 	num, err := strconv.ParseInt(strings.TrimSpace(*i.Norm), INT_DECIMAL, INT_BIT)
 	if nil != err {
 		panic(&form.ErrorReverseTransform{
