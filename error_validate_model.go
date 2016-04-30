@@ -18,8 +18,3 @@ func (eVM *ErrorValidateModel) Error() string {
 func (eVM *ErrorValidateModel) Translate(language LanguageInterface) {
 	eVM.Msg = language.Translate(eVM.Key, eVM.Value)
 }
-
-func (eVM *ErrorValidateModel) clean() {
-	eVM.Key = ""
-	eVM.Value = nil
-}

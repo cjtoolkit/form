@@ -17,10 +17,4 @@ func (eRT *ErrorReverseTransform) Error() string {
 
 func (eRT *ErrorReverseTransform) Translate(language LanguageInterface) {
 	eRT.Msg = language.Translate(eRT.Key, eRT.Value)
-	eRT.clean()
-}
-
-func (eRT *ErrorReverseTransform) clean() {
-	eRT.Key = ""
-	eRT.Value = nil
 }
