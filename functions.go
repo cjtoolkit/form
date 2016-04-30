@@ -25,12 +25,11 @@ func GetAllFile(values ValuesInterface, name string) (fhs []*multipart.FileHeade
 }
 
 func BuildLanguageTemplate(tpl string) *text.Template {
-	tmpl := text.Must(text.New("").Funcs(text.FuncMap{
+	return text.Must(text.New("").Funcs(text.FuncMap{
 		"list":      templateListFilter,
 		"pluralise": templatePluraliseFilter,
 		"pluralize": templatePluraliseFilter, // Knowing the Americans
 	}).Parse(tpl))
-	return tmpl
 }
 
 func templateListFilter(and string, value interface{}) (str string) {
