@@ -18,6 +18,7 @@ type Float struct {
 	Norm           *string  // Mandatory
 	Model          *float64 // Mandatory
 	Err            *error   // Mandatory
+	Suffix         *string
 	Required       bool
 	RequiredErrKey string
 	Min            float64
@@ -52,6 +53,10 @@ const (
 	FLOAT_FMT_NO_EXPONENT byte = 'f'
 	FLOAT_PRECISION            = -1
 )
+
+func (f Float) NameWithSuffix() string {
+	return addSuffix(f.Name, f.Suffix)
+}
 
 func (f Float) MarshalJSON() ([]byte, error) {
 	return json.Marshal(floatJson{
@@ -89,7 +94,7 @@ func (f Float) GetErrorPtr() *error {
 }
 
 func (f Float) PopulateNorm(values form.ValuesInterface) {
-	*f.Norm = values.GetOne(f.Name)
+	*f.Norm = values.GetOne(f.NameWithSuffix())
 }
 
 func (f Float) Transform() {

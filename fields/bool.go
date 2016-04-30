@@ -13,6 +13,7 @@ type Bool struct {
 	Model          *bool   // Mandatory
 	Err            *error  // Mandatory
 	Value          string  // Mandatory
+	Suffix         *string
 	Required       bool
 	RequiredErrKey string
 }
@@ -24,6 +25,10 @@ type boolJson struct {
 	Success  bool   `json:"success"`
 	Error    string `json:"error,omitempty"`
 	Value    string `json:"value"`
+}
+
+func (b Bool) NameWithSuffix() string {
+	return addSuffix(b.Name, b.Suffix)
 }
 
 func (b Bool) MarshalJSON() ([]byte, error) {
@@ -59,7 +64,7 @@ func (b Bool) GetErrorPtr() *error {
 }
 
 func (b Bool) PopulateNorm(values form.ValuesInterface) {
-	*b.Norm = values.GetOne(b.Name)
+	*b.Norm = values.GetOne(b.NameWithSuffix())
 }
 
 func (b Bool) Transform() {

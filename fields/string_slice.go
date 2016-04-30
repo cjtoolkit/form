@@ -13,6 +13,7 @@ type StringSlice struct {
 	Norm           *[]string // Mandatory
 	Model          *[]string // Mandatory
 	Err            *error    // Mandatory
+	Suffix         *string
 	Required       bool
 	RequiredErrKey string
 	Extra          func()
@@ -24,6 +25,10 @@ type stringSliceJson struct {
 	Required bool   `json:"required"`
 	Success  bool   `json:"success"`
 	Error    string `json:"error,omitempty"`
+}
+
+func (s StringSlice) NameWithSuffix() string {
+	return addSuffix(s.Name, s.Suffix)
 }
 
 func (s StringSlice) MarshalJSON() ([]byte, error) {
@@ -56,7 +61,7 @@ func (s StringSlice) GetErrorPtr() *error {
 }
 
 func (s StringSlice) PopulateNorm(values form.ValuesInterface) {
-	*s.Norm = values.GetAll(s.Name)
+	*s.Norm = values.GetAll(s.NameWithSuffix())
 }
 
 func (s StringSlice) Transform() {

@@ -14,6 +14,7 @@ type IntSlice struct {
 	Norm           *[]string // Mandatory
 	Model          *[]int64  // Mandatory
 	Err            *error    // Mandatory
+	Suffix         *string
 	Required       bool
 	RequiredErrKey string
 	Extra          func()
@@ -31,6 +32,10 @@ const (
 	INT_SLICE_DECIMAL = 10
 	INT_SLICE_BIT     = 64
 )
+
+func (i IntSlice) NameWithSuffix() string {
+	return addSuffix(i.Name, i.Suffix)
+}
 
 func (i IntSlice) MarshalJSON() ([]byte, error) {
 	return json.Marshal(intSliceJson{
@@ -62,7 +67,7 @@ func (i IntSlice) GetErrorPtr() *error {
 }
 
 func (i IntSlice) PopulateNorm(values form.ValuesInterface) {
-	*i.Norm = values.GetAll(i.Name)
+	*i.Norm = values.GetAll(i.NameWithSuffix())
 }
 
 func (i IntSlice) Transform() {

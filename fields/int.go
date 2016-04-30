@@ -17,6 +17,7 @@ type Int struct {
 	Norm           *string // Mandatory
 	Model          *int64  // Mandatory
 	Err            *error  // Mandatory
+	Suffix         *string
 	Required       bool
 	RequiredErrKey string
 	Min            int64
@@ -50,6 +51,10 @@ const (
 	INT_DECIMAL = 10
 	INT_BIT     = 64
 )
+
+func (i Int) NameWithSuffix() string {
+	return addSuffix(i.Name, i.Suffix)
+}
 
 func (i Int) MarshalJSON() ([]byte, error) {
 	return json.Marshal(intJson{
@@ -87,7 +92,7 @@ func (i Int) GetErrorPtr() *error {
 }
 
 func (i Int) PopulateNorm(values form.ValuesInterface) {
-	*i.Norm = values.GetOne(i.Name)
+	*i.Norm = values.GetOne(i.NameWithSuffix())
 }
 
 func (i Int) Transform() {

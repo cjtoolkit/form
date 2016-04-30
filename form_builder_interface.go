@@ -4,6 +4,6 @@ type FormBuilderInterface interface {
 	Fields() []FormFieldInterface
 }
 
-func FormBuilderInterfaceCheck (v FormBuilderInterface) {
+func FormBuilderInterfaceCheck(v FormBuilderInterface) {
 
 }

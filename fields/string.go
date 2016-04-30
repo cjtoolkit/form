@@ -18,6 +18,7 @@ type String struct {
 	Norm            *string // Mandatory
 	Model           *string // Mandatory
 	Err             *error  // Mandatory
+	Suffix          *string
 	Required        bool
 	RequiredErrKey  string
 	MinRune         int
@@ -46,6 +47,10 @@ type stringJson struct {
 	MustMatch string   `json:"mustMatch,omitempty"`
 	Pattern   string   `json:"pattern,omitempty"`
 	List      []string `json:"list,omitempty"`
+}
+
+func (s String) NameWithSuffix() string {
+	return addSuffix(s.Name, s.Suffix)
 }
 
 func (s String) MarshalJSON() ([]byte, error) {
@@ -83,7 +88,7 @@ func (s String) GetErrorPtr() *error {
 }
 
 func (s String) PopulateNorm(values form.ValuesInterface) {
-	*s.Norm = values.GetOne(s.Name)
+	*s.Norm = values.GetOne(s.NameWithSuffix())
 }
 
 func (s String) Transform() {

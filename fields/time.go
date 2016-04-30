@@ -15,6 +15,7 @@ type Time struct {
 	Err            *error         // Mandatory
 	Location       *time.Location // Mandatory
 	Formats        []string       // Mandatory, most ideal format should be at the top
+	Suffix         *string
 	Required       bool
 	RequiredErrKey string
 	Min            time.Time
@@ -36,6 +37,10 @@ type timeJson struct {
 	MinUnix  int64  `json:"minUnix,omitempty"`
 	Max      string `json:"max,omitempty"`
 	MaxUnix  int64  `json:"maxUnix"`
+}
+
+func (t Time) NameWithSuffix() string {
+	return addSuffix(t.Name, t.Suffix)
 }
 
 func (t Time) timeToString(tt time.Time, zero bool) string {
@@ -83,7 +88,7 @@ func (t Time) GetErrorPtr() *error {
 }
 
 func (t Time) PopulateNorm(values form.ValuesInterface) {
-	*t.Norm = values.GetOne(t.Name)
+	*t.Norm = values.GetOne(t.NameWithSuffix())
 }
 
 func (t Time) Transform() {

@@ -13,6 +13,7 @@ type File struct {
 	Label            string                 // Mandatory
 	File             **multipart.FileHeader // Mandatory
 	Err              *error                 // Mandatory
+	Suffix           *string
 	Required         bool
 	RequiredErrKey   string
 	Mime             []string
@@ -33,6 +34,10 @@ type fileJson struct {
 const (
 	FILE_CONTENT_TYPE = "Content-Type"
 )
+
+func (f File) NameWithSuffix() string {
+	return addSuffix(f.Name, f.Suffix)
+}
 
 func (f File) MarshalJSON() ([]byte, error) {
 	return json.Marshal(fileJson{
@@ -62,7 +67,7 @@ func (f File) GetErrorPtr() *error {
 }
 
 func (f File) PopulateNorm(values form.ValuesInterface) {
-	*f.File = form.GetOneFile(values, f.Name)
+	*f.File = form.GetOneFile(values, f.NameWithSuffix())
 }
 
 func (f File) Transform() {
