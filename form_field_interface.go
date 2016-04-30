@@ -11,3 +11,5 @@ type FormFieldInterface interface {
 	ReverseTransform()
 	ValidateModel()
 }
+
+func FormFieldInterfaceCheck(v FormFieldInterface) {}
