@@ -135,6 +135,10 @@ func (f Float) ReverseTransform() {
 
 func (f Float) ValidateModel() {
 	f.validateRequired()
+	f.validateMin()
+	f.validateMax()
+	f.validateStep()
+	f.validateInList()
 	execFnIfNotNil(f.Extra)
 }
 
