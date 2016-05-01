@@ -37,13 +37,13 @@ func NewTime(
 	options ...func(*Time),
 ) Time {
 	t := Time{
-		Name: name,
-		Label: label,
-		Norm: norm,
-		Model: model,
-		Err: err,
+		Name:     name,
+		Label:    label,
+		Norm:     norm,
+		Model:    model,
+		Err:      err,
 		Location: location,
-		Formats: formats,
+		Formats:  formats,
 	}
 
 	t.PreCheck()
