@@ -6,9 +6,9 @@ func BoolSuffix(suffix *string) func(*Bool) {
 	}
 }
 
-func BoolRequired(required bool, errKey string) func(*Bool) {
+func BoolRequired(errKey string) func(*Bool) {
 	return func(b *Bool) {
-		b.Required = required
+		b.Required = true
 		b.RequiredErrKey = errKey
 	}
 }

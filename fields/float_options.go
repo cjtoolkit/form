@@ -6,9 +6,9 @@ func FloatSuffix(suffix *string) func(*Float) {
 	}
 }
 
-func FloatRequired(required bool, errKey string) func(*Float) {
+func FloatRequired(errKey string) func(*Float) {
 	return func(f *Float) {
-		f.Required = required
+		f.Required = true
 		f.RequiredErrKey = errKey
 	}
 }

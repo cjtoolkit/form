@@ -6,9 +6,9 @@ func FileSuffix(suffix *string) func(*File) {
 	}
 }
 
-func FileRequired(required bool, errKey string) func(*File) {
+func FileRequired(errKey string) func(*File) {
 	return func(f *File) {
-		f.Required = required
+		f.Required = true
 		f.RequiredErrKey = errKey
 	}
 }

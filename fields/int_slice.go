@@ -20,6 +20,24 @@ type IntSlice struct {
 	Extra          func()
 }
 
+func NewIntSlice(name, label string, norm *[]string, model *[]int64, err *error, options ...func(*IntSlice)) IntSlice {
+	i := IntSlice{
+		Name:  name,
+		Label: label,
+		Norm:  norm,
+		Model: model,
+		Err:   err,
+	}
+
+	i.PreCheck()
+
+	for _, option := range options {
+		option(&i)
+	}
+
+	return i
+}
+
 type intSliceJson struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`

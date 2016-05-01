@@ -6,9 +6,9 @@ func IntSuffix(suffix *string) func(*Int) {
 	}
 }
 
-func IntRequired(required bool, errKey string) func(*Int) {
+func IntRequired(errKey string) func(*Int) {
 	return func(i *Int) {
-		i.Required = required
+		i.Required = true
 		i.RequiredErrKey = errKey
 	}
 }
