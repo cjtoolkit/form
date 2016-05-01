@@ -20,12 +20,12 @@ type Bool struct {
 
 func NewBool(name, label, value string, norm *string, model *bool, err *error, options ...func(*Bool)) Bool {
 	b := Bool{
-		Name: name,
+		Name:  name,
 		Label: label,
 		Value: value,
-		Norm: norm,
+		Norm:  norm,
 		Model: model,
-		Err: err,
+		Err:   err,
 	}
 
 	b.PreCheck()

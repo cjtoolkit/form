@@ -23,6 +23,21 @@ type File struct {
 	Extra            func()
 }
 
+func NewFile(name, label string, file **multipart.FileHeader, err *error, options ...func(*File)) File {
+	f := File{
+		Name:  name,
+		Label: label,
+		File:  file,
+		Err:   err,
+	}
+
+	for _, option := range options {
+		option(&f)
+	}
+
+	return f
+}
+
 type fileJson struct {
 	Type     string   `json:"type"`
 	Name     string   `json:"name"`
