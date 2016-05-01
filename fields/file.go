@@ -31,6 +31,8 @@ func NewFile(name, label string, file **multipart.FileHeader, err *error, option
 		Err:   err,
 	}
 
+	f.PreCheck()
+
 	for _, option := range options {
 		option(&f)
 	}

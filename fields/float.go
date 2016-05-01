@@ -34,6 +34,24 @@ type Float struct {
 	Extra          func()
 }
 
+func NewFloat(name, label string, norm *string, model *float64, err *error, options ...func(*Float)) Float {
+	f := Float{
+		Name:  name,
+		Label: label,
+		Norm:  norm,
+		Model: model,
+		Err:   err,
+	}
+
+	f.PreCheck()
+
+	for _, option := range options {
+		option(&f)
+	}
+
+	return f
+}
+
 type floatJson struct {
 	Type     string    `json:"type"`
 	Name     string    `json:"name"`
