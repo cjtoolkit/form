@@ -33,6 +33,24 @@ type Int struct {
 	Extra          func()
 }
 
+func NewInt(name, label string, norm *string, model *int64, err *error, options ...func(*Int)) Int {
+	i := Int{
+		Name:  name,
+		Label: label,
+		Norm:  norm,
+		Model: model,
+		Err:   err,
+	}
+
+	i.PreCheck()
+
+	for _, option := range options {
+		option(&i)
+	}
+
+	return i
+}
+
 type intJson struct {
 	Type     string  `json:"type"`
 	Name     string  `json:"name"`
