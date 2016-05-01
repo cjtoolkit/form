@@ -36,6 +36,24 @@ type String struct {
 	Extra           func()
 }
 
+func NewString(name, label string, norm, model *string, err *error, options ...func(*String)) String {
+	s := String{
+		Name:  name,
+		Label: label,
+		Norm:  norm,
+		Model: model,
+		Err:   err,
+	}
+
+	s.PreCheck()
+
+	for _, option := range options {
+		option(&s)
+	}
+
+	return s
+}
+
 type stringJson struct {
 	Type      string   `json:"type"`
 	Name      string   `json:"name"`
