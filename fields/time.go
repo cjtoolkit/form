@@ -27,6 +27,34 @@ type Time struct {
 	Extra          func()
 }
 
+func NewTime(
+	name, label string,
+	norm *string,
+	model *time.Time,
+	err *error,
+	location *time.Location,
+	formats []string,
+	options ...func(*Time),
+) Time {
+	t := Time{
+		Name: name,
+		Label: label,
+		Norm: norm,
+		Model: model,
+		Err: err,
+		Location: location,
+		Formats: formats,
+	}
+
+	t.PreCheck()
+
+	for _, option := range options {
+		option(&t)
+	}
+
+	return t
+}
+
 type timeJson struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`
