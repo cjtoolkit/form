@@ -18,6 +18,25 @@ type Bool struct {
 	RequiredErrKey string
 }
 
+func NewBool(name, label, value string, norm *string, model *bool, err *error, options ...func(*Bool)) Bool {
+	b := Bool{
+		Name: name,
+		Label: label,
+		Value: value,
+		Norm: norm,
+		Model: model,
+		Err: err,
+	}
+
+	b.PreCheck()
+
+	for _, option := range options {
+		option(&b)
+	}
+
+	return b
+}
+
 type boolJson struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`
