@@ -148,7 +148,7 @@ func TestString(t *testing.T) {
 				})
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
-					Key: form.LANG_MIN_CHAR,
+					Key: form.LANG_MIN_RUNE,
 					Value: String{
 						MinRune: 4,
 						Model:   &model,
@@ -190,7 +190,7 @@ func TestString(t *testing.T) {
 				})
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
-					Key: form.LANG_MAX_CHAR,
+					Key: form.LANG_MAX_RUNE,
 					Value: String{
 						MaxRune: 4,
 						Model:   &model,

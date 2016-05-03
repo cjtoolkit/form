@@ -145,7 +145,7 @@ func (s String) validateMinRune() {
 		return
 	case s.MinRune > utf8.RuneCountInString(*s.Model):
 		panic(&form.ErrorValidateModel{
-			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MIN_CHAR, s.MinRuneErrKey),
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MIN_RUNE, s.MinRuneErrKey),
 			Value: s,
 		})
 	}
@@ -157,7 +157,7 @@ func (s String) validateMaxRune() {
 		return
 	case s.MaxRune < utf8.RuneCountInString(*s.Model):
 		panic(&form.ErrorValidateModel{
-			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MAX_CHAR, s.MaxRuneErrKey),
+			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MAX_RUNE, s.MaxRuneErrKey),
 			Value: s,
 		})
 	}

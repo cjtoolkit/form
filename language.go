@@ -22,8 +22,8 @@ func (l Langauge) Translate(name string, value interface{}) (msg string) {
 
 const (
 	LANG_FIELD_REQUIRED = "field_required"
-	LANG_MIN_CHAR       = "min_char"
-	LANG_MAX_CHAR       = "max_char"
+	LANG_MIN_RUNE       = "min_rune"
+	LANG_MAX_RUNE       = "max_rune"
 	LANG_MUST_MATCH     = "must_match"
 	LANG_PATTERN        = "pattern"
 	LANG_IN_LIST        = "in_list"
@@ -37,14 +37,16 @@ const (
 	LANG_TIME_MAX       = "time_max"
 	LANG_FILE_MIME      = "file_mime"
 	LANG_FILE_SIZE      = "file_size"
+	LANG_INVALID_EMAIL  = "invalid_email"
+	LANG_INVALID_URL    = "invalid_url"
 )
 
 func englishLanguage() Langauge {
 	T := BuildLanguageTemplate
 	return Langauge{
 		LANG_FIELD_REQUIRED: T(`'{{.Label}}' is required.`),
-		LANG_MIN_CHAR:       T(`'{{.Label}}' should be more than or equal to '{{.MinRune}}' character{{.MinRune|pluralise "s"}}.`),
-		LANG_MAX_CHAR:       T(`'{{.Label}}' should be less than or equal '{{.MaxRune}}' character{{.MaxRune|pluralise "s"}}.`),
+		LANG_MIN_RUNE:       T(`'{{.Label}}' should be more than or equal to '{{.MinRune}}' character{{.MinRune|pluralise "s"}}.`),
+		LANG_MAX_RUNE:       T(`'{{.Label}}' should be less than or equal '{{.MaxRune}}' character{{.MaxRune|pluralise "s"}}.`),
 		LANG_MUST_MATCH:     T(`'{{.Label}}' should match '{{.MustMatchLabel}}.'`),
 		LANG_PATTERN:        T(`'{{.Label}}' should match '{{.Pattern.String}}.'`),
 		LANG_IN_LIST:        T(`Value of '{{.Label}}' is not in the list '{{.InList|list "and"}}'.`),
@@ -58,6 +60,8 @@ func englishLanguage() Langauge {
 		LANG_TIME_MAX:       T(`'{{.Label}}' should be less than '{{.Max}}'.`),
 		LANG_FILE_MIME:      T(`'{{.Label}}' should be '{{.Mime|list "and"}}'.`),
 		LANG_FILE_SIZE:      T(`'{{.Label}}' should be less '{{.SizeInByte}}' in bytes.`),
+		LANG_INVALID_EMAIL:  T(`'{{.Label}}' is not a valid email address.`),
+		LANG_INVALID_URL:    T(`'{{.Label}}' is not a valid url.`),
 	}
 }
 
