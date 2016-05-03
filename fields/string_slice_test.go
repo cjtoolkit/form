@@ -123,8 +123,9 @@ func TestStringSlice(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: StringSlice{
+						Model:    &model,
+						Required: true,
 					},
 				})
 
@@ -139,8 +140,9 @@ func TestStringSlice(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: StringSlice{
+						Model:    &model,
+						Required: true,
 					},
 				})
 			})

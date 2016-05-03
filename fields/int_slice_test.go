@@ -110,8 +110,9 @@ func TestIntSlice(t *testing.T) {
 
 			So(<-panicChannel, ShouldResemble, &form.ErrorReverseTransform{
 				Key: form.LANG_NOT_INT,
-				Value: map[string]interface{}{
-					"Label": "",
+				Value: IntSlice{
+					Norm:  &norm,
+					Model: &model,
 				},
 			})
 
@@ -164,8 +165,9 @@ func TestIntSlice(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: IntSlice{
+						Model:    &model,
+						Required: true,
 					},
 				})
 
@@ -180,8 +182,9 @@ func TestIntSlice(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: IntSlice{
+						Model:    &model,
+						Required: true,
 					},
 				})
 			})

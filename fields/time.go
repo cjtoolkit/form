@@ -137,9 +137,7 @@ func (t Time) ReverseTransform() {
 
 	panic(form.ErrorReverseTransform{
 		Key: form.LANG_TIME_FORMAT,
-		Value: map[string]interface{}{
-			"Label": t.Label,
-		},
+		Value: t,
 	})
 }
 
@@ -157,9 +155,7 @@ func (t Time) validateRequired() {
 	case (*t.Model).IsZero():
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, t.RequiredErrKey),
-			Value: map[string]interface{}{
-				"Label": t.Label,
-			},
+			Value: t,
 		})
 	}
 }
@@ -171,10 +167,7 @@ func (t Time) validateMin() {
 	case t.Min.Unix() > (*t.Model).Unix() || (t.Min.Unix() == (*t.Model).Unix() && t.Min.UnixNano() > (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MIN, t.MinErrKey),
-			Value: map[string]interface{}{
-				"Label": t.Label,
-				"Min":   t.Min.Format(t.Formats[0]),
-			},
+			Value: t,
 		})
 	}
 }
@@ -190,10 +183,7 @@ func (t Time) validateMax() {
 	case t.Max.Unix() < (*t.Model).Unix() || (t.Max.Unix() == (*t.Model).Unix() && t.Max.UnixNano() < (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MAX, t.MaxErrKey),
-			Value: map[string]interface{}{
-				"Label": t.Label,
-				"Max":   t.Max.Format(t.Formats[0]),
-			},
+			Value: t,
 		})
 	}
 }

@@ -110,8 +110,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: Int{
+						Model:    &model,
+						Required: true,
 					},
 				})
 			})
@@ -157,9 +158,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MIN,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Min":   int64(0),
+					Value: Int{
+						Model:   &model,
+						MinZero: true,
 					},
 				})
 			})
@@ -189,9 +190,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MIN,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Min":   int64(5),
+					Value: Int{
+						Model: &model,
+						Min:   5,
 					},
 				})
 			})
@@ -237,9 +238,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MAX,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Max":   int64(0),
+					Value: Int{
+						Model:   &model,
+						MaxZero: true,
 					},
 				})
 			})
@@ -269,9 +270,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MAX,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Max":   int64(5),
+					Value: Int{
+						Model: &model,
+						Max:   5,
 					},
 				})
 			})
@@ -311,9 +312,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_STEP,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Step":  int64(2),
+					Value: Int{
+						Model: &model,
+						Step:  2,
 					},
 				})
 			})
@@ -368,9 +369,9 @@ func TestInt(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_IN_LIST,
-					Value: map[string]interface{}{
-						"Label": "",
-						"List":  []int64{12, 42, 60},
+					Value: Int{
+						Model:  &model,
+						InList: list,
 					},
 				})
 			})

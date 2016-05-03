@@ -200,8 +200,9 @@ func TestBool(t *testing.T) {
 
 			So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 				Key: form.LANG_FIELD_REQUIRED,
-				Value: map[string]interface{}{
-					"Label": "",
+				Value:Bool{
+					Model:    &model,
+					Required: true,
 				},
 			})
 		})

@@ -143,8 +143,9 @@ func TestFile(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: File{
+						File:     &file,
+						Required: true,
 					},
 				})
 			})
@@ -190,9 +191,9 @@ func TestFile(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FILE_MIME,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Mime":  []string{"image/jpeg"},
+					Value: File{
+						File: &file,
+						Mime: []string{"image/jpeg"},
 					},
 				})
 			})
@@ -238,9 +239,9 @@ func TestFile(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FILE_SIZE,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Size":  int64(6),
+					Value: File{
+						File:       &file,
+						SizeInByte: 6,
 					},
 				})
 			})

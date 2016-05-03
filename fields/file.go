@@ -109,9 +109,7 @@ func (f File) validateRequired() {
 	case nil == *f.File:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, f.RequiredErrKey),
-			Value: map[string]interface{}{
-				"Label": f.Label,
-			},
+			Value: f,
 		})
 	}
 }
@@ -138,10 +136,7 @@ func (f File) validateMime() {
 
 	panic(&form.ErrorValidateModel{
 		Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FILE_MIME, f.MimeErrKey),
-		Value: map[string]interface{}{
-			"Label": f.Label,
-			"Mime":  f.Mime,
-		},
+		Value: f,
 	})
 }
 
@@ -174,10 +169,7 @@ func (f File) validateSizeInByte() {
 	case f.getFileSize() > f.SizeInByte:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FILE_SIZE, f.SizeInByteErrKey),
-			Value: map[string]interface{}{
-				"Label": f.Label,
-				"Size":  f.SizeInByte,
-			},
+			Value: f,
 		})
 	}
 }

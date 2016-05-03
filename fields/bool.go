@@ -109,9 +109,7 @@ func (b Bool) validateRequired() {
 	case !*b.Model:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, b.RequiredErrKey),
-			Value: map[string]interface{}{
-				"Label": b.Label,
-			},
+			Value: b,
 		})
 	}
 }

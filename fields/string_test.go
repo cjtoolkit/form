@@ -107,8 +107,9 @@ func TestString(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: String{
+						Model:    &model,
+						Required: true,
 					},
 				})
 			})
@@ -148,9 +149,9 @@ func TestString(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_MIN_CHAR,
-					Value: map[string]interface{}{
-						"Label":   "",
-						"MinRune": 4,
+					Value: String{
+						MinRune: 4,
+						Model:   &model,
 					},
 				})
 			})
@@ -190,9 +191,9 @@ func TestString(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_MAX_CHAR,
-					Value: map[string]interface{}{
-						"Label":   "",
-						"MaxRune": 4,
+					Value: String{
+						MaxRune: 4,
+						Model:   &model,
 					},
 				})
 			})
@@ -270,9 +271,10 @@ func TestString(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_MUST_MATCH,
-					Value: map[string]interface{}{
-						"Label":          "",
-						"MustMatchLabel": "Matching Fruit",
+					Value: String{
+						Model:          &model,
+						MustMatchLabel: mustMatchLabel,
+						MustMatchModel: &mustMatchModel,
 					},
 				})
 			})
@@ -314,9 +316,9 @@ func TestString(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_PATTERN,
-					Value: map[string]interface{}{
-						"Label":   "",
-						"Pattern": `\d`,
+					Value: String{
+						Pattern: pattern,
+						Model:   &model,
 					},
 				})
 			})
@@ -358,9 +360,9 @@ func TestString(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_IN_LIST,
-					Value: map[string]interface{}{
-						"Label": "",
-						"List":  []string{"orange", "apple", "pear"},
+					Value: String{
+						Model:  &model,
+						InList: list,
 					},
 				})
 			})

@@ -168,8 +168,11 @@ func TestTime(t *testing.T) {
 
 			So(<-panicChannel, ShouldResemble, form.ErrorReverseTransform{
 				Key: form.LANG_TIME_FORMAT,
-				Value: map[string]interface{}{
-					"Label": "",
+				Value: Time{
+					Model:    &model,
+					Norm:     &norm,
+					Formats:  TimeFormats(),
+					Location: time.UTC,
 				},
 			})
 		})
@@ -218,8 +221,9 @@ func TestTime(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: Time{
+						Model:    &model,
+						Required: true,
 					},
 				})
 			})
@@ -262,9 +266,11 @@ func TestTime(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_TIME_MIN,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Min":   "00:00:04",
+					Value: Time{
+						Model:    &model,
+						Location: time.UTC,
+						Formats:  []string{"15:04:05"},
+						Min:      time.Unix(4, 0).In(time.UTC),
 					},
 				})
 			})
@@ -308,9 +314,11 @@ func TestTime(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_TIME_MAX,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Max":   "00:00:04",
+					Value: Time{
+						Model:    &model,
+						Location: time.UTC,
+						Formats:  []string{"15:04:05"},
+						Max:      time.Unix(4, 0).In(time.UTC),
 					},
 				})
 			})

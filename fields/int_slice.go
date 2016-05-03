@@ -103,9 +103,7 @@ func (i IntSlice) ReverseTransform() {
 		if nil != err {
 			panic(&form.ErrorReverseTransform{
 				Key: form.LANG_NOT_INT,
-				Value: map[string]interface{}{
-					"Label": i.Label,
-				},
+				Value: i,
 			})
 		}
 		*i.Model = append(*i.Model, num)
@@ -125,9 +123,7 @@ func (i IntSlice) validateRequired() {
 	case 0 == len(*i.Model):
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, i.RequiredErrKey),
-			Value: map[string]interface{}{
-				"Label": i.Label,
-			},
+			Value: i,
 		})
 	}
 }

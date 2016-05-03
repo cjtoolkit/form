@@ -134,9 +134,7 @@ func (s String) validateRequired() {
 	case "" == *s.Model:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, s.RequiredErrKey),
-			Value: map[string]interface{}{
-				"Label": s.Label,
-			},
+			Value: s,
 		})
 	}
 }
@@ -148,10 +146,7 @@ func (s String) validateMinRune() {
 	case s.MinRune > utf8.RuneCountInString(*s.Model):
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MIN_CHAR, s.MinRuneErrKey),
-			Value: map[string]interface{}{
-				"Label":   s.Label,
-				"MinRune": s.MinRune,
-			},
+			Value: s,
 		})
 	}
 }
@@ -163,10 +158,7 @@ func (s String) validateMaxRune() {
 	case s.MaxRune < utf8.RuneCountInString(*s.Model):
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MAX_CHAR, s.MaxRuneErrKey),
-			Value: map[string]interface{}{
-				"Label":   s.Label,
-				"MaxRune": s.MaxRune,
-			},
+			Value: s,
 		})
 	}
 }
@@ -178,10 +170,7 @@ func (s String) validateMustMatch() {
 	case *s.MustMatchModel != *s.Model:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_MUST_MATCH, s.MustMatchErrKey),
-			Value: map[string]interface{}{
-				"Label":          s.Label,
-				"MustMatchLabel": s.MustMatchLabel,
-			},
+			Value: s,
 		})
 	}
 }
@@ -193,10 +182,7 @@ func (s String) validatePattern() {
 	case !s.Pattern.MatchString(*s.Model):
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_PATTERN, s.PatternErrKey),
-			Value: map[string]interface{}{
-				"Label":   s.Label,
-				"Pattern": s.Pattern.String(),
-			},
+			Value: s,
 		})
 	}
 }
@@ -216,10 +202,7 @@ func (s String) validateInList() {
 
 	panic(&form.ErrorValidateModel{
 		Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_IN_LIST, s.InListErrKey),
-		Value: map[string]interface{}{
-			"Label": s.Label,
-			"List":  s.InList,
-		},
+		Value: s,
 	})
 }
 

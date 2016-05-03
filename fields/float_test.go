@@ -114,8 +114,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_FIELD_REQUIRED,
-					Value: map[string]interface{}{
-						"Label": "",
+					Value: Float{
+						Model:    &model,
+						Required: true,
 					},
 				})
 			})
@@ -161,9 +162,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MIN,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Min":   float64(0),
+					Value: Float{
+						Model:   &model,
+						MinZero: true,
 					},
 				})
 			})
@@ -193,9 +194,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MIN,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Min":   float64(5),
+					Value: Float{
+						Model: &model,
+						Min:   5,
 					},
 				})
 			})
@@ -241,9 +242,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MAX,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Max":   float64(0),
+					Value: Float{
+						Model:   &model,
+						MaxZero: true,
 					},
 				})
 			})
@@ -273,9 +274,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_MAX,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Max":   float64(5),
+					Value: Float{
+						Model: &model,
+						Max:   5,
 					},
 				})
 			})
@@ -319,9 +320,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_NUMBER_STEP,
-					Value: map[string]interface{}{
-						"Label": "",
-						"Step":  float64(2),
+					Value: Float{
+						Model: &model,
+						Step:  2,
 					},
 				})
 			})
@@ -378,9 +379,9 @@ func TestFloat(t *testing.T) {
 
 				So(<-panicChannel, ShouldResemble, &form.ErrorValidateModel{
 					Key: form.LANG_IN_LIST,
-					Value: map[string]interface{}{
-						"Label": "",
-						"List":  []float64{1.4, 1.5, 1.6},
+					Value: Float{
+						Model:  &model,
+						InList: list,
 					},
 				})
 			})

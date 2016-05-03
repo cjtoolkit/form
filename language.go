@@ -46,8 +46,8 @@ func englishLanguage() Langauge {
 		LANG_MIN_CHAR:       T(`'{{.Label}}' should be more than or equal to '{{.MinRune}}' character{{.MinRune|pluralise "s"}}.`),
 		LANG_MAX_CHAR:       T(`'{{.Label}}' should be less than or equal '{{.MaxRune}}' character{{.MaxRune|pluralise "s"}}.`),
 		LANG_MUST_MATCH:     T(`'{{.Label}}' should match '{{.MustMatchLabel}}.'`),
-		LANG_PATTERN:        T(`'{{.Label}}' should match '{{.Pattern}}.'`),
-		LANG_IN_LIST:        T(`Value of '{{.Label}}' is not in the list '{{.List|list "and"}}'.`),
+		LANG_PATTERN:        T(`'{{.Label}}' should match '{{.Pattern.String}}.'`),
+		LANG_IN_LIST:        T(`Value of '{{.Label}}' is not in the list '{{.InList|list "and"}}'.`),
 		LANG_NOT_INT:        T(`'{{.Label}}' is not a whole number.`),
 		LANG_NOT_FLOAT:      T(`'{{.Label}}' is not a decimal.`),
 		LANG_NUMBER_MIN:     T(`'{{.Label}}' should be more than or equal to '{{.Min}}'.`),
@@ -57,7 +57,7 @@ func englishLanguage() Langauge {
 		LANG_TIME_MIN:       T(`'{{.Label}}' should be more than '{{.Min}}'.`),
 		LANG_TIME_MAX:       T(`'{{.Label}}' should be less than '{{.Max}}'.`),
 		LANG_FILE_MIME:      T(`'{{.Label}}' should be '{{.Mime|list "and"}}'.`),
-		LANG_FILE_SIZE:      T(`'{{.Label}}' should be less '{{.Size}}' in bytes.`),
+		LANG_FILE_SIZE:      T(`'{{.Label}}' should be less '{{.SizeInByte}}' in bytes.`),
 	}
 }
 

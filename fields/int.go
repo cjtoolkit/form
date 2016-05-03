@@ -123,9 +123,7 @@ func (i Int) ReverseTransform() {
 	if nil != err {
 		panic(&form.ErrorReverseTransform{
 			Key: form.LANG_NOT_INT,
-			Value: map[string]interface{}{
-				"Label": i.Label,
-			},
+			Value: i,
 		})
 	}
 	*i.Model = num
@@ -147,9 +145,7 @@ func (i Int) validateRequired() {
 	case 0 == *i.Model:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, i.RequiredErrKey),
-			Value: map[string]interface{}{
-				"Label": i.Label,
-			},
+			Value: i,
 		})
 	}
 }
@@ -161,10 +157,7 @@ func (i Int) validateMin() {
 	case i.Min > *i.Model:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_NUMBER_MIN, i.MinErrKey),
-			Value: map[string]interface{}{
-				"Label": i.Label,
-				"Min":   i.Min,
-			},
+			Value: i,
 		})
 	}
 }
@@ -176,10 +169,7 @@ func (i Int) validateMax() {
 	case i.Max < *i.Model:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_NUMBER_MAX, i.MaxErrKey),
-			Value: map[string]interface{}{
-				"Label": i.Label,
-				"Max":   i.Max,
-			},
+			Value: i,
 		})
 	}
 }
@@ -191,10 +181,7 @@ func (i Int) validateStep() {
 	case 0 != *i.Model%i.Step:
 		panic(&form.ErrorValidateModel{
 			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_NUMBER_STEP, i.StepErrKey),
-			Value: map[string]interface{}{
-				"Label": i.Label,
-				"Step":  i.Step,
-			},
+			Value: i,
 		})
 	}
 }
@@ -214,9 +201,6 @@ func (i Int) validateInList() {
 
 	panic(&form.ErrorValidateModel{
 		Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_IN_LIST, i.IsListErrKey),
-		Value: map[string]interface{}{
-			"Label": i.Label,
-			"List":  i.InList,
-		},
+		Value: i,
 	})
 }
