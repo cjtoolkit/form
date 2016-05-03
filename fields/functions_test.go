@@ -77,4 +77,14 @@ func TestFunctions(t *testing.T) {
 		})
 
 	})
+
+	Convey("addSuffix", t, func() {
+
+		name := "name"
+		suffix := "suffix"
+
+		So(addSuffix(name, nil), ShouldEqual, "name")
+		So(addSuffix(name, &suffix), ShouldEqual, "name-suffix")
+
+	})
 }
