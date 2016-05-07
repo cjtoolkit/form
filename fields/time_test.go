@@ -166,7 +166,7 @@ func TestTime(t *testing.T) {
 				}).ReverseTransform()
 			})
 
-			So(<-panicChannel, ShouldResemble, form.ErrorReverseTransform{
+			So(<-panicChannel, ShouldResemble, &form.ErrorReverseTransform{
 				Key: form.LANG_TIME_FORMAT,
 				Value: Time{
 					Model:    &model,
