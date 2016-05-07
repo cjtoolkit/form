@@ -135,7 +135,7 @@ func (t Time) ReverseTransform() {
 		return
 	}
 
-	panic(form.ErrorReverseTransform{
+	panic(&form.ErrorReverseTransform{
 		Key: form.LANG_TIME_FORMAT,
 		Value: t,
 	})
