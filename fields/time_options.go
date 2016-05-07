@@ -8,6 +8,12 @@ func TimeSuffix(suffix *string) func(*Time) {
 	}
 }
 
+func TimeUserLocation(UserLocation *string) func(*Time) {
+	return func(t *Time) {
+		t.UserLocation = UserLocation
+	}
+}
+
 func TimeRequired(errKey string) func(*Time) {
 	return func(t *Time) {
 		t.Required = true

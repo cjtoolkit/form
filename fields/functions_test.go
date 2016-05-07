@@ -6,6 +6,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"regexp"
 	"testing"
+	"time"
 )
 
 var panicChannel = make(chan interface{})
@@ -85,6 +86,23 @@ func TestFunctions(t *testing.T) {
 
 		So(addSuffix(name, nil), ShouldEqual, "name")
 		So(addSuffix(name, &suffix), ShouldEqual, "name-suffix")
+
+	})
+
+	Convey("useDefaultIfNotUserDefinedOrCouldntFindIt", t, func() {
+
+		var code int
+
+		_, code = _useDefaultIfNotUserDefinedOrCouldntFindIt(time.UTC, nil)
+		So(code, ShouldEqual, 1)
+
+		str := ""
+		_, code = _useDefaultIfNotUserDefinedOrCouldntFindIt(time.UTC, &str)
+		So(code, ShouldEqual, 2)
+
+		str = "abc"
+		_, code = _useDefaultIfNotUserDefinedOrCouldntFindIt(time.UTC, &str)
+		So(code, ShouldEqual, 0)
 
 	})
 }

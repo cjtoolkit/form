@@ -16,6 +16,7 @@ type Time struct {
 	Location       *time.Location // Mandatory
 	Formats        []string       // Mandatory, most ideal format should be at the top
 	Suffix         *string
+	UserLocation   *string
 	Required       bool
 	RequiredErrKey string
 	Min            time.Time
@@ -127,7 +128,8 @@ func (t Time) ReverseTransform() {
 	norm := strings.TrimSpace(*t.Norm)
 	*t.Model = time.Time{}
 	for _, format := range t.Formats {
-		out, err := time.ParseInLocation(format, norm, t.Location)
+		out, err := time.ParseInLocation(format, norm,
+			useDefaultIfNotUserDefinedOrCouldntFindIt(t.Location, t.UserLocation))
 		if nil != err {
 			continue
 		}
@@ -136,7 +138,7 @@ func (t Time) ReverseTransform() {
 	}
 
 	panic(&form.ErrorReverseTransform{
-		Key: form.LANG_TIME_FORMAT,
+		Key:   form.LANG_TIME_FORMAT,
 		Value: t,
 	})
 }
@@ -154,7 +156,7 @@ func (t Time) validateRequired() {
 		return
 	case (*t.Model).IsZero():
 		panic(&form.ErrorValidateModel{
-			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, t.RequiredErrKey),
+			Key:   UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_FIELD_REQUIRED, t.RequiredErrKey),
 			Value: t,
 		})
 	}
@@ -166,7 +168,7 @@ func (t Time) validateMin() {
 		return
 	case t.Min.Unix() > (*t.Model).Unix() || (t.Min.Unix() == (*t.Model).Unix() && t.Min.UnixNano() > (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
-			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MIN, t.MinErrKey),
+			Key:   UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MIN, t.MinErrKey),
 			Value: t,
 		})
 	}
@@ -182,7 +184,7 @@ func (t Time) validateMax() {
 		return
 	case t.Max.Unix() < (*t.Model).Unix() || (t.Max.Unix() == (*t.Model).Unix() && t.Max.UnixNano() < (*t.Model).UnixNano()):
 		panic(&form.ErrorValidateModel{
-			Key: UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MAX, t.MaxErrKey),
+			Key:   UseDefaultKeyIfCustomKeyIsEmpty(form.LANG_TIME_MAX, t.MaxErrKey),
 			Value: t,
 		})
 	}

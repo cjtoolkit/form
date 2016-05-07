@@ -1,6 +1,9 @@
 package fields
 
-import "regexp"
+import (
+	"regexp"
+	"time"
+)
 
 func UseDefaultKeyIfCustomKeyIsEmpty(defaultKey, customKey string) string {
 	if "" != customKey {
@@ -42,4 +45,22 @@ func addSuffix(name string, suffix *string) string {
 		return name + "-" + *suffix
 	}
 	return name
+}
+
+func _useDefaultIfNotUserDefinedOrCouldntFindIt(defaultLoc *time.Location, locationByString *string) (*time.Location, int) {
+	if nil == locationByString {
+		return defaultLoc, 1
+	}
+
+	if loc, err := time.LoadLocation(*locationByString); nil == err {
+		return loc, 2
+	}
+
+	return defaultLoc, 0
+}
+
+
+func useDefaultIfNotUserDefinedOrCouldntFindIt(defaultLoc *time.Location, locationByString *string) *time.Location {
+	loc, _ := _useDefaultIfNotUserDefinedOrCouldntFindIt(defaultLoc, locationByString)
+	return loc
 }
