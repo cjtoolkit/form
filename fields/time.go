@@ -195,11 +195,9 @@ func (t Time) MaxStr() string {
 func DateTimeLocalFormats() []string {
 	// All meets html5 specification.
 	return []string{
-		"2006-01-02T15:04.05",
 		"2006-01-02T15:04:05",
 		"2006-01-02T15:04",
 		"2006-01-02",
-		"15:04.05",
 		"15:04:05",
 		"15:04",
 	}
@@ -215,7 +213,6 @@ func DateFormats() []string {
 func TimeFormats() []string {
 	// All meets html5 specification.
 	return []string{
-		"15:04.05",
 		"15:04:05",
 		"15:04",
 	}
