@@ -127,9 +127,9 @@ func (t Time) Transform() {
 func (t Time) ReverseTransform() {
 	norm := strings.TrimSpace(*t.Norm)
 	*t.Model = time.Time{}
+	location := useDefaultIfNotUserDefinedOrCouldntFindIt(t.Location, t.UserLocation)
 	for _, format := range t.Formats {
-		out, err := time.ParseInLocation(format, norm,
-			useDefaultIfNotUserDefinedOrCouldntFindIt(t.Location, t.UserLocation))
+		out, err := time.ParseInLocation(format, norm, location)
 		if nil != err {
 			continue
 		}
