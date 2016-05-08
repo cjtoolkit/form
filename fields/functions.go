@@ -48,7 +48,7 @@ func addSuffix(name string, suffix *string) string {
 }
 
 func _useDefaultIfNotUserDefinedOrCouldntFindIt(defaultLoc *time.Location, locationByString *string) (*time.Location, int) {
-	if nil == locationByString {
+	if nil == locationByString || "" == *locationByString {
 		return defaultLoc, 1
 	}
 
