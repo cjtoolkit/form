@@ -12,21 +12,19 @@ type Form struct {
 	disablePreCheck bool
 }
 
-func NewForm(language LanguageInterface) (f *Form) {
+func NewForm(language LanguageInterface, options ...func(*Form)) (f *Form) {
 	f = &Form{
 		language: language,
 	}
 	f.checkLanguage()
+	for _, option := range options {
+		option(f)
+	}
 	return
 }
 
-func NewFormEnglishLanguage() *Form {
-	return NewForm(englishLanguageMap)
-}
-
-func (f *Form) DisablePreCheck() *Form {
-	f.disablePreCheck = true
-	return f
+func NewFormEnglishLanguage(options ...func(*Form)) *Form {
+	return NewForm(englishLanguageMap, options...)
 }
 
 func (f *Form) checkLanguage() {
