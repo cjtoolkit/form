@@ -98,6 +98,10 @@ func TestFunctions(t *testing.T) {
 
 		str := ""
 		_, code = _useDefaultIfNotUserDefinedOrCouldntFindIt(time.UTC, &str)
+		So(code, ShouldEqual, 1)
+
+		str = "Europe/Jersey"
+		_, code = _useDefaultIfNotUserDefinedOrCouldntFindIt(time.UTC, &str)
 		So(code, ShouldEqual, 2)
 
 		str = "abc"

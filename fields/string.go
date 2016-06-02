@@ -36,7 +36,7 @@ type String struct {
 	Extra           func()
 }
 
-func NewString(name, label string, norm, model *string, err *error, options ...func(*String)) String {
+func NewString(name, label string, norm, model *string, err *error, options ...StringOption) String {
 	s := String{
 		Name:  name,
 		Label: label,

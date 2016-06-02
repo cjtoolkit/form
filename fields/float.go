@@ -34,7 +34,7 @@ type Float struct {
 	Extra          func()
 }
 
-func NewFloat(name, label string, norm *string, model *float64, err *error, options ...func(*Float)) Float {
+func NewFloat(name, label string, norm *string, model *float64, err *error, options ...FloatOption) Float {
 	f := Float{
 		Name:  name,
 		Label: label,

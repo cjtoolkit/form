@@ -35,7 +35,7 @@ func NewTime(
 	err *error,
 	location *time.Location,
 	formats []string,
-	options ...func(*Time),
+	options ...TimeOption,
 ) Time {
 	t := Time{
 		Name:     name,

@@ -23,7 +23,7 @@ type File struct {
 	Extra            func()
 }
 
-func NewFile(name, label string, file **multipart.FileHeader, err *error, options ...func(*File)) File {
+func NewFile(name, label string, file **multipart.FileHeader, err *error, options ...FileOption) File {
 	f := File{
 		Name:  name,
 		Label: label,

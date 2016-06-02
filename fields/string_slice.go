@@ -19,7 +19,7 @@ type StringSlice struct {
 	Extra          func()
 }
 
-func NewStringSlice(name, label string, norm, model *[]string, err *error, options ...func(*StringSlice)) StringSlice {
+func NewStringSlice(name, label string, norm, model *[]string, err *error, options ...StringSliceOption) StringSlice {
 	s := StringSlice{
 		Name:  name,
 		Label: label,

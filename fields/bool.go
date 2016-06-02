@@ -18,7 +18,7 @@ type Bool struct {
 	RequiredErrKey string
 }
 
-func NewBool(name, label, value string, norm *string, model *bool, err *error, options ...func(*Bool)) Bool {
+func NewBool(name, label, value string, norm *string, model *bool, err *error, options ...BoolOption) Bool {
 	b := Bool{
 		Name:  name,
 		Label: label,

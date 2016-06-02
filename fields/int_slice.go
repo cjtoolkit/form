@@ -20,7 +20,7 @@ type IntSlice struct {
 	Extra          func()
 }
 
-func NewIntSlice(name, label string, norm *[]string, model *[]int64, err *error, options ...func(*IntSlice)) IntSlice {
+func NewIntSlice(name, label string, norm *[]string, model *[]int64, err *error, options ...IntSliceOption) IntSlice {
 	i := IntSlice{
 		Name:  name,
 		Label: label,

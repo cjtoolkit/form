@@ -33,7 +33,7 @@ type Int struct {
 	Extra          func()
 }
 
-func NewInt(name, label string, norm *string, model *int64, err *error, options ...func(*Int)) Int {
+func NewInt(name, label string, norm *string, model *int64, err *error, options ...IntOption) Int {
 	i := Int{
 		Name:  name,
 		Label: label,

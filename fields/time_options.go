@@ -2,26 +2,28 @@ package fields
 
 import "time"
 
-func TimeSuffix(suffix *string) func(*Time) {
+type TimeOption func(*Time)
+
+func TimeSuffix(suffix *string) TimeOption {
 	return func(t *Time) {
 		t.Suffix = suffix
 	}
 }
 
-func TimeUserLocation(UserLocation *string) func(*Time) {
+func TimeUserLocation(UserLocation *string) TimeOption {
 	return func(t *Time) {
 		t.UserLocation = UserLocation
 	}
 }
 
-func TimeRequired(errKey string) func(*Time) {
+func TimeRequired(errKey string) TimeOption {
 	return func(t *Time) {
 		t.Required = true
 		t.RequiredErrKey = errKey
 	}
 }
 
-func TimeMin(min time.Time, errKey string) func(*Time) {
+func TimeMin(min time.Time, errKey string) TimeOption {
 	return func(t *Time) {
 		t.Min = min
 		t.MinZero = true
@@ -29,7 +31,7 @@ func TimeMin(min time.Time, errKey string) func(*Time) {
 	}
 }
 
-func TimeMax(max time.Time, errKey string) func(*Time) {
+func TimeMax(max time.Time, errKey string) TimeOption {
 	return func(t *Time) {
 		t.Max = max
 		t.MaxZero = true
@@ -37,7 +39,7 @@ func TimeMax(max time.Time, errKey string) func(*Time) {
 	}
 }
 
-func TimeExtra(extra func()) func(*Time) {
+func TimeExtra(extra func()) TimeOption {
 	return func(t *Time) {
 		t.Extra = extra
 	}
