@@ -64,6 +64,7 @@ func (f *FieldAbstract) InputAttr() map[string]string {
 	delete(f.inputAttr, "class")
 	delete(f.inputAttr, "selected")
 	delete(f.inputAttr, "checked")
+	delete(f.inputAttr, "name")
 
 	return f.inputAttr
 }
@@ -78,4 +79,12 @@ func (f *FieldAbstract) SetChecked(checked bool) {
 
 func (f *FieldAbstract) Checked() bool {
 	return f.checked
+}
+
+func (f *FieldAbstract) SetOptions(options []string) {
+	f.options = options
+}
+
+func (f *FieldAbstract) Options() []string {
+	return f.options
 }
