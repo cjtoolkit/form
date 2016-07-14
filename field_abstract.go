@@ -12,6 +12,7 @@ type FieldAbstract struct {
 	inputAttr map[string]string
 	checked   bool
 	options   []string
+	meta      map[string]string
 }
 
 func NewFieldAbstract(
@@ -32,6 +33,7 @@ func NewFieldAbstract(
 		value:     value,
 		values:    values,
 		inputAttr: map[string]string{},
+		meta:      map[string]string{},
 	}
 }
 
@@ -87,4 +89,16 @@ func (f *FieldAbstract) SetOptions(options []string) {
 
 func (f *FieldAbstract) Options() []string {
 	return f.options
+}
+
+func (f *FieldAbstract) HasMeta(name string) bool {
+	return "" != f.meta[name]
+}
+
+func (f *FieldAbstract) Meta(name string) string {
+	return f.meta[name]
+}
+
+func (f *FieldAbstract) SetMeta(name, value string) {
+	f.meta[name] = value
 }
