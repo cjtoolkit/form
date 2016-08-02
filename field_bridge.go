@@ -1,6 +1,10 @@
 package form
 
-type FieldAbstract struct {
+const (
+	InputCheckbox = "input:checkbox"
+)
+
+type FieldBridge struct {
 	_type     string
 	multi     bool
 	label     *string
@@ -15,7 +19,7 @@ type FieldAbstract struct {
 	meta      map[string]string
 }
 
-func NewFieldAbstract(
+func NewFieldBridge(
 	_type string,
 	multi bool,
 	label *string,
@@ -23,8 +27,8 @@ func NewFieldAbstract(
 	suffix **string,
 	value *string,
 	values *[]string,
-) *FieldAbstract {
-	return &FieldAbstract{
+) *FieldBridge {
+	return &FieldBridge{
 		_type:     _type,
 		multi:     multi,
 		label:     label,
@@ -37,15 +41,15 @@ func NewFieldAbstract(
 	}
 }
 
-func (f *FieldAbstract) Id() string {
+func (f *FieldBridge) Id() string {
 	return f.id
 }
 
-func (f *FieldAbstract) Label() string {
+func (f *FieldBridge) Label() string {
 	return *f.label
 }
 
-func (f *FieldAbstract) Name() string {
+func (f *FieldBridge) Name() string {
 	if nil != *f.suffix {
 		return *f.name + **f.suffix
 	}
@@ -53,15 +57,15 @@ func (f *FieldAbstract) Name() string {
 	return *f.name
 }
 
-func (f *FieldAbstract) Value() string {
+func (f *FieldBridge) Value() string {
 	return *f.value
 }
 
-func (f *FieldAbstract) Values() []string {
+func (f *FieldBridge) Values() []string {
 	return *f.value
 }
 
-func (f *FieldAbstract) InputAttr() map[string]string {
+func (f *FieldBridge) InputAttr() map[string]string {
 	delete(f.inputAttr, "id")
 	delete(f.inputAttr, "class")
 	delete(f.inputAttr, "selected")
@@ -71,34 +75,34 @@ func (f *FieldAbstract) InputAttr() map[string]string {
 	return f.inputAttr
 }
 
-func (f *FieldAbstract) SetInputAttr(name, value string) {
+func (f *FieldBridge) SetInputAttr(name, value string) {
 	f.inputAttr[name] = value
 }
 
-func (f *FieldAbstract) SetChecked(checked bool) {
+func (f *FieldBridge) SetChecked(checked bool) {
 	f.checked = checked
 }
 
-func (f *FieldAbstract) Checked() bool {
+func (f *FieldBridge) Checked() bool {
 	return f.checked
 }
 
-func (f *FieldAbstract) SetOptions(options []string) {
+func (f *FieldBridge) SetOptions(options []string) {
 	f.options = options
 }
 
-func (f *FieldAbstract) Options() []string {
+func (f *FieldBridge) Options() []string {
 	return f.options
 }
 
-func (f *FieldAbstract) HasMeta(name string) bool {
+func (f *FieldBridge) HasMeta(name string) bool {
 	return "" != f.meta[name]
 }
 
-func (f *FieldAbstract) Meta(name string) string {
+func (f *FieldBridge) Meta(name string) string {
 	return f.meta[name]
 }
 
-func (f *FieldAbstract) SetMeta(name, value string) {
+func (f *FieldBridge) SetMeta(name, value string) {
 	f.meta[name] = value
 }

@@ -10,6 +10,7 @@ type FormFieldInterface interface {
 	Transform()
 	ReverseTransform()
 	ValidateModel()
+	GetBridge() *FieldBridge
 }
 
 func FormFieldInterfaceCheck(v FormFieldInterface) {}
